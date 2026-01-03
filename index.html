@@ -5,17 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YASIF STORE - Promo Kopi Hemat</title>
     <style>
-        /* GAYA TAMPILAN (CSS) - BIAR KEREN */
+        /* GAYA TAMPILAN (CSS) */
         body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; }
         
-        /* Header */
         header { background: #2c3e50; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         header h1 { margin: 0; font-size: 20px; font-weight: 700; }
         
-        /* Container Utama */
         .container { max-width: 600px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
 
-        /* Halaman Pilihan Brand */
+        /* Pilihan Brand */
         .brand-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         .brand-card { background: white; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.2s; border: 2px solid transparent; }
         .brand-card:hover { transform: translateY(-5px); border-color: #2c3e50; }
@@ -23,22 +21,27 @@
         .brand-name { font-weight: bold; display: block; }
 
         /* List Menu */
-        #menu-section { display: none; } /* Tersembunyi di awal */
+        #menu-section { display: none; }
         .menu-list { display: grid; gap: 15px; margin-top: 15px; }
         .menu-item { background: white; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        
         .item-info h3 { margin: 0 0 5px; font-size: 16px; }
-        .item-price { color: #e74c3c; font-weight: bold; }
-        .btn-add { background: #2c3e50; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 12px; }
+        
+        /* GAYA HARGA BARU (CORET & PROMO) */
+        .price-container { display: flex; flex-direction: column; align-items: flex-start; }
+        .price-original { text-decoration: line-through; color: #999; font-size: 12px; margin-bottom: 2px; }
+        .price-promo { color: #e74c3c; font-weight: bold; font-size: 16px; }
+
+        .btn-add { background: #2c3e50; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 12px; min-width: 80px; }
         .btn-add:active { transform: scale(0.95); }
 
-        /* Tombol Kembali */
         .btn-back { background: transparent; border: 1px solid #ccc; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
 
-        /* Floating Cart (Keranjang Melayang) */
+        /* Floating Cart */
         .floating-cart { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 580px; background: #25D366; color: white; padding: 15px; border-radius: 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4); cursor: pointer; display: none; z-index: 200; }
         .cart-info { font-weight: bold; padding-left: 10px; }
 
-        /* Modal Checkout (Pop-up) */
+        /* Modal Checkout */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 300; align-items: flex-end; justify-content: center; }
         .modal-content { background: white; width: 100%; max-width: 600px; padding: 25px; border-radius: 20px 20px 0 0; animation: slideUp 0.3s; }
         @keyframes slideUp { from {transform: translateY(100%);} to {transform: translateY(0);} }
@@ -112,29 +115,24 @@
 
     <script>
         /* === BAGIAN DATA PRODUK === 
-           Kamu bisa edit harga dan nama menu di sini
+           Paste hasil dari EXCEL di dalam kurung siku [ ... ] di bawah ini
         */
         const databaseMenu = {
             'kenangan': [
-                { name: "Kopi Kenangan Mantan", price: 18000 },
-                { name: "Dua Shot Iced Shaken", price: 22000 },
-                { name: "Latte", price: 24000 },
-                { name: "Milo Dinosaurus", price: 20000 },
-                { name: "Americano", price: 15000 }
+                { name: 'Kopi Kenangan Mantan', price: 18000, original: 24000 },
+                { name: 'Dua Shot Iced Shaken', price: 22000, original: 28000 },
+                { name: 'Latte', price: 24000, original: 30000 },
             ],
             'tomoro': [
-                { name: "Tomoro Aren Latte", price: 18000 },
-                { name: "Coconut Aren Latte", price: 23000 },
-                { name: "Manuka Oat Latte", price: 28000 },
-                { name: "Caffe Latte", price: 22000 },
-                { name: "Chocolate Series", price: 19000 }
+                { name: 'Tomoro Aren Latte', price: 18000, original: 25000 },
+                { name: 'Coconut Aren Latte', price: 23000, original: 29000 },
             ]
         };
 
-        // === NOMOR WA YASIF STORE (SUDAH DIUPDATE) ===
+        // === NOMOR WA KAMU ===
         const NOMOR_WA = "6287836345807"; 
 
-        /* === LOGIKA PROGRAM (JANGAN DIUBAH) === */
+        /* === LOGIKA PROGRAM === */
         let cart = [];
         let currentBrand = '';
 
@@ -143,22 +141,24 @@
             document.getElementById('home-section').style.display = 'none';
             document.getElementById('menu-section').style.display = 'block';
             
-            // Ubah Judul
             const title = brand === 'kenangan' ? 'Kopi Kenangan' : 'Tomoro Coffee';
-            document.getElementById('brand-title').innerText = "Menu " + title;
+            document.getElementById('brand-title').innerText = "Promo " + title;
 
-            // Tampilkan Menu
             const container = document.getElementById('menu-container');
-            container.innerHTML = ''; // Bersihkan dulu
+            container.innerHTML = ''; 
             
             databaseMenu[brand].forEach((item, index) => {
+                // Tampilan Harga Coret & Promo
                 container.innerHTML += `
                     <div class="menu-item">
                         <div class="item-info">
                             <h3>${item.name}</h3>
-                            <span class="item-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+                            <div class="price-container">
+                                <span class="price-original">Rp ${item.original.toLocaleString('id-ID')}</span>
+                                <span class="price-promo">Rp ${item.price.toLocaleString('id-ID')}</span>
+                            </div>
                         </div>
-                        <button class="btn-add" onclick="addToCart('${brand}', ${index})">TAMBAH +</button>
+                        <button class="btn-add" onclick="addToCart('${brand}', ${index})">AMBIL PROMO</button>
                     </div>
                 `;
             });
@@ -176,10 +176,9 @@
         }
 
         function updateCartUI() {
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            const total = cart.reduce((sum, item) => sum + item.price, 0); // Total hitung dari harga promo
             document.getElementById('cart-summary').innerText = `${cart.length} Item | Rp ${total.toLocaleString('id-ID')}`;
             
-            // Munculkan tombol keranjang jika ada isi
             if(cart.length > 0) {
                 document.getElementById('floating-cart').style.display = 'flex';
             }
@@ -189,9 +188,11 @@
             const list = document.getElementById('cart-details');
             list.innerHTML = '';
             let total = 0;
+            let totalHemat = 0;
 
             cart.forEach((item) => {
                 total += item.price;
+                totalHemat += (item.original - item.price); // Hitung hemat
                 list.innerHTML += `
                     <div class="cart-row">
                         <span>${item.name}</span>
@@ -215,17 +216,16 @@
                 return;
             }
 
-            let message = `Halo Yasif Store, saya mau beli Voucher Promo:\n\n`;
+            let message = `Halo Yasif Store, saya mau klaim Promo Kopi:\n\n`;
             
-            // List Item
             cart.forEach(item => {
-                message += `- ${item.name} (Rp ${item.price.toLocaleString('id-ID')})\n`;
+                message += `- ${item.name} (Promo: Rp ${item.price.toLocaleString('id-ID')})\n`;
             });
 
             const total = cart.reduce((sum, item) => sum + item.price, 0);
             message += `\n*Total Bayar: Rp ${total.toLocaleString('id-ID')}*`;
             message += `\n\nLokasi Ambil: *${location}*`;
-            message += `\n\nMohon diproses ya kak!`;
+            message += `\n\nMohon diproses segera ya!`;
 
             const url = `https://wa.me/${NOMOR_WA}?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
