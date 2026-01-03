@@ -3,73 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YASIF STORE - Top Up Voucher & Game Murah</title>
+    <title>YASIF STORE - Promo Kopi Hemat</title>
     <style>
-        /* INI BAGIAN DESAIN (CSS) */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        /* GAYA TAMPILAN (CSS) - BIAR KEREN */
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; }
         
-        /* Header Atas */
-        header { background-color: #2c3e50; color: white; padding: 20px; text-align: center; }
-        header h1 { margin: 0; font-size: 24px; }
-        header p { margin: 5px 0 0; font-size: 14px; opacity: 0.8; }
-
-        /* Wadah Produk */
-        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-
-        /* Kartu Produk */
-        .card { background: white; border-radius: 10px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s; }
-        .card:hover { transform: translateY(-5px); }
+        /* Header */
+        header { background: #2c3e50; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 20px; font-weight: 700; }
         
-        /* Tempat Foto Produk (Kotak Abu-abu sementara) */
-        .img-placeholder { width: 100%; height: 120px; background-color: #ddd; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px; }
+        /* Container Utama */
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
+
+        /* Halaman Pilihan Brand */
+        .brand-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .brand-card { background: white; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.2s; border: 2px solid transparent; }
+        .brand-card:hover { transform: translateY(-5px); border-color: #2c3e50; }
+        .brand-logo { width: 80px; height: 80px; background: #ddd; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; font-weight: bold; }
+        .brand-name { font-weight: bold; display: block; }
+
+        /* List Menu */
+        #menu-section { display: none; } /* Tersembunyi di awal */
+        .menu-list { display: grid; gap: 15px; margin-top: 15px; }
+        .menu-item { background: white; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .item-info h3 { margin: 0 0 5px; font-size: 16px; }
+        .item-price { color: #e74c3c; font-weight: bold; }
+        .btn-add { background: #2c3e50; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 12px; }
+        .btn-add:active { transform: scale(0.95); }
+
+        /* Tombol Kembali */
+        .btn-back { background: transparent; border: 1px solid #ccc; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
+
+        /* Floating Cart (Keranjang Melayang) */
+        .floating-cart { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 580px; background: #25D366; color: white; padding: 15px; border-radius: 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4); cursor: pointer; display: none; z-index: 200; }
+        .cart-info { font-weight: bold; padding-left: 10px; }
+
+        /* Modal Checkout (Pop-up) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 300; align-items: flex-end; justify-content: center; }
+        .modal-content { background: white; width: 100%; max-width: 600px; padding: 25px; border-radius: 20px 20px 0 0; animation: slideUp 0.3s; }
+        @keyframes slideUp { from {transform: translateY(100%);} to {transform: translateY(0);} }
         
-        /* Teks Produk */
-        h3 { font-size: 16px; margin: 10px 0 5px; }
-        .price { color: #e74c3c; font-weight: bold; font-size: 14px; margin-bottom: 15px; display: block; }
+        .cart-item-list { max-height: 200px; overflow-y: auto; margin-bottom: 15px; border-bottom: 1px solid #eee; }
+        .cart-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-checkout { width: 100%; background: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .btn-close { background: #ddd; color: #333; border: none; padding: 10px; width: 100%; border-radius: 10px; margin-top: 10px; cursor: pointer; }
 
-        /* Tombol Beli */
-        .btn-beli { background-color: #25D366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; display: block; width: 100%; box-sizing: border-box; }
-        .btn-beli:hover { background-color: #1ebc57; }
-
-        /* Footer Bawah */
-        footer { text-align: center; padding: 20px; font-size: 12px; color: #777; margin-top: 30px; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>YASIF STORE</h1>
-        <p>Solusi Top Up Voucher Game & Pulsa Terpercaya</p>
     </header>
 
     <div class="container">
         
-        <div class="card">
-            <div class="https://imgcdn.espos.id/@espos/images/2022/09/14Mobile-Legends-Popculture.id_.jpg?quality=60">FOTO MLBB</div> 
-            <h3>222 Diamonds MLBB</h3>
-            <span class="price">Rp 40.000</span>
-            <a href="https://wa.me/6287836345807?text=Halo%20Admin%20Yasif%20Store,%20mau%20topup%2086%20DM%20MLBB" class="btn-beli">Beli Sekarang</a>
+        <div id="home-section">
+            <h3 style="text-align:center;">Pilih Kopi Favoritmu:</h3>
+            <div class="brand-choice">
+                <div class="brand-card" onclick="openMenu('kenangan')">
+                    <div class="brand-logo" style="background:#e8cfc1; color:#333;">KOPI<br>KENANGAN</div>
+                    <span class="brand-name">Kopi Kenangan</span>
+                </div>
+                <div class="brand-card" onclick="openMenu('tomoro')">
+                    <div class="brand-logo" style="background:#ff6b6b; color:white;">TOMORO<br>COFFEE</div>
+                    <span class="brand-name">Tomoro Coffee</span>
+                </div>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="img-placeholder">FOTO FF</div>
-            <h3>140 Diamonds FF</h3>
-            <span class="price">Rp 25.000</span>
-            <a href="https://wa.me/6287836345807?text=Halo%20Admin%20Yasif%20Store,%20mau%20topup%20140%20DM%20FF" class="btn-beli">Beli Sekarang</a>
+        <div id="menu-section">
+            <button class="btn-back" onclick="goHome()">← Kembali</button>
+            <h2 id="brand-title">Menu</h2>
+            <div class="menu-list" id="menu-container">
+                </div>
         </div>
 
-        <div class="card">
-            <div class="img-placeholder">FOTO PLN</div>
-            <h3>Token PLN 50k</h3>
-            <span class="price">Rp 51.500</span>
-            <a href="https://wa.me/6287836345807?text=Halo%20Admin%20Yasif%20Store,%20mau%20beli%20Token%20PLN%2050k" class="btn-beli">Beli Sekarang</a>
+    </div>
+
+    <div class="floating-cart" id="floating-cart" onclick="openModal()">
+        <span class="cart-info" id="cart-summary">0 Item | Rp 0</span>
+        <span style="padding-right:10px;">Lihat Keranjang ></span>
+    </div>
+
+    <div class="modal" id="checkout-modal">
+        <div class="modal-content">
+            <h3>Detail Pesanan</h3>
+            <div class="cart-item-list" id="cart-details">
+                </div>
+            
+            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:15px; font-size:18px;">
+                <span>Total:</span>
+                <span id="cart-total-price">Rp 0</span>
+            </div>
+
+            <div class="form-group">
+                <label>Lokasi Ambil (Nama Cabang/Store):</label>
+                <input type="text" id="store-location" placeholder="Contoh: Cabang Grand Indonesia">
+            </div>
+
+            <button class="btn-checkout" onclick="sendToWA()">Pesan via WhatsApp</button>
+            <button class="btn-close" onclick="closeModal()">Tutup / Tambah Lagi</button>
         </div>
+    </div>
 
-        </div>
+    <script>
+        /* === BAGIAN DATA PRODUK === 
+           Kamu bisa edit harga dan nama menu di sini
+        */
+        const databaseMenu = {
+            'kenangan': [
+                { name: "Kopi Kenangan Mantan", price: 18000 },
+                { name: "Dua Shot Iced Shaken", price: 22000 },
+                { name: "Latte", price: 24000 },
+                { name: "Milo Dinosaurus", price: 20000 },
+                { name: "Americano", price: 15000 }
+            ],
+            'tomoro': [
+                { name: "Tomoro Aren Latte", price: 18000 },
+                { name: "Coconut Aren Latte", price: 23000 },
+                { name: "Manuka Oat Latte", price: 28000 },
+                { name: "Caffe Latte", price: 22000 },
+                { name: "Chocolate Series", price: 19000 }
+            ]
+        };
 
-    <footer>
-        &copy; 2025 YASIF STORE. Melayani Sepenuh Hati.
-    </footer>
+        // === NOMOR WA YASIF STORE (SUDAH DIUPDATE) ===
+        const NOMOR_WA = "6287836345807"; 
 
+        /* === LOGIKA PROGRAM (JANGAN DIUBAH) === */
+        let cart = [];
+        let currentBrand = '';
+
+        function openMenu(brand) {
+            currentBrand = brand;
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('menu-section').style.display = 'block';
+            
+            // Ubah Judul
+            const title = brand === 'kenangan' ? 'Kopi Kenangan' : 'Tomoro Coffee';
+            document.getElementById('brand-title').innerText = "Menu " + title;
+
+            // Tampilkan Menu
+            const container = document.getElementById('menu-container');
+            container.innerHTML = ''; // Bersihkan dulu
+            
+            databaseMenu[brand].forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="menu-item">
+                        <div class="item-info">
+                            <h3>${item.name}</h3>
+                            <span class="item-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+                        </div>
+                        <button class="btn-add" onclick="addToCart('${brand}', ${index})">TAMBAH +</button>
+                    </div>
+                `;
+            });
+        }
+
+        function goHome() {
+            document.getElementById('home-section').style.display = 'block';
+            document.getElementById('menu-section').style.display = 'none';
+        }
+
+        function addToCart(brand, index) {
+            const item = databaseMenu[brand][index];
+            cart.push(item);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('cart-summary').innerText = `${cart.length} Item | Rp ${total.toLocaleString('id-ID')}`;
+            
+            // Munculkan tombol keranjang jika ada isi
+            if(cart.length > 0) {
+                document.getElementById('floating-cart').style.display = 'flex';
+            }
+        }
+
+        function openModal() {
+            const list = document.getElementById('cart-details');
+            list.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item) => {
+                total += item.price;
+                list.innerHTML += `
+                    <div class="cart-row">
+                        <span>${item.name}</span>
+                        <span>Rp ${item.price.toLocaleString('id-ID')}</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('cart-total-price').innerText = "Rp " + total.toLocaleString('id-ID');
+            document.getElementById('checkout-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('checkout-modal').style.display = 'none';
+        }
+
+        function sendToWA() {
+            const location = document.getElementById('store-location').value;
+            if(!location) {
+                alert("Mohon isi lokasi cabang pengambilan dulu ya!");
+                return;
+            }
+
+            let message = `Halo Yasif Store, saya mau beli Voucher Promo:\n\n`;
+            
+            // List Item
+            cart.forEach(item => {
+                message += `- ${item.name} (Rp ${item.price.toLocaleString('id-ID')})\n`;
+            });
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            message += `\n*Total Bayar: Rp ${total.toLocaleString('id-ID')}*`;
+            message += `\n\nLokasi Ambil: *${location}*`;
+            message += `\n\nMohon diproses ya kak!`;
+
+            const url = `https://wa.me/${NOMOR_WA}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+    </script>
 </body>
 </html>
