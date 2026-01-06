@@ -3,233 +3,494 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YASIF STORE - Promo Kopi Hemat</title>
+    <title>YASIF STORE - Voucher Kopi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#FAF8F5',
+                        foreground: '#2A2A2A',
+                        card: '#FFFFFF',
+                        border: '#E8E4DB',
+                        muted: '#8C8577',
+                        accent: '#D4AF37',
+                        primary: '#2D7F4F',
+                        'primary-foreground': '#FFFFFF',
+                        promo: '#C8492B',
+                    },
+                    fontFamily: {
+                        sans: ['system-ui', '-apple-system', 'sans-serif'],
+                        serif: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
     <style>
-        /* GAYA TAMPILAN (CSS) */
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; }
-        
-        header { background: #2c3e50; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        header h1 { margin: 0; font-size: 20px; font-weight: 700; }
-        
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
-
-        /* Pilihan Brand */
-        .brand-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .brand-card { background: white; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.2s; border: 2px solid transparent; }
-        .brand-card:hover { transform: translateY(-5px); border-color: #2c3e50; }
-        .brand-logo { width: 80px; height: 80px; background: #ddd; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; font-weight: bold; }
-        .brand-name { font-weight: bold; display: block; }
-
-        /* List Menu */
-        #menu-section { display: none; }
-        .menu-list { display: grid; gap: 15px; margin-top: 15px; }
-        .menu-item { background: white; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        
-        .item-info h3 { margin: 0 0 5px; font-size: 16px; }
-        
-        /* GAYA HARGA BARU (CORET & PROMO) */
-        .price-container { display: flex; flex-direction: column; align-items: flex-start; }
-        .price-original { text-decoration: line-through; color: #999; font-size: 12px; margin-bottom: 2px; }
-        .price-promo { color: #e74c3c; font-weight: bold; font-size: 16px; }
-
-        .btn-add { background: #2c3e50; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 12px; min-width: 80px; }
-        .btn-add:active { transform: scale(0.95); }
-
-        .btn-back { background: transparent; border: 1px solid #ccc; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
-
-        /* Floating Cart */
-        .floating-cart { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 580px; background: #25D366; color: white; padding: 15px; border-radius: 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4); cursor: pointer; display: none; z-index: 200; }
-        .cart-info { font-weight: bold; padding-left: 10px; }
-
-        /* Modal Checkout */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 300; align-items: flex-end; justify-content: center; }
-        .modal-content { background: white; width: 100%; max-width: 600px; padding: 25px; border-radius: 20px 20px 0 0; animation: slideUp 0.3s; }
-        @keyframes slideUp { from {transform: translateY(100%);} to {transform: translateY(0);} }
-        
-        .cart-item-list { max-height: 200px; overflow-y: auto; margin-bottom: 15px; border-bottom: 1px solid #eee; }
-        .cart-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: bold; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .btn-checkout { width: 100%; background: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .btn-close { background: #ddd; color: #333; border: none; padding: 10px; width: 100%; border-radius: 10px; margin-top: 10px; cursor: pointer; }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #FAF8F5;
+            color: #2A2A2A;
+        }
+        /* Animasi Pop-up */
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .animate-zoom { animation: zoomIn 0.2s ease-out; }
     </style>
 </head>
 <body>
-
-    <header>
-        <h1>YASIF STORE</h1>
-    </header>
-
-    <div class="container">
-        
-        <div id="home-section">
-            <h3 style="text-align:center;">Pilih Kopi Favoritmu:</h3>
-            <div class="brand-choice">
-                <div class="brand-card" onclick="openMenu('kenangan')">
-                    <div class="brand-logo" style="background:#e8cfc1; color:#333;">KOPI<br>KENANGAN</div>
-                    <span class="brand-name">Kopi Kenangan</span>
-                </div>
-                <div class="brand-card" onclick="openMenu('tomoro')">
-                    <div class="brand-logo" style="background:#ff6b6b; color:white;">TOMORO<br>COFFEE</div>
-                    <span class="brand-name">Tomoro Coffee</span>
-                </div>
-            </div>
-        </div>
-
-        <div id="menu-section">
-            <button class="btn-back" onclick="goHome()">← Kembali</button>
-            <h2 id="brand-title">Menu</h2>
-            <div class="menu-list" id="menu-container">
-                </div>
-        </div>
-
-    </div>
-
-    <div class="floating-cart" id="floating-cart" onclick="openModal()">
-        <span class="cart-info" id="cart-summary">0 Item | Rp 0</span>
-        <span style="padding-right:10px;">Lihat Keranjang ></span>
-    </div>
-
-    <div class="modal" id="checkout-modal">
-        <div class="modal-content">
-            <h3>Detail Pesanan</h3>
-            <div class="cart-item-list" id="cart-details">
-                </div>
-            
-            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:15px; font-size:18px;">
-                <span>Total:</span>
-                <span id="cart-total-price">Rp 0</span>
-            </div>
-
-            <div class="form-group">
-                <label>Lokasi Ambil (Nama Cabang/Store):</label>
-                <input type="text" id="store-location" placeholder="Contoh: Cabang Grand Indonesia">
-            </div>
-
-            <button class="btn-checkout" onclick="sendToWA()">Pesan via WhatsApp</button>
-            <button class="btn-close" onclick="closeModal()">Tutup / Tambah Lagi</button>
-        </div>
-    </div>
+    <div id="app"></div>
 
     <script>
-        /* === BAGIAN DATA PRODUK === 
-           Paste hasil dari EXCEL di dalam kurung siku [ ... ] di bawah ini
-        */
-        const databaseMenu = {
-            'kenangan': [
-                { name: 'Kopi Kenangan Mantan', price: 18000, original: 24000 },
-                { name: 'Dua Shot Iced Shaken', price: 22000, original: 28000 },
-                { name: 'Latte', price: 24000, original: 30000 },
-            ],
-            'tomoro': [
-                { name: 'Tomoro Aren Latte', price: 18000, original: 25000 },
-                { name: 'Coconut Aren Latte', price: 23000, original: 29000 },
-            ]
+        // --- DATA PRODUK ---
+        const products = [
+        { id: "1", name: "Kopi Kenangan Mantan", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250812051422019174/detail/5b10a373_2aec27ffffdc9e8.webp" },
+{ id: "2", name: "Toffee Nut Late", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251123181917021062/detail/bd57be8d_ab0cbd37907d628.webp" },
+{ id: "3", name: "Toffee Nut Aren Latte", originalPrice: 21000, promoPrice: 13500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251123135412014443/detail/8d36bd27_660f8c0a63880f8.webp" },
+{ id: "4", name: "Toffee Nut Oat Latte", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251123135412029037/detail/b5c7d7ee_9bb39c2260fdaec.webp" },
+{ id: "5", name: "Dubai Pistachio Latte", originalPrice: 26000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251123181919042338/detail/bdb02f10_8e13b7cc32c86ec.webp" },
+{ id: "6", name: "Pistachio Latte", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251123181919069865/detail/8e239ba7_ae878f8b5c556f3.webp" },
+{ id: "7", name: "Pistachio Aren Latte", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251123181919056205/detail/924b3315_c4b1b6cce555736.webp" },
+{ id: "8", name: "Cafe Malt Latte", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "" },
+{ id: "9", name: "Caramel Latte", originalPrice: 23000, promoPrice: 14500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193126060859/detail/e9ddffc4_ecba1398e652979.webp" },
+{ id: "10", name: "Dua Shot Iced Shaken", originalPrice: 28000, promoPrice: 17000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193128078742/detail/ee46dfe5_590f16c24cee913.webp" },
+{ id: "11", name: "Caramel Macchiato", originalPrice: 28000, promoPrice: 17000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250812051421027652/detail/ae93796d_404b2968cc0722e.webp" },
+{ id: "12", name: "Hazelnut Latte", originalPrice: 26000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193125023318/detail/f2220ce9_a2140e6cbaf588b.webp" },
+{ id: "13", name: "Kopi Susu Black Aren", originalPrice: 21000, promoPrice: 13500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193125060247/detail/0ff58d8c_63797561bee87b9.webp" },
+{ id: "14", name: "Matcha Espresso", originalPrice: 26000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193127069282/detail/c7fbb5f5_127f022392f087e.webp" },
+{ id: "15", name: "Mocha Latte", originalPrice: 28000, promoPrice: 17000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193128023892/detail/acd94dd5_8e866cccfaca696.webp" },
+{ id: "16", name: "Vanilla Latte", originalPrice: 26000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193130027096/detail/e6f61022_eda82d03ffa2627.webp" },
+{ id: "17", name: "Avocado Coffee", originalPrice: 28000, promoPrice: 17000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250703074725012544/detail/4ceae86b_c9778ae7145062a.webp" },
+{ id: "18", name: "Spanish Latte", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250812051421018408/detail/4983790e_326fedae12ba368.webp" },
+{ id: "19", name: "Creamy Aren Latte", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250701081956023314/detail/55494d68_fc905469e7d1ef2.webp" },
+{ id: "20", name: "Butterscotch Aren Latte", originalPrice: 20000, promoPrice: 13000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193127015676/detail/ad0dbfe5_cc6de456af98b49.webp" },
+{ id: "21", name: "Butterscotch Sea Salt latte", originalPrice: 25000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193129017472/detail/a3ebb563_895267a518f2978.webp" },
+{ id: "22", name: "Americano", originalPrice: 17000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193130067701/detail/a67cc828_bfab17b25c46ffa.webp" },
+{ id: "23", name: "Cappuccino", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193131040855/detail/8e5c4d82_c25681b0cfec532.webp" },
+{ id: "24", name: "Latte", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193132012856/detail/4a8f13ae_00ff4874930fcd7.webp" },
+{ id: "25", name: "Toffe Nut Choco Macchiato", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "" },
+{ id: "26", name: "butterscotch Sea Salt Crumble", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/c035cfad-b164-4982-86e1-cdc7a33595d5_7be23137-13e7-5f63-ccc8-cad9d4e77421.png?auto=format" },
+{ id: "27", name: "Milk Oreo Crumble", originalPrice: 26000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/a15fd431-d33f-45d2-9524-6eb6d914489f_31770136-f420-e0eb-6c9e-080daa295cd6.png?auto=format" },
+{ id: "28", name: "Babyccino", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "" },
+{ id: "29", name: "Dubai Pistachio Chocolate", originalPrice: 27000, promoPrice: 16500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/4ff16f63-0cb6-4243-a2fc-993017def44a_efb480ca-31a1-8fd1-8a35-e8e113d73010.png?auto=format" },
+{ id: "30", name: "Fresh Lemonade", originalPrice: 17000, promoPrice: 11500, brand: "Kopi Kenangan", image: "" },
+{ id: "31", name: "Huzelnut Choco Milk Tea", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "" },
+{ id: "32", name: "Avocado Caramel", originalPrice: 28000, promoPrice: 17000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193147016654/detail/559de687_d0ce7a477821c37.webp" },
+{ id: "33", name: "Avocado Milk", originalPrice: 24000, promoPrice: 15000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193148086543/detail/fd59074d_5395c2fe71dbaa7.webp" },
+{ id: "34", name: "Caramel Dutch Choco", originalPrice: 28000, promoPrice: 17000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193147027174/detail/4f5681cb_210431f9a61ba2a.webp" },
+{ id: "35", name: "Dutch Chocolate", originalPrice: 26000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193147045449/detail/0df98805_89002bfb5c998ee.webp" },
+{ id: "36", name: "Hazelnut Dutch Choco", originalPrice: 28000, promoPrice: 17000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193150086778/detail/eeb3ea66_480ec21d725419f.webp" },
+{ id: "37", name: "Lemon Black Tea", originalPrice: 17000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193146074669/detail/d00f8fc0_559cbb576177a27.webp" },
+{ id: "38", name: "Kenangan Milk Tea", originalPrice: 21000, promoPrice: 13500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193148039827/detail/913c22df_7a5d83a501603ae.webp" },
+{ id: "39", name: "Milo Dinosaurus", originalPrice: 23000, promoPrice: 14500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193150052617/detail/a01a6a96_8bdd0e248c5d36d.webp" },
+{ id: "40", name: "Oreo Shake", originalPrice: 26000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193149036011/detail/f91d4201_feb994df04c4453.webp" },
+{ id: "41", name: "Raspberry Hibiscus", originalPrice: 20000, promoPrice: 13000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193149052378/detail/7ba226ae_3d05dece9480be2.webp" },
+{ id: "42", name: "Susu Grass Jelly", originalPrice: 24000, promoPrice: 15000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193149060970/detail/0c699bd8_168caaa10f5f95c.webp" },
+{ id: "43", name: "Thai Tea", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193146058165/detail/857d2fcd_29afeecf07a6c0a.webp" },
+{ id: "44", name: "Matcha Latte", originalPrice: 25000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193148076389/detail/73f28968_165e37fca0da957.webp" },
+{ id: "45", name: "Oatside Kopi Kenangan Mantan", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193109043175/detail/796b24e6_616d14a5728d1ff.webp" },
+{ id: "46", name: "Oatside Latte", originalPrice: 25000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193109060320/detail/ced81934_3fd8d7f1e3af821.webp" },
+{ id: "47", name: "Oatsside Matcha Latte", originalPrice: 25000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193109021326/detail/281a5a15_dbfc6e9ff734f3c.webp" },
+{ id: "48", name: "Pistachio Frappe", originalPrice: 32000, promoPrice: 19000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250922193527045371/detail/516352d3_47da80764322449.webp" },
+{ id: "49", name: "Butterscotch Kenangan Frape", originalPrice: 30000, promoPrice: 18000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250701082015016768/detail/63a3f71e_c158a0c20395877.webp" },
+{ id: "50", name: "Matcha Kenangan Frappe", originalPrice: 32000, promoPrice: 19000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250701094127019837/detail/0f153e11_0676d2b60eddce1.webp" },
+{ id: "51", name: "Kopi Kenangan Mantan Frappe", originalPrice: 30000, promoPrice: 18000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250701082014010059/detail/9c56be81_1e18627861ae747.webp" },
+{ id: "52", name: "Vanilla Kenangan Frappe", originalPrice: 25000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250701082014035176/detail/f4c784b7_8915c14d7b17582.webp" },
+{ id: "53", name: "Dutch Choco Kenangan Frappe", originalPrice: 29000, promoPrice: 17500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193136043965/detail/ea2dbc86_126e1df53b45103.webp" },
+{ id: "54", name: "Bambang Choco Cheese Toast", originalPrice: 17000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/66499e2e-b9c8-42f4-a32e-296fc8639792_9bcefd8c-c6d2-0bf3-cd8b-d58b53b7c107.png?auto=format" },
+{ id: "55", name: "Adam Ayam Toast", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/5401f48a-01c5-4981-88aa-f3c1724e75e2_fb8f8b0c-b019-3c84-87a5-753cb136b32f.png?auto=format" },
+{ id: "56", name: "Wahyu Sapi Toast", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/605c7f65-d7ec-4568-9ea0-3650bb92546e_f8688c41-22fd-a3a2-836f-7491a183eda0.png?auto=format" },
+{ id: "57", name: "Butter Croissant", originalPrice: 15000, promoPrice: 10500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/db92aac9-45b6-4d34-8c80-8376eaaf873c_9d55c3c9-52d8-ba1d-93f0-d3463fccf78c.png?auto=format" },
+{ id: "58", name: "Chocolate Croissant", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/76d0d5df-9a62-49fa-b65e-8ca8d63a6a4d_91b9e718-9857-2d5c-644a-f5bc8624ebeb.png?auto=format" },
+{ id: "59", name: "Chocolate Donut", originalPrice: 13000, promoPrice: 9500, brand: "Kopi Kenangan", image: "" },
+{ id: "60", name: "Sugar Donut", originalPrice: 10000, promoPrice: 8000, brand: "Kopi Kenangan", image: "" },
+{ id: "61", name: "Cheese Donut", originalPrice: 15000, promoPrice: 10500, brand: "Kopi Kenangan", image: "" },
+{ id: "62", name: "Roti Coklat Klasik", originalPrice: 9000, promoPrice: 7500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/a638a121-fe33-46e8-8a90-abd75706c1ec_9e12c70d-aa2b-5e0e-aebe-70e0ea1ebfd9.png?auto=format" },
+{ id: "63", name: "Roti Susu Manis", originalPrice: 9000, promoPrice: 7500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/396da488-0f99-4e03-9e4d-a60c2c979074_33396a34-db50-f763-4f98-7ec86de19e27.png?auto=format" },
+{ id: "64", name: "Roti Keju Manis", originalPrice: 12000, promoPrice: 9000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/72acff80-65d0-4ccb-8018-c6abb90e76da_4d56bebd-84b0-00e6-34d0-2a7f4bbd7003.png?auto=format" },
+{ id: "65", name: "Roti Srikaya", originalPrice: 15000, promoPrice: 10500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/bb7f1969-adf1-4402-b565-871903609693_dbf90a98-0acd-2f08-0505-b83f77186496.png?auto=format" },
+{ id: "66", name: "Choco Chip Cookies", originalPrice: 14000, promoPrice: 10000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/26fda6fc-f6aa-4fc0-b6e6-304be6c3c38a_e4d2e3fc-27e8-c6b3-8746-363e0e135588.png?auto=format" },
+{ id: "67", name: "Join the Dark Side Cookie", originalPrice: 21000, promoPrice: 13500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/abce5af0-e7d7-4699-b2ab-efaed6f3ac45_9e36632a-bf36-8360-39f7-91b3c733e5d4.png?auto=format" },
+{ id: "68", name: "Friend Chip Cookie", originalPrice: 17000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/056f4a54-9897-438c-8439-8924ce1aec37_31f64dbd-4d3f-10a9-f95e-ecc735c98dba.png?auto=format" },
+{ id: "69", name: "Pasta Mentai", originalPrice: 24000, promoPrice: 15000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/fb629113-34ef-4ea0-923f-9f6a81681b9b_cfc504ae-2cd8-641d-a09d-b8e8426e43bf.png?auto=format" },
+{ id: "70", name: "Pasta Indoghetti", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251212052608012601/detail/505f058b_303643db99c0fa4.webp" },
+{ id: "71", name: "Chicken Japanese Curry  Rice", originalPrice: 24000, promoPrice: 15000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251212052609023189/detail/80161efd_ba6140742e7b7b3.webp" },
+{ id: "72", name: "Chicken Pad Kra Pao Rice", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251212052608024725/detail/0cd18658_ece4248728d730c.webp" },
+{ id: "73", name: "Donut Almond", originalPrice: 13000, promoPrice: 9500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251026192736057926/detail/64396cd2_5c4c2f7b87a6748.webp" },
+{ id: "74", name: "Sandwich Smoked Beef and Cheese", originalPrice: 21000, promoPrice: 13500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251119052648012618/detail/d2d27f4c_18e44164b148568.webp" },
+{ id: "75", name: "Sandwich Chicken Tartar", originalPrice: 21000, promoPrice: 13500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251119052649019190/detail/653da70a_2ddbbcee926d573.webp" },
+{ id: "76", name: "Canele Original", originalPrice: 13000, promoPrice: 9500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251211192434026758/detail/f3748a41_319e31bd7ec6b3f.webp" },
+{ id: "77", name: "Canele Toffee Nut Crumble", originalPrice: 15000, promoPrice: 10500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251211192433012142/detail/94793536_6425ab37b5ac942.webp" },
+{ id: "78", name: "Donut Abon", originalPrice: 13000, promoPrice: 9500, brand: "Kopi Kenangan", image: "" },
+{ id: "79", name: "Croissant Abon", originalPrice: 17000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251211192433021856/detail/9c7d5034_00dce96fec491e6.webp" },
+
+{ id: "1", name: "Chocolate", originalPrice: 21000, promoPrice: 13500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "2", name: "Chocolate Frappe", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "3", name: "Matcha Latte", originalPrice: 27000, promoPrice: 16500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "4", name: "Matcha Frappe", originalPrice: 27000, promoPrice: 16500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "5", name: "Choco Oat Latte", originalPrice: 28000, promoPrice: 17000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "6", name: "Matcha Oat Latte", originalPrice: 28000, promoPrice: 17000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "7", name: "Hojicha Oat Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "8", name: "Coconut Choco", originalPrice: 23000, promoPrice: 14500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "9", name: "Caramel Cheese Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "10", name: "Cheese Cloud Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "11", name: "TOMORO Coconut Latte", originalPrice: 23000, promoPrice: 14500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "12", name: "Caffe Latte", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "13", name: "Cappuccino", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "14", name: "Caffe Mocha", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "15", name: "Coconut Aren Latte", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "16", name: "Caramel Macchiato", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "17", name: "Manuka Oat Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "18", name: "Limitless Sky Blue Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "19", name: "Rosy Hibiscus Lemonade", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "20", name: "Sea Salt Matcha Garden", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "21", name: "Sea Salt Cloud Chocolate", originalPrice: 28000, promoPrice: 17000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "22", name: "Sea Salt Cloud Matcha Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "23", name: "Coffee Frappe", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "24", name: "Caffe Mocha Frappe", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "25", name: "Aren Latte Frappe", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "26", name: "Oat Aren Frappe", originalPrice: 27000, promoPrice: 16500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "27", name: "Coconut Aren Frappe", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "28", name: "TOMORO Aren Latte", originalPrice: 20000, promoPrice: 13000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "29", name: "TOMORO Oat Latte", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "30", name: "Breve Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "31", name: "Cheese Cloud Chocolate", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+{ id: "32", name: "Sea Salt Cloud Caramel Macchiato", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let state = {
+            selectedBrand: null,
+            cart: [],
+            showCart: false,
+            storeLocation: '',
+            activeProduct: null, 
+            tempNote: ''         
         };
 
-        // === NOMOR WA KAMU ===
-        const NOMOR_WA = "6287836345807"; 
-
-        /* === LOGIKA PROGRAM === */
-        let cart = [];
-        let currentBrand = '';
-
-        function openMenu(brand) {
-            currentBrand = brand;
-            document.getElementById('home-section').style.display = 'none';
-            document.getElementById('menu-section').style.display = 'block';
-            
-            const title = brand === 'kenangan' ? 'Kopi Kenangan' : 'Tomoro Coffee';
-            document.getElementById('brand-title').innerText = "Promo " + title;
-
-            const container = document.getElementById('menu-container');
-            container.innerHTML = ''; 
-            
-            databaseMenu[brand].forEach((item, index) => {
-                // Tampilan Harga Coret & Promo
-                container.innerHTML += `
-                    <div class="menu-item">
-                        <div class="item-info">
-                            <h3>${item.name}</h3>
-                            <div class="price-container">
-                                <span class="price-original">Rp ${item.original.toLocaleString('id-ID')}</span>
-                                <span class="price-promo">Rp ${item.price.toLocaleString('id-ID')}</span>
-                            </div>
-                        </div>
-                        <button class="btn-add" onclick="addToCart('${brand}', ${index})">AMBIL PROMO</button>
-                    </div>
-                `;
-            });
+        // Helper Functions
+        function formatPrice(price) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+            }).format(price);
         }
 
-        function goHome() {
-            document.getElementById('home-section').style.display = 'block';
-            document.getElementById('menu-section').style.display = 'none';
+        function getTotalItems() {
+            return state.cart.reduce((sum, item) => sum + item.quantity, 0);
         }
 
-        function addToCart(brand, index) {
-            const item = databaseMenu[brand][index];
-            cart.push(item);
-            updateCartUI();
+        function getTotalPrice() {
+            return state.cart.reduce((sum, item) => sum + item.promoPrice * item.quantity, 0);
         }
 
-        function updateCartUI() {
-            const total = cart.reduce((sum, item) => sum + item.price, 0); // Total hitung dari harga promo
-            document.getElementById('cart-summary').innerText = `${cart.length} Item | Rp ${total.toLocaleString('id-ID')}`;
-            
-            if(cart.length > 0) {
-                document.getElementById('floating-cart').style.display = 'flex';
+        // --- LOGIKA UTAMA ---
+        
+        // 1. Buka Popup
+        function openProductPopup(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                state.activeProduct = product;
+                state.tempNote = ''; 
+                render();
             }
         }
 
-        function openModal() {
-            const list = document.getElementById('cart-details');
-            list.innerHTML = '';
-            let total = 0;
-            let totalHemat = 0;
-
-            cart.forEach((item) => {
-                total += item.price;
-                totalHemat += (item.original - item.price); // Hitung hemat
-                list.innerHTML += `
-                    <div class="cart-row">
-                        <span>${item.name}</span>
-                        <span>Rp ${item.price.toLocaleString('id-ID')}</span>
-                    </div>
-                `;
-            });
-
-            document.getElementById('cart-total-price').innerText = "Rp " + total.toLocaleString('id-ID');
-            document.getElementById('checkout-modal').style.display = 'flex';
+        // 2. Tutup Popup
+        function closeProductPopup() {
+            state.activeProduct = null;
+            render();
         }
 
-        function closeModal() {
-            document.getElementById('checkout-modal').style.display = 'none';
+        // 3. Simpan Catatan
+        function updateTempNote(value) {
+            state.tempNote = value;
         }
 
-        function sendToWA() {
-            const location = document.getElementById('store-location').value;
-            if(!location) {
-                alert("Mohon isi lokasi cabang pengambilan dulu ya!");
+        // 4. Masukkan ke Keranjang (DENGAN PROTEKSI BRAND)
+        function confirmAddToCart() {
+            if (!state.activeProduct) return;
+
+            // --- PROTEKSI BRAND ---
+            if (state.cart.length > 0) {
+                const currentBrand = state.cart[0].brand; // Brand yang sedang ada di keranjang
+                const newBrand = state.activeProduct.brand; // Brand yang mau dimasukkan
+                
+                if (currentBrand !== newBrand) {
+                    alert(`Maaf Kak, keranjangmu saat ini berisi produk ${currentBrand}.\n\nMohon checkout dulu atau kosongkan keranjang jika ingin memesan menu ${newBrand}.`);
+                    return; // Batalkan proses
+                }
+            }
+            // ----------------------
+
+            const existingItem = state.cart.find(item => item.id === state.activeProduct.id && item.note === state.tempNote);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                state.cart.push({ 
+                    ...state.activeProduct, 
+                    quantity: 1,
+                    note: state.tempNote 
+                });
+            }
+
+            state.activeProduct = null; // Tutup popup
+            // Tidak otomatis buka keranjang (biar bisa belanja lagi)
+            render();
+        }
+
+        function removeFromCart(productId, note) {
+            state.cart = state.cart.filter(item => !(item.id === productId && item.note === note));
+            render();
+        }
+
+        // --- WHATSAPP LOGIC UPDATE ---
+        function handleWhatsAppOrder() {
+            if (!state.storeLocation.trim()) {
+                alert('Mohon isi lokasi cabang pengambilan');
                 return;
             }
 
-            let message = `Halo Yasif Store, saya mau klaim Promo Kopi:\n\n`;
+            // Ambil nama brand dari item pertama di keranjang
+            const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
+
+            let message = '*HAI YASIF MAU ORDER DONG (∩˃o˂∩)*\n';
+            message += `*Orderan: ${orderBrand}*\n\n`; // <--- Header Brand Otomatis
             
-            cart.forEach(item => {
-                message += `- ${item.name} (Promo: Rp ${item.price.toLocaleString('id-ID')})\n`;
+            state.cart.forEach(item => {
+                message += `• ${item.name} (${item.quantity}x)\n`;
+                if (item.note && item.note.trim() !== '') {
+                    message += `   📝 Note: ${item.note}\n`;
+                }
+                message += `   Harga: ${formatPrice(item.promoPrice * item.quantity)}\n\n`;
             });
 
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-            message += `\n*Total Bayar: Rp ${total.toLocaleString('id-ID')}*`;
-            message += `\n\nLokasi Ambil: *${location}*`;
-            message += `\n\nMohon diproses segera ya!`;
+            message += `*Total: ${formatPrice(getTotalPrice())}*\n`;
+            message += `--------------------------------\n`;
+            message += `*Lokasi Ambil:* ${state.storeLocation}\n\n`;
+            message += '*Segera Di proses ya (ㅅ´ ˘ `)*';
 
-            const url = `https://wa.me/${NOMOR_WA}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
+            const whatsappUrl = `https://wa.me/6287836345807?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
         }
+
+        // --- RENDER FUNCTIONS (TAMPILAN) ---
+        function render() {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                ${renderHeader()}
+                ${!state.selectedBrand ? renderBrandSelection() : renderMenu()}
+                ${getTotalItems() > 0 ? renderFloatingCart() : ''}
+                ${state.showCart ? renderCartModal() : ''}
+                ${state.activeProduct ? renderNotePopup() : ''} 
+            `;
+        }
+
+        function renderHeader() {
+            return `
+                <header class="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-border">
+                    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+                        ${state.selectedBrand ? `
+                            <button onclick="selectBrand(null)" class="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors">
+                                ← Kembali
+                            </button>
+                        ` : '<div class="w-[80px]"></div>'}
+                        <h1 class="text-2xl font-serif tracking-wide text-accent mx-auto font-bold">YASIF STORE</h1>
+                        <div class="w-[80px]"></div>
+                    </div>
+                </header>
+            `;
+        }
+
+        function renderBrandSelection() {
+            return `
+                <div class="relative min-h-[80vh] flex flex-col justify-center overflow-hidden">
+                    <div class="absolute -top-20 -right-20 w-72 h-72 bg-accent/20 rounded-full blur-[80px] pointer-events-none"></div>
+                    <div class="absolute -bottom-20 -left-20 w-72 h-72 bg-primary/15 rounded-full blur-[80px] pointer-events-none"></div>
+                    
+                    <div class="container mx-auto px-4 py-12 max-w-2xl relative z-10">
+                        <div class="text-center mb-10">
+                            <span class="inline-block py-1 px-3 rounded-full bg-accent/10 text-accent text-xs font-bold tracking-wider mb-4 border border-accent/20">OFFICIAL VOUCHER</span>
+                            <h2 class="text-4xl md:text-5xl font-serif text-foreground mb-3">Mau Belanja Apa<br>Hari Ini?</h2>
+                        </div>
+
+                        <div class="grid gap-5">
+                            <button onclick="selectBrand('Kopi Kenangan')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-accent transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-accent transition-colors">Kopi Kenangan</h3>
+                                    <p class="text-muted text-sm">Mengenang Mantan Xixi</p>
+                                </div>
+                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-accent group-hover:scale-110 transition-transform">❤️</div>
+                            </button>
+
+                            <button onclick="selectBrand('Tomoro Coffee')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-primary transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-primary transition-colors">Tomoro Coffee</h3>
+                                    <p class="text-muted text-sm">See You Tomoro</p>
+                                </div>
+                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">☀️</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMenu() {
+            const filteredProducts = products.filter(p => p.brand === state.selectedBrand);
+            return `
+                <div class="container mx-auto px-4 py-6 pb-32 max-w-4xl">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-serif mb-1">${state.selectedBrand}</h2>
+                        <p class="text-muted text-sm">HARGA SETIAP DAERAH DAN STORE BERBEDA-BEDA!!! (Bisa Lebih Murah Atau Lebih Mahal</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 md:grid-cols-3">
+                        ${filteredProducts.map(product => `
+                            <div class="bg-card border border-border overflow-hidden rounded-lg hover:border-accent/50 transition-colors flex flex-col shadow-sm">
+                                <div class="w-full aspect-square bg-gray-100 relative">
+                                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x400/png?text=No+Image'"/>
+                                </div>
+
+                                <div class="p-3 flex flex-col flex-1">
+                                    <h3 class="font-semibold text-sm leading-tight mb-2 line-clamp-2 h-[40px] overflow-hidden">${product.name}</h3>
+                                    
+                                    <div class="mt-auto">
+                                        <div class="flex flex-col mb-3">
+                                            <span class="text-[11px] text-muted line-through">${formatPrice(product.originalPrice)}</span>
+                                            <span class="text-base font-bold text-promo">${formatPrice(product.promoPrice)}</span>
+                                        </div>
+
+                                        <button onclick='openProductPopup("${product.id}")' class="w-full bg-primary text-primary-foreground py-2 rounded text-[10px] sm:text-xs font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
+                                            Tambahkan Keranjang
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderNotePopup() {
+            const p = state.activeProduct;
+            return `
+                <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-zoom">
+                    <div class="bg-card w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden border border-border">
+                        <div class="p-4 border-b border-border bg-gray-50 flex justify-between items-center">
+                            <h3 class="font-bold text-foreground truncate pr-4">${p.name}</h3>
+                            <button onclick="closeProductPopup()" class="text-muted hover:text-red-500 font-bold text-xl">×</button>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="mb-4">
+                                <span class="text-xs font-bold text-promo bg-red-50 px-2 py-1 rounded border border-red-100">Harga Promo: ${formatPrice(p.promoPrice)}</span>
+                            </div>
+
+                            <label class="block text-sm font-bold text-foreground mb-2">
+                                Catatan Opsional (Kosongkan jika Normal)
+                            </label>
+                            <textarea 
+                                oninput="updateTempNote(this.value)"
+                                placeholder="Contoh: Ukuran Large, Less Ice, Gula sedikit..."
+                                class="w-full h-28 p-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent text-sm resize-none"
+                            ></textarea>
+                            <p class="text-[10px] text-muted mt-2 italic">*Biaya tambahan (jika ada) akan diinfokan Admin via Chat.</p>
+                        </div>
+
+                        <div class="p-4 bg-gray-50 border-t border-border flex gap-3">
+                            <button onclick="closeProductPopup()" class="flex-1 py-3 text-sm font-bold text-muted bg-gray-200 rounded-xl hover:bg-gray-300 transition">Batal</button>
+                            <button onclick="confirmAddToCart()" class="flex-1 py-3 text-sm font-bold text-white bg-primary rounded-xl hover:opacity-90 transition shadow-lg shadow-green-200">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFloatingCart() {
+            return `
+                <button onclick="state.showCart=true;render()" class="fixed bottom-6 right-6 bg-accent text-white rounded-full p-4 shadow-xl hover:scale-105 transition-transform z-40 animate-bounce">
+                    <div class="relative">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span class="absolute -top-2 -right-2 bg-promo text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border border-white">
+                            ${getTotalItems()}
+                        </span>
+                    </div>
+                </button>
+            `;
+        }
+
+        function renderCartModal() {
+            return `
+                <div class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end md:items-center md:justify-center">
+                    <div class="bg-card w-full md:max-w-2xl md:rounded-2xl border-t md:border border-border overflow-hidden max-h-[90vh] flex flex-col shadow-2xl">
+                        <div class="p-6 border-b border-border flex items-center justify-between bg-white">
+                            <h3 class="text-2xl font-serif text-accent font-bold">Keranjang Belanja</h3>
+                            <button onclick="state.showCart=false;render()" class="text-muted hover:text-foreground">Tutup</button>
+                        </div>
+
+                        <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                            ${state.cart.length === 0 ? `
+                                <p class="text-muted text-center py-8">Keranjang Anda masih kosong</p>
+                            ` : `
+                                <div class="space-y-4">
+                                    ${state.cart.map(item => `
+                                        <div class="flex gap-4 p-4 bg-white rounded-xl border border-border shadow-sm relative">
+                                            <div class="flex-1">
+                                                <h4 class="font-semibold text-foreground mb-1">${item.name}</h4>
+                                                ${item.note ? `<div class="text-xs text-muted bg-yellow-50 p-1.5 rounded border border-yellow-100 inline-block mb-1">📝 ${item.note}</div>` : ''}
+                                                <p class="text-sm text-primary font-bold">${formatPrice(item.promoPrice)} x ${item.quantity}</p>
+                                            </div>
+                                            <button onclick="removeFromCart('${item.id}', '${item.note}')" class="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors">
+                                                ✕
+                                            </button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <div class="mt-6">
+                                    <label class="block text-sm font-bold text-foreground mb-2">
+                                        Lokasi Cabang Pengambilan <span class="text-promo">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value="${state.storeLocation}"
+                                        oninput="state.storeLocation = this.value"
+                                        placeholder="Contoh: Cabang Grand Indonesia..."
+                                        class="w-full px-4 py-3 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+                                    />
+                                </div>
+                            `}
+                        </div>
+
+                        ${state.cart.length > 0 ? `
+                            <div class="p-6 border-t border-border bg-white">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-lg font-medium text-muted">Total Pembayaran</span>
+                                    <span class="text-2xl font-bold text-accent">${formatPrice(getTotalPrice())}</span>
+                                </div>
+                                <button onclick="handleWhatsAppOrder()" class="w-full bg-[#25D366] text-white py-4 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-green-100 flex justify-center items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.846 0 01-1.353-5.033c0-5.42 4.409-9.85 9.85-9.85 2.632 0 5.108 1.025 6.969 2.887 1.861 1.862 2.887 4.337 2.887 6.968.001 5.423-4.41 9.85-9.853 9.85"/></svg>
+                                    Pesan via WhatsApp
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Global Handlers
+        window.selectBrand = function(brand) { state.selectedBrand = brand; render(); };
+        window.openProductPopup = openProductPopup; 
+        
+        render(); // Start App
     </script>
 </body>
 </html>
