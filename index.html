@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YASIF STORE - Voucher Kopi</title>
+    <title>YASIF STORE - Multi Brand</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -16,9 +16,10 @@
                         border: '#E8E4DB',
                         muted: '#8C8577',
                         accent: '#D4AF37',
-                        primary: '#2D7F4F',
+                        primary: '#2D7F4F', 
                         'primary-foreground': '#FFFFFF',
-                        promo: '#C8492B',
+                        promo: '#C8492B', 
+                        mcd: '#FFBC0D',   
                     },
                     fontFamily: {
                         sans: ['system-ui', '-apple-system', 'sans-serif'],
@@ -44,9 +45,11 @@
     <div id="app"></div>
 
     <script>
-        // --- DATA PRODUK (SUDAH DIPERBAIKI ID-NYA AGAR TIDAK BENTROK) ---
+        // --- DATA PRODUK ---
         const products = [
-            // --- KOPI KENANGAN (ID 1 - 99) ---
+            // ==========================================
+            // 1. KOPI KENANGAN (ID 1 - 99)
+            // ==========================================
             { id: "1", name: "Kopi Kenangan Mantan", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250812051422019174/detail/5b10a373_2aec27ffffdc9e8.webp" },
             { id: "2", name: "Toffee Nut Late", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251123181917021062/detail/bd57be8d_ab0cbd37907d628.webp" },
             { id: "3", name: "Toffee Nut Aren Latte", originalPrice: 21000, promoPrice: 13500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251123135412014443/detail/8d36bd27_660f8c0a63880f8.webp" },
@@ -127,40 +130,104 @@
             { id: "78", name: "Donut Abon", originalPrice: 13000, promoPrice: 9500, brand: "Kopi Kenangan", image: "" },
             { id: "79", name: "Croissant Abon", originalPrice: 17000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251211192433021856/detail/9c7d5034_00dce96fec491e6.webp" },
 
-            // --- TOMORO COFFEE (ID 101 - DST) -- DIUBAH SUPAYA TIDAK BENTROK ID NYA ---
-            { id: "101", name: "Chocolate", originalPrice: 21000, promoPrice: 13500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "102", name: "Chocolate Frappe", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "103", name: "Matcha Latte", originalPrice: 27000, promoPrice: 16500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "104", name: "Matcha Frappe", originalPrice: 27000, promoPrice: 16500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "105", name: "Choco Oat Latte", originalPrice: 28000, promoPrice: 17000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "106", name: "Matcha Oat Latte", originalPrice: 28000, promoPrice: 17000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "107", name: "Hojicha Oat Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "108", name: "Coconut Choco", originalPrice: 23000, promoPrice: 14500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "109", name: "Caramel Cheese Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "110", name: "Cheese Cloud Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "111", name: "TOMORO Coconut Latte", originalPrice: 23000, promoPrice: 14500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "112", name: "Caffe Latte", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "113", name: "Cappuccino", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "114", name: "Caffe Mocha", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "115", name: "Coconut Aren Latte", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "116", name: "Caramel Macchiato", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "117", name: "Manuka Oat Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "118", name: "Limitless Sky Blue Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "119", name: "Rosy Hibiscus Lemonade", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "120", name: "Sea Salt Matcha Garden", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "121", name: "Sea Salt Cloud Chocolate", originalPrice: 28000, promoPrice: 17000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "122", name: "Sea Salt Cloud Matcha Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "123", name: "Coffee Frappe", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "124", name: "Caffe Mocha Frappe", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "125", name: "Aren Latte Frappe", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "126", name: "Oat Aren Frappe", originalPrice: 27000, promoPrice: 16500, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "127", name: "Coconut Aren Frappe", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "128", name: "TOMORO Aren Latte", originalPrice: 20000, promoPrice: 13000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "129", name: "TOMORO Oat Latte", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "130", name: "Breve Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "131", name: "Cheese Cloud Chocolate", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
-            { id: "132", name: "Sea Salt Cloud Caramel Macchiato", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.imgur.com/xer345o.png" },
+            
+            // ==========================================
+            // 2. TOMORO COFFEE (ID 101 - 200)
+            // ==========================================
+            { id: "101", name: "Chocolate", originalPrice: 21000, promoPrice: 13500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240403024213034788/detail/53f057e0_80b61c9204b.webp" },
+            { id: "102", name: "Chocolate Frappe", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20220929064725056609/detail/a66426ae_2821ecfca9d.webp" },
+            { id: "103", name: "Matcha Latte", originalPrice: 27000, promoPrice: 16500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20220929064729010429/detail/18fe3801_206262e13b5.webp" },
+            { id: "104", name: "Matcha Frappe", originalPrice: 27000, promoPrice: 16500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20220929064726033490/detail/62897f72_5aeb5f34a5a.webp" },
+            { id: "105", name: "Choco Oat Latte", originalPrice: 28000, promoPrice: 17000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230219161632023953/detail/021df064_87871d6bde9.webp" },
+            { id: "106", name: "Matcha Oat Latte", originalPrice: 28000, promoPrice: 17000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230703164542011562/detail/b22e4f68_ea594884b8c.webp" },
+            { id: "107", name: "Hojicha Oat Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230219161630020636/detail/c45bc165_5db6b392573.webp" },
+            { id: "108", name: "Coconut Choco", originalPrice: 23000, promoPrice: 14500, brand: "Tomoro Coffee", image: "" },
+            { id: "109", name: "Caramel Cheese Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE202410011221397303144/detail/7ca6b6e58bf54039ae151eabdb45d24c_1767718900688893063.webp" },
+            { id: "110", name: "Cheese Cloud Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE202410011221397315374/detail/f1babbdc82e544d183b4da1712bd68b0_1767718901087073805.webp" },
+            { id: "111", name: "TOMORO Coconut Latte", originalPrice: 23000, promoPrice: 14500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20231201052540011833/detail/8d01ad1991a0440daaf7c0937a71234c_1767718899526247736.webp" },
+            { id: "112", name: "Caffe Latte", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240403024221025333/detail/1773363ba36f4673b6f77aac7eb5b940_1767718897408486157.webp" },
+            { id: "113", name: "Cappuccino", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20220929064719026558/detail/34c119e022514d8e9764fb0415dd62e5_1767718900845353926.webp" },
+            { id: "114", name: "Caffe Mocha", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20220929064719026558/detail/34c119e022514d8e9764fb0415dd62e5_1767718900845353926.webp" },
+            { id: "115", name: "Coconut Aren Latte", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20231201052541024582/detail/679391d630de4918854905b7569418dd_1767718899338187433.webp" },
+            { id: "116", name: "Caramel Macchiato", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230113034948015908/detail/48cfbac27da84199bac6cdabda400960_1767718899608943367.webp" },
+            { id: "117", name: "Manuka Oat Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230219161627031365/detail/955f100e3b8c41448497e13dc817a559_1767718898481789067.webp" },
+            { id: "118", name: "Kopi susu Aren", originalPrice: 18000, promoPrice: 12000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240618125618038275/detail/d0e271fba13c432ab45400db87c2b448_1767718899017695017.webp" },
+            { id: "119", name: "Spanish Latte", originalPrice: 25000, promoPrice: 15500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240501051955281535/detail/7eb0df4e07294ac88f76900ac6e36089_1767718899559551463.webp" },
+            { id: "120", name: "Spanish Aren Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE202405010520513896209/detail/89f8922a0c7d45a49a4abc9fe94698f7_1767718901461746147.webp" },
+            { id: "121", name: "TOMORO Aren Latte", originalPrice: 20000, promoPrice: 13000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240403024220010397/detail/55bd41658e204801894d8c3f45d7f0fb_1767718897226800221.webp" },
+            { id: "122", name: "TOMORO Oat Latte", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240403024217071021/detail/3ebf60f7f0a045ee843455713f8ba4ce_1767718901591453215.webp" },
+            { id: "123", name: "Breve Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240325044729017344/detail/311eb8f560784148ba90dd3752c75645_1767718898980151003.webp" },
+            { id: "124", name: "Matcha Frappe", originalPrice: 27000, promoPrice: 16500, brand: "Tomoro Coffee", image: "" },
+            { id: "125", name: "Sea Salt Cloud Caramel Macchiato", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240810022442050982/detail/c17635f2a19e40f49956a58207806de9_1761584469101605119.webp" },
+            { id: "126", name: "Caffe Americano", originalPrice: 18000, promoPrice: 12000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20220929064721012611/detail/10d414e6e6a84e00b324ecf6bde12dba_1767718901499056587.webp" },
+            { id: "127", name: "Pistachio Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250624170201139716/detail/425e14296d8c4c1faa0d7f2e37ee1498_1750784521443125824.webp" },
+            { id: "128", name: "Pistachio Chocolate", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250624170201202214/detail/822707456a94472692b678cb312412f0_1750784521695266242.webp" },
+            { id: "129", name: "Pistachio Matcha Latte", originalPrice: 29000, promoPrice: 17500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250624170201283226/detail/58fd2f40ab834a79aed13a2c851b7969_1750784521915553429.webp" },
+            { id: "130", name: "Jasmine Green Milk Tea", originalPrice: 19000, promoPrice: 12500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251029170536179666/detail/1a1063a8bc184779977c922f01733dcb_1761757536367092703.webp" },
+            { id: "131", name: "Peach Oolong Milk Tea", originalPrice: 19000, promoPrice: 12500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251029170536293336/detail/d69a67a472d44336950d7af198b76ae2_1761757536575419792.webp" },
+            { id: "132", name: "Sea Salt Cloud Chocolate", originalPrice: 28000, promoPrice: 17000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240810022442061963/detail/0a745b5caf584d3093c43348ed4d7ee2_1723256682769202693.webp" },
+            { id: "133", name: "Sea Salt Cloud Matcha Latte", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE2024060517151517386238/detail/8cda9d73723142169181a777f023f974_1718175725457655629.webp" },
+            { id: "134", name: "Peach Americano", originalPrice: 19000, promoPrice: 12500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250423071639302532/detail/699b1ccd6b4c47d9a48c07a13e4d6f6c_1767718899691325777.webp" },
+            { id: "135", name: "Peach Coconut Frappe", originalPrice: 19000, promoPrice: 12500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250423071640031309/detail/b83a4534c7d2409db9d7567e351f2462_1745392600052868531.webp" },
+            { id: "136", name: "Peach Jasmine Tea", originalPrice: 19000, promoPrice: 12500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250423071639436875/detail/d98c2912357d46adbcc6dccc3a09bb98_1745392599839416641.webp" },
+            { id: "137", name: "Strawberry Jasmine Smoothie", originalPrice: 19000, promoPrice: 12500, brand: "Tomoro Coffee", image: "" },
+            { id: "138", name: "Pink Pop Lemonade", originalPrice: 14000, promoPrice: 10000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230116155019015218/detail/36076b86_3a72d99a8b4.webp" },
+            { id: "139", name: "Pink Pop Lemon Tea", originalPrice: 17000, promoPrice: 11500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230116155019049154/detail/85cf8914_28542950b08.webp" },
+            { id: "140", name: "Grapefruit Americano", originalPrice: 20000, promoPrice: 13000, brand: "Tomoro Coffee", image: "" },
+            { id: "141", name: "Lemonade Americano", originalPrice: 20000, promoPrice: 13000, brand: "Tomoro Coffee", image: "" },
+            { id: "142", name: "Chocolate Frappe", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "" },
 
+            // ==========================================
+            // 3. FORE COFFEE (ID 201 - DST)
+            // ==========================================
+            { id: "201", name: "Dark Chocochio", originalPrice: 36000, promoPrice: 21000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251120112735012993/detail/123cfc6c_ChocochioID.webp" },
+            { id: "202", name: "Toffee Pistachio Latte", originalPrice: 33000, promoPrice: 19500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251120174741027654/detail/5449f45d_hioLatteID.webp" },
+            { id: "203", name: "Americano Salted Pistachio", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251120174740031592/detail/3163aacf_PistachioID.webp" },
+            { id: "204", name: "Kopi Dari Tani", originalPrice: 25000, promoPrice: 15500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250131164822016776/detail/e5b8522c_pidariTani.webp" },
+            { id: "205", name: "Butterscotch Sea Salt Latte", originalPrice: 33000, promoPrice: 19500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165047223923/detail/8c73c3f6_BSL.webp" },
+            { id: "206", name: "Buttercream Latte", originalPrice: 33000, promoPrice: 19500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165047896012/detail/2aaff91c_rcreamLatte.webp" },
+            { id: "207", name: "Aren Latte", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165048957548/detail/dad3df6c_ArenLatte.webp" },
+            { id: "208", name: "Pandan Latte", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165049968299/detail/3442f792_PandanLatte.webp" },
+            { id: "209", name: "Dirty Matchapresso", originalPrice: 31000, promoPrice: 18500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251121002010010555/detail/165382b7_chapressoID.webp" },
+            { id: "210", name: "Malty Latte", originalPrice: 27000, promoPrice: 16500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250701040849011722/detail/b63a96c1_tyLatte1.webp" },
+            { id: "211", name: "Bumi Latte", originalPrice: 25000, promoPrice: 15500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250131164825057959/detail/632c3002_BumiLatte.webp" },
+            { id: "212", name: "Cappuccino", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165055070072/detail/ce0ec4fd_Cappuccino3.webp" },
+            { id: "213", name: "Double Iced Shaken Latte", originalPrice: 33000, promoPrice: 19500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165057306468/detail/17957223_ShakenLatte.webp" },
+            { id: "214", name: "Café Latte", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165058063120/detail/006a5f9c_CafeLatte.webp" },
+            { id: "215", name: "Nutty Oat Latte", originalPrice: 39000, promoPrice: 22500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165052504266/detail/a22d55b3_tyOatLatte.webp" },
+            { id: "216", name: "Buttercream Tiramisu Latte", originalPrice: 34000, promoPrice: 20000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250131164825076315/detail/ef859b05_amisuLatte4.webp" },
+            { id: "217", name: "Espresso", originalPrice: 21000, promoPrice: 13500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165054671367/detail/ff030ffa_Espresso.webp" },
+            { id: "218", name: "Caramel Praline Macchiato", originalPrice: 34000, promoPrice: 20000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250131164824040075/detail/bfb7d1a1_neMacchiato.webp" },
+            { id: "219", name: "Americano", originalPrice: 23000, promoPrice: 14500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165029504133/detail/38380602_Americano3.webp" },
+            { id: "220", name: "Manuka Americano", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165027345669/detail/5c82b9e7_kaAmericano.webp" },
+            { id: "221", name: "Triple Peach Americano", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165024900376/detail/0d65983e_chAmericano.webp" },
+            { id: "222", name: "Berry Manuka Americano", originalPrice: 31000, promoPrice: 18500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165026374273/detail/3b98132a_kaAmericano.webp" },
+            { id: "223", name: "Matcha Butter Salt Cream", originalPrice: 31000, promoPrice: 18500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251120163645014994/detail/ef738a9d_altCreamID.webp" },
+            { id: "224", name: "Dark Chocolate", originalPrice: 34000, promoPrice: 20000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165036527316/detail/8d584af2_rkChocolate.webp" },
+            { id: "225", name: "Almond Choco", originalPrice: 39000, promoPrice: 22500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165031705117/detail/3a543a83_ndChocolate.webp" },
+            { id: "226", name: "Matcha Green Tea", originalPrice: 34000, promoPrice: 20000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165033901662/detail/1ed2bc6a_MatchaLatte.webp" },
+            { id: "227", name: "Classic Milo", originalPrice: 25000, promoPrice: 15500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165035203147/detail/c4155f55_IcedMilo.webp" },
+            { id: "228", name: "Hibiscus Lychee Peach Yakult", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165039494821/detail/39184fb6_PeachYakult.webp" },
+            { id: "229", name: "Sunny Citrus Jasmine", originalPrice: 31000, promoPrice: 18500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165038489896/detail/ef498337_trusJasmine.webp" },
+            { id: "230", name: "Coco Peach Fusion", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250131174805023076/detail/f2c491fd_hFusion1.webp" },
+            { id: "231", name: "Caramel Praline Coffee Ice Blended", originalPrice: 34000, promoPrice: 20000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165107592008/detail/039e1d31_IceBlended.webp" },
+            { id: "232", name: "Matcha Ice Blended", originalPrice: 34000, promoPrice: 20000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165109144926/detail/f0209089_IceBlended.webp" },
+            { id: "233", name: "Chocolate Ice Blended", originalPrice: 37000, promoPrice: 21500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165108509661/detail/8f2c0f56_IceBlended.webp" },
+            { id: "234", name: "Strawberry Ice Blended", originalPrice: 34000, promoPrice: 20000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165109411844/detail/191d9abe_IceBlended.webp" },
+            { id: "235", name: "Choco Cookie Shake", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250626174632023502/detail/6edf594d_CookieShake.webp" },
+            { id: "236", name: "Butterscotch Milk Crumble", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165106287913/detail/7e6f3cec_Crumble2.webp" },
+            { id: "237", name: "Vanilla O' Crumbs", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165106558140/detail/dfd5d660_OCrumbs1.webp" },
+            { id: "238", name: "Choco Caramel Cloud", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165107042238/detail/39138bed_elCloud1.webp" },
+            { id: "239", name: "English Breakfast", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165041017485/detail/23cf8f38_shBreakfast.webp" },
+            { id: "240", name: "Green Tea Jasmine", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165041779336/detail/c26c6347_TeaJasmine.webp" },
+            { id: "241", name: "Pure Chamomile", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165043836572/detail/f1acf72d_reChamomile.webp" },
+            { id: "242", name: "Green Tea Mint", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165042806102/detail/20a2e391_eenTeaMint.webp" },
+
+            // ==========================================
+            // 4. MCDONALD'S (ID 301 - DST)
+            // ==========================================
+            { id: "301", name: "Paket Panas 1", originalPrice: 39500, promoPrice: 20500, brand: "McDonald's", image: "https://i.imgur.com/UnRLA2G.jpeg" },
+            
         ];
 
         // --- STATE MANAGEMENT ---
@@ -194,7 +261,6 @@
         
         // 1. Buka Popup
         function openProductPopup(productId) {
-            // Karena ID sudah unik (Kopi Kenangan 1-99, Tomoro 101+), fungsi find aman.
             const product = products.find(p => p.id === productId);
             if (product) {
                 state.activeProduct = product;
@@ -218,14 +284,14 @@
         function confirmAddToCart() {
             if (!state.activeProduct) return;
 
-            // --- PROTEKSI BRAND (Fix: Logic ini sekarang bekerja karena ID sudah unik) ---
+            // --- PROTEKSI BRAND ---
             if (state.cart.length > 0) {
-                const currentBrand = state.cart[0].brand; // Brand yang sedang ada di keranjang
-                const newBrand = state.activeProduct.brand; // Brand yang mau dimasukkan
+                const currentBrand = state.cart[0].brand; 
+                const newBrand = state.activeProduct.brand; 
                 
                 if (currentBrand !== newBrand) {
                     alert(`Maaf Kak, keranjangmu saat ini berisi produk ${currentBrand}.\n\nMohon checkout dulu atau hapus keranjang jika ingin memesan menu ${newBrand}.`);
-                    return; // Batalkan proses
+                    return; 
                 }
             }
             // ----------------------
@@ -251,18 +317,18 @@
             render();
         }
 
-        // --- WHATSAPP LOGIC UPDATE (FIX: JUDUL OTOMATIS) ---
+        // --- WHATSAPP LOGIC ---
         function handleWhatsAppOrder() {
             if (!state.storeLocation.trim()) {
                 alert('Mohon isi lokasi cabang pengambilan');
                 return;
             }
 
-            // Ambil nama brand dari item pertama di keranjang (karena sekarang keranjang pasti 1 brand)
+            // Ambil nama brand dari item pertama di keranjang
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
 
             let message = '*HAI YASIF MAU ORDER DONG (∩˃o˂∩)*\n';
-            message += `*Orderan: ${orderBrand}*\n\n`; // <--- Header Brand Otomatis Berubah
+            message += `*Orderan: ${orderBrand}*\n\n`; 
             
             state.cart.forEach(item => {
                 message += `• ${item.name} (${item.quantity}x)\n`;
@@ -317,12 +383,13 @@
         }
 
         function renderBrandSelection() {
+            // Layout GRID 2 Kolom agar muat 4 Brand dengan rapi
             return `
                 <div class="relative min-h-[80vh] flex flex-col justify-center overflow-hidden">
                     <div class="absolute -top-20 -right-20 w-72 h-72 bg-accent/20 rounded-full blur-[80px] pointer-events-none"></div>
                     <div class="absolute -bottom-20 -left-20 w-72 h-72 bg-primary/15 rounded-full blur-[80px] pointer-events-none"></div>
                     
-                    <div class="container mx-auto px-4 py-12 max-w-2xl relative z-10">
+                    <div class="container mx-auto px-4 py-12 max-w-4xl relative z-10">
                         <div class="text-center mb-10">
                             <span class="inline-block py-1 px-3 rounded-full bg-accent/10 text-accent text-xs font-bold tracking-wider mb-4 border border-accent/20">OFFICIAL VOUCHER</span>
                             <h2 class="text-4xl md:text-5xl font-serif text-foreground mb-3">Mau Belanja Apa<br>Hari Ini?</h2>
@@ -332,7 +399,8 @@
                             </p>
                         </div>
 
-                        <div class="grid gap-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            
                             <button onclick="selectBrand('Kopi Kenangan')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-accent transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
                                 <div>
                                     <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-accent transition-colors">Kopi Kenangan</h3>
@@ -348,6 +416,23 @@
                                 </div>
                                 <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">☀️</div>
                             </button>
+
+                            <button onclick="selectBrand('Fore Coffee')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-green-600 transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-green-600 transition-colors">Fore Coffee</h3>
+                                    <p class="text-muted text-sm">#FOREveryone</p>
+                                </div>
+                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">🌿</div>
+                            </button>
+
+                            <button onclick="selectBrand('McDonald\\'s')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-red-600 transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-red-600 transition-colors">McDonald's</h3>
+                                    <p class="text-muted text-sm">Makin Kenal Makin Sayang</p>
+                                </div>
+                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform">🍔</div>
+                            </button>
+
                         </div>
                     </div>
                 </div>
@@ -356,12 +441,24 @@
 
         function renderMenu() {
             const filteredProducts = products.filter(p => p.brand === state.selectedBrand);
+            
+            // --- CUSTOM NOTE PER BRAND (LOGIKA BARU DI SINI) ---
+            const brandNotes = {
+                "Kopi Kenangan": "HARGA SETIAP DAERAH DAN STORE BERBEDA-BEDA!!! (Bisa Lebih Murah Atau Lebih Mahal)",
+                "Tomoro Coffee": "HANYA TERSEDIA UKURAN SMALL!!! (Harga Berbeda-beda Setiap Store)",
+                "Fore Coffee": "HARGA SETIAP DAERAH DAN STORE BERBEDA-BEDA!!! (Bisa Lebih Murah Atau Lebih Mahal)",
+                "McDonald's": "CANTUMKAN BAGIAN AYAM DI NOTE (Sayap, Paha Bawah, Dada Mentok, Dada Tulang, Paha Atas)"
+            };
+
+            const currentNote = brandNotes[state.selectedBrand] || "";
+            // ---------------------------------------------------
+
             return `
                 <div class="container mx-auto px-4 py-6 pb-32 max-w-4xl">
                     <div class="mb-6">
                         <h2 class="text-2xl font-serif mb-1">${state.selectedBrand}</h2>
                         
-                        <p class="text-red-600 font-bold text-sm">HARGA SETIAP DAERAH DAN STORE BERBEDA-BEDA!!! (Bisa Lebih Murah Atau Lebih Mahal)</p>
+                        <p class="text-red-600 font-bold text-sm">${currentNote}</p>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 md:grid-cols-3">
