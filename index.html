@@ -565,12 +565,18 @@
 
         function renderFloatingCart() {
             return `
-                <button onclick="state.showCart=true;render()" class="fixed bottom-6 right-6 bg-accent text-white rounded-full p-4 shadow-xl hover:scale-105 transition-transform z-40 animate-bounce">
+                <button onclick="state.showCart=true;render()" class="fixed bottom-6 right-6 bg-accent text-white rounded-full px-6 py-4 shadow-xl hover:scale-105 transition-transform z-40 animate-bounce flex items-center gap-3 border-2 border-white/20">
                     <div class="relative">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        
                         <span class="absolute -top-2 -right-2 bg-promo text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border border-white">
                             ${getTotalItems()}
                         </span>
+                    </div>
+                    
+                    <div class="flex flex-col items-start">
+                        <span class="text-[10px] opacity-90 leading-none">Total Items: ${getTotalItems()}</span>
+                        <span class="font-bold text-sm leading-tight">Lihat Pesanan</span>
                     </div>
                 </button>
             `;
