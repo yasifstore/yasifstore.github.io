@@ -30,6 +30,8 @@
                         'primary-foreground': '#FFFFFF',
                         promo: '#C8492B', 
                         mcd: '#FFBC0D',   
+                        digital: '#0ea5e9', // Warna Biru Langit untuk Pulsa/Token
+                        wa: '#25D366',      // Warna WA
                     },
                     fontFamily: {
                         sans: ['system-ui', '-apple-system', 'sans-serif'],
@@ -233,10 +235,24 @@
             { id: "241", name: "Pure Chamomile", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165043836572/detail/f1acf72d_reChamomile.webp" },
             { id: "242", name: "Green Tea Mint", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165042806102/detail/20a2e391_eenTeaMint.webp" },
 
+
+             // ==========================================
+            // 5. PULSA & TOKEN (ID 501 - DST)
             // ==========================================
-            // 4. MCDONALD'S (ID 301 - DST)
-            // ==========================================
-            { id: "301", name: "Paket Panas 1", originalPrice: 39500, promoPrice: 20500, brand: "McDonald's", image: "https://i.imgur.com/UnRLA2G.jpeg" },
+            // LOGIKA HARGA: ASLI = NOMINAL + 2500, PROMO = ASLI - 5%
+            
+            // PULSA
+            { id: "501", name: "Pulsa All Operator 20rb", originalPrice: 22500, promoPrice: 19000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/keBDkUI.png" },
+            { id: "502", name: "Pulsa All Operator 50rb", originalPrice: 52500, promoPrice: 47500, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/3Sbnu0N.png" },
+            { id: "503", name: "Pulsa All Operator 100rb", originalPrice: 102500, promoPrice: 95000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/nIMCy4A.png" },
+            { id: "504", name: "Pulsa All Operator 150rb", originalPrice: 152500, promoPrice: 142500, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/FyfdMq7.png" },
+            { id: "505", name: "Pulsa All Operator 200rb", originalPrice: 202500, promoPrice: 190000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/Wd3Nl9d.png" },
+
+            // TOKEN LISTRIK
+            { id: "506", name: "Token Listrik 20rb", originalPrice: 22500, promoPrice: 19000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/4lSre7l.png" },
+            { id: "507", name: "Token Listrik 50rb", originalPrice: 52500, promoPrice: 47500, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/AgOD6Jp.png" },
+            { id: "508", name: "Token Listrik 100rb", originalPrice: 102500, promoPrice: 95000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/XjvTGqn.png" },
+            { id: "509", name: "Token Listrik 200rb", originalPrice: 202500, promoPrice: 19000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/OU0mmcq.png" },
             
         ];
 
@@ -269,13 +285,18 @@
 
         // --- LOGIKA UTAMA ---
         
-        // 1. Buka Popup
+        // 1. Buka Popup (Smart Logic: Skip Popup utk Pulsa)
         function openProductPopup(productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
-                state.activeProduct = product;
-                state.tempNote = ''; 
-                render();
+                // LOGIC BARU: Jika Brand Digital, Langsung Add to Cart (Skip Popup Note)
+                if (product.brand === "Pulsa & Token Listrik") {
+                    directAddToCart(product);
+                } else {
+                    state.activeProduct = product;
+                    state.tempNote = ''; 
+                    render();
+                }
             }
         }
 
@@ -322,22 +343,53 @@
             render();
         }
 
+        // 4.1. Direct Add To Cart (Khusus Digital)
+        function directAddToCart(product) {
+             // --- PROTEKSI BRAND ---
+             if (state.cart.length > 0) {
+                const currentBrand = state.cart[0].brand; 
+                const newBrand = product.brand; 
+                
+                if (currentBrand !== newBrand) {
+                    alert(`Maaf Kak, keranjangmu saat ini berisi produk ${currentBrand}.\n\nMohon checkout dulu atau hapus keranjang jika ingin memesan menu ${newBrand}.`);
+                    return; 
+                }
+            }
+            // ----------------------
+
+            // Cek item duplikat (tanpa note)
+            const existingItem = state.cart.find(item => item.id === product.id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                state.cart.push({ 
+                    ...product, 
+                    quantity: 1,
+                    note: '' // Note kosong untuk digital
+                });
+            }
+            render();
+        }
+
         function removeFromCart(productId, note) {
             state.cart = state.cart.filter(item => !(item.id === productId && item.note === note));
             render();
         }
 
-        // --- WHATSAPP LOGIC ---
+        // --- WHATSAPP LOGIC (Smart Logic: Lokasi vs Nomor HP) ---
         function handleWhatsAppOrder() {
             if (!state.storeLocation.trim()) {
-                alert('Mohon isi lokasi cabang pengambilan');
+                // Pesan Error Dinamis
+                const isDigital = state.cart.length > 0 && state.cart[0].brand === 'Pulsa & Token Listrik';
+                alert(isDigital ? 'Mohon isi Nomor HP / ID Pelanggan!' : 'Mohon isi lokasi cabang pengambilan');
                 return;
             }
 
             // Ambil nama brand dari item pertama di keranjang
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
+            const isDigital = orderBrand === 'Pulsa & Token Listrik';
 
-            // REVISI: Menghapus pembuka yang alay
             let message = `*Orderan: ${orderBrand}*\n\n`; 
             
             state.cart.forEach(item => {
@@ -350,9 +402,14 @@
 
             message += `*Total: ${formatPrice(getTotalPrice())}*\n`;
             message += `--------------------------------\n`;
-            message += `*Lokasi Ambil:* ${state.storeLocation}\n\n`;
             
-            // REVISI: Mengubah penutup menjadi lebih formal
+            // Logic Dinamis: Lokasi vs Nomor Tujuan
+            if (isDigital) {
+                message += `*Nomor Tujuan / ID Pelanggan:* ${state.storeLocation}\n\n`;
+            } else {
+                message += `*Lokasi Ambil:* ${state.storeLocation}\n\n`;
+            }
+            
             message += '*Segera Di proses ya.*';
 
             const whatsappUrl = `https://wa.me/6287836345807?text=${encodeURIComponent(message)}`;
@@ -434,11 +491,21 @@
                                 <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">🌿</div>
                             </button>
 
-                            <button onclick="selectBrand('McDonald\\'s')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-red-600 transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
+
+                            <button onclick="selectBrand('Pulsa & Token Listrik')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-digital transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
                                 <div>
-                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-red-600 transition-colors">McDonald's</h3>
-                                    </div>
-                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform">🍔</div>
+                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-digital transition-colors">Pulsa & Token</h3>
+                                    <p class="text-xs text-muted">All Operator & PLN</p>
+                                </div>
+                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-digital group-hover:scale-110 transition-transform">⚡</div>
+                            </button>
+
+                            <button onclick="window.open('https://chat.whatsapp.com/Bk73XNM1R3D5p8ZdMlna1W', '_blank')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-wa transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-wa transition-colors">Gabung Grup WhatsApp</h3>
+                                    <p class="text-xs text-muted">Yasif Store</p>
+                                </div>
+                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-wa group-hover:scale-110 transition-transform">💬</div>
                             </button>
 
                         </div>
@@ -476,11 +543,11 @@
                         <li>Bisa Request Sugar/Ice/Up Size (harga berbeda) Di Note Produk.</li>
                     </ul>
                 `,
-                "McDonald's": `
+                "Pulsa & Token Listrik": `
                     <ul class="list-decimal pl-5 space-y-1 text-left">
-                        <li>Cantumkan bagian ayam di Note (Sayap, Paha Bawah, Dada Mentok, Dada Tulang, Paha Atas)</li>
-                        <li>Pesanan Dine in, Tinggal Infokan Cabang Store Dan Nomor Meja.</li>
-                        <li>Untuk Take Away Ada Biaya Tamabahan +3k.</li>
+                        <li>Pastikan Nomor HP / Nomor Meteran Benar.</li>
+                        <li>Kesalahan nomor bukan tanggung jawab Admin.</li>
+                        <li>Konfirmasi pesanan melalui WhatsApp.</li>
                     </ul>
                 `
             };
@@ -583,6 +650,13 @@
         }
 
         function renderCartModal() {
+            // Smart Logic: Cek apakah keranjang isinya Digital (Pulsa/Token)
+            const isDigital = state.cart.length > 0 && state.cart[0].brand === 'Pulsa & Token Listrik';
+            
+            // Tentukan Label dan Placeholder berdasarkan jenis barang
+            const inputLabel = isDigital ? 'Nomor HP / ID Pelanggan (Wajib)' : 'Lokasi Cabang Pengambilan (Wajib)';
+            const inputPlaceholder = isDigital ? 'Contoh: 0812xxxx (Pulsa) atau 1412xxxx (PLN)' : 'Contoh: Cabang Grand Indonesia...';
+
             return `
                 <div class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end md:items-center md:justify-center">
                     <div class="bg-card w-full md:max-w-2xl md:rounded-2xl border-t md:border border-border overflow-hidden max-h-[90vh] flex flex-col shadow-2xl">
@@ -612,13 +686,13 @@
 
                                 <div class="mt-6">
                                     <label class="block text-sm font-bold text-foreground mb-2">
-                                        Lokasi Cabang Pengambilan <span class="text-promo">*</span>
+                                        ${inputLabel} <span class="text-promo">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         value="${state.storeLocation}"
                                         oninput="state.storeLocation = this.value"
-                                        placeholder="Contoh: Cabang Grand Indonesia..."
+                                        placeholder="${inputPlaceholder}"
                                         class="w-full px-4 py-3 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all"
                                     />
                                 </div>
