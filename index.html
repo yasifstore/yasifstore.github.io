@@ -30,8 +30,8 @@
                         'primary-foreground': '#FFFFFF',
                         promo: '#C8492B', 
                         mcd: '#FFBC0D',   
-                        digital: '#0ea5e9', // Warna Biru Langit untuk Pulsa/Token
-                        wa: '#25D366',      // Warna WA
+                        digital: '#0ea5e9',
+                        wa: '#25D366',
                     },
                     fontFamily: {
                         sans: ['system-ui', '-apple-system', 'sans-serif'],
@@ -51,6 +51,14 @@
         /* Animasi Pop-up */
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .animate-zoom { animation: zoomIn 0.2s ease-out; }
+        
+        /* Checkbox Custom Style */
+        .custom-checkbox {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: #2D7F4F;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -260,7 +268,6 @@
              // ==========================================
             // 5. PULSA & TOKEN (ID 501 - DST)
             // ==========================================
-            // LOGIKA HARGA: ASLI = NOMINAL + 2500, PROMO = ASLI - 5%
             
             // PULSA
             { id: "501", name: "Pulsa All Operator 20rb", originalPrice: 22500, promoPrice: 19000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/keBDkUI.png" },
@@ -284,7 +291,8 @@
             showCart: false,
             storeLocation: '',
             activeProduct: null, 
-            tempNote: ''         
+            tempNote: '',
+            isLarge: false // NEW: State untuk tracking pilihan ukuran
         };
 
         // Helper Functions
@@ -306,7 +314,7 @@
 
         // --- LOGIKA UTAMA ---
         
-        // 1. Buka Popup (Smart Logic: Skip Popup utk Pulsa)
+        // 1. Buka Popup (Reset state isLarge ke false)
         function openProductPopup(productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
@@ -316,6 +324,7 @@
                 } else {
                     state.activeProduct = product;
                     state.tempNote = ''; 
+                    state.isLarge = false; // Reset Pilihan Large Setiap Buka Popup
                     render();
                 }
             }
@@ -324,6 +333,7 @@
         // 2. Tutup Popup
         function closeProductPopup() {
             state.activeProduct = null;
+            state.isLarge = false;
             render();
         }
 
@@ -331,8 +341,14 @@
         function updateTempNote(value) {
             state.tempNote = value;
         }
+        
+        // 3.5. Toggle Large (New Function)
+        function toggleLarge(checked) {
+            state.isLarge = checked;
+            render(); // Re-render untuk update UI (walaupun sederhana)
+        }
 
-        // 4. Masukkan ke Keranjang (DENGAN PROTEKSI BRAND)
+        // 4. Masukkan ke Keranjang (DENGAN PROTEKSI BRAND & LOGIC LARGE)
         function confirmAddToCart() {
             if (!state.activeProduct) return;
 
@@ -348,19 +364,38 @@
             }
             // ----------------------
 
-            const existingItem = state.cart.find(item => item.id === state.activeProduct.id && item.note === state.tempNote);
+            // --- LOGIC HARGA & NOTE KHUSUS FORE LARGE ---
+            let finalPrice = state.activeProduct.promoPrice;
+            let finalNote = state.tempNote;
+
+            // Jika User pilih Large (hanya Fore yg bisa akses tombol ini)
+            if (state.isLarge) {
+                finalPrice += 3500; // Tambah Harga
+                
+                // Tambah tulisan "Large" ke note
+                if (finalNote.trim() === '') {
+                    finalNote = 'Large';
+                } else {
+                    finalNote = `Large, ${finalNote}`;
+                }
+            }
+            // ---------------------------------------------
+
+            const existingItem = state.cart.find(item => item.id === state.activeProduct.id && item.note === finalNote && item.promoPrice === finalPrice);
             
             if (existingItem) {
                 existingItem.quantity += 1;
             } else {
                 state.cart.push({ 
                     ...state.activeProduct, 
+                    promoPrice: finalPrice, // Pakai harga final (bisa berubah jika large)
                     quantity: 1,
-                    note: state.tempNote 
+                    note: finalNote 
                 });
             }
 
             state.activeProduct = null; // Tutup popup
+            state.isLarge = false;
             render();
         }
 
@@ -398,16 +433,14 @@
             render();
         }
 
-        // --- WHATSAPP LOGIC (Smart Logic: Lokasi vs Nomor HP) ---
+        // --- WHATSAPP LOGIC ---
         function handleWhatsAppOrder() {
             if (!state.storeLocation.trim()) {
-                // Pesan Error Dinamis
                 const isDigital = state.cart.length > 0 && state.cart[0].brand === 'Pulsa & Token Listrik';
                 alert(isDigital ? 'Mohon isi Nomor HP / ID Pelanggan!' : 'Mohon isi lokasi cabang pengambilan');
                 return;
             }
 
-            // Ambil nama brand dari item pertama di keranjang
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
             const isDigital = orderBrand === 'Pulsa & Token Listrik';
 
@@ -424,7 +457,6 @@
             message += `*Total: ${formatPrice(getTotalPrice())}*\n`;
             message += `--------------------------------\n`;
             
-            // Logic Dinamis: Lokasi vs Nomor Tujuan
             if (isDigital) {
                 message += `*Nomor Tujuan / ID Pelanggan:* ${state.storeLocation}\n\n`;
             } else {
@@ -473,7 +505,6 @@
         }
 
         function renderBrandSelection() {
-            // Layout GRID 2 Kolom agar muat 4 Brand dengan rapi
             return `
                 <div class="relative min-h-[80vh] flex flex-col justify-center overflow-hidden">
                     <div class="absolute -top-20 -right-20 w-72 h-72 bg-accent/20 rounded-full blur-[80px] pointer-events-none"></div>
@@ -538,10 +569,6 @@
         function renderMenu() {
             const filteredProducts = products.filter(p => p.brand === state.selectedBrand);
             
-            // --- CUSTOM NOTE PER BRAND (EDIT ATURAN DI SINI) ---
-            // Gunakan tanda backtick ( ` ) di awal dan akhir text agar bisa enter
-            // Gunakan <li>Isi aturan</li> untuk setiap poin
-            
             const brandNotes = {
                 "Kopi Kenangan": `
                     <ul class="list-decimal pl-5 space-y-1 text-left">
@@ -561,7 +588,7 @@
                     <ul class="list-decimal pl-5 space-y-1 text-left">
                         <li>Harga setiap daerah dan store BERBEDA-BEDA (Bisa lebih murah/mahal).</li>
                         <li>Pesanan Pick up, Jadi Tinggal Ambil Di Store Yang Sudah Di Pilih (Tidak Ada Pembayaran Lagi).</li>
-                        <li>Bisa Request Sugar/Ice/Up Size +3,5k, tulis Di Note Produk.</li>
+                        <li>Sudah ada opsi <b>Upgrade Large (+3.5k)</b> saat klik menu.</li>
                     </ul>
                 `,
                 "Pulsa & Token Listrik": `
@@ -573,9 +600,7 @@
                 `
             };
 
-            // Jika tidak ada note khusus, tampilkan string kosong
             const currentNote = brandNotes[state.selectedBrand] || "";
-            // ---------------------------------------------------
 
             return `
                 <div class="container mx-auto px-4 py-6 pb-32 max-w-4xl">
@@ -617,6 +642,24 @@
 
         function renderNotePopup() {
             const p = state.activeProduct;
+            
+            // --- LOGIKA TAMPILKAN OPSI LARGE ---
+            // 1. Harus Brand Fore Coffee
+            // 2. Tidak boleh ID 245 sampai 266 (Makanan)
+            const idNum = parseInt(p.id);
+            const isFore = p.brand === 'Fore Coffee';
+            const isFood = idNum >= 245 && idNum <= 266;
+            
+            const showLargeOption = isFore && !isFood;
+            
+            // --- LOGIKA PLACEHOLDER KHUSUS (SESUAI REQUEST) ---
+            let notePlaceholder = "Contoh: Less Ice, Gula sedikit..."; // Default (Tomoro, dll)
+
+            if (p.brand === 'Kopi Kenangan') {
+                notePlaceholder = "Contoh: Request Up Size Large, Less Ice, Gula sedikit...";
+            }
+            // ---------------------------------------------------
+
             return `
                 <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-zoom">
                     <div class="bg-card w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden border border-border">
@@ -630,21 +673,35 @@
                                 <span class="text-xs font-bold text-promo bg-red-50 px-2 py-1 rounded border border-red-100">Harga Promo: ${formatPrice(p.promoPrice)}</span>
                             </div>
 
+                            ${showLargeOption ? `
+                                <div class="mb-4 bg-green-50 p-3 rounded-lg border border-green-100">
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" onchange="toggleLarge(this.checked)" ${state.isLarge ? 'checked' : ''} class="custom-checkbox">
+                                        <div>
+                                            <span class="text-sm font-bold text-foreground block">Upgrade Large</span>
+                                            <span class="text-xs text-muted">+ Rp 3.500</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            ` : ''}
+
                             <label class="block text-sm font-bold text-foreground mb-2">
                                 Catatan Opsional (Kosongkan jika Normal)
                             </label>
                             <textarea 
                                 oninput="updateTempNote(this.value)"
-                                placeholder="Contoh: Ukuran Large, Less Ice, Gula sedikit..."
-                                class="w-full h-28 p-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent text-sm resize-none"
+                                placeholder="${notePlaceholder}"
+                                class="w-full h-24 p-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent text-sm resize-none"
                             ></textarea>
                             
-                            <p class="text-[10px] text-red-500 mt-2 italic">*Biaya tambahan (jika ada) akan diinfokan Admin via Chat.</p>
+                            <p class="text-[10px] text-red-500 mt-2 italic">*Biaya tambahan lain (jika ada) akan diinfokan Admin via Chat.</p>
                         </div>
 
                         <div class="p-4 bg-gray-50 border-t border-border flex gap-3">
                             <button onclick="closeProductPopup()" class="flex-1 py-3 text-sm font-bold text-muted bg-gray-200 rounded-xl hover:bg-gray-300 transition">Batal</button>
-                            <button onclick="confirmAddToCart()" class="flex-1 py-3 text-sm font-bold text-white bg-primary rounded-xl hover:opacity-90 transition shadow-lg shadow-green-200">Simpan</button>
+                            <button onclick="confirmAddToCart()" class="flex-1 py-3 text-sm font-bold text-white bg-primary rounded-xl hover:opacity-90 transition shadow-lg shadow-green-200">
+                                Simpan (${formatPrice(state.isLarge ? p.promoPrice + 3500 : p.promoPrice)})
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -671,10 +728,8 @@
         }
 
         function renderCartModal() {
-            // Smart Logic: Cek apakah keranjang isinya Digital (Pulsa/Token)
             const isDigital = state.cart.length > 0 && state.cart[0].brand === 'Pulsa & Token Listrik';
             
-            // Tentukan Label dan Placeholder berdasarkan jenis barang
             const inputLabel = isDigital ? 'Nomor HP / ID Pelanggan (Wajib)' : 'Lokasi Cabang Pengambilan (Wajib)';
             const inputPlaceholder = isDigital ? 'Contoh: 0812xxxx (Pulsa) atau 1412xxxx (PLN)' : 'Contoh: Cabang Grand Indonesia...';
 
