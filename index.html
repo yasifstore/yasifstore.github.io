@@ -681,7 +681,11 @@
             const isFore = p.brand === 'Fore Coffee';
             const isFood = idNum >= 245 && idNum <= 266;
             
-            const showLargeOption = isFore && !isFood;
+            // LOGIKA BARU: Cek kategori 1L
+            const is1L = p.category === 'FOREveryone 1L';
+            
+            // Syarat muncul opsi Large: Brand Fore, Bukan Makanan, DAN Bukan 1L
+            const showLargeOption = isFore && !isFood && !is1L;
             
             let notePlaceholder = "Contoh: Less Ice, Gula sedikit..."; 
 
