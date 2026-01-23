@@ -401,10 +401,13 @@
             if (state.isLarge) {
                 finalPrice += 3500;
                 
+                const largeTag = "✅ UPGRADE LARGE (+3.5k)";
+
                 if (finalNote.trim() === '') {
-                    finalNote = 'Large';
+                    finalNote = largeTag;
                 } else {
-                    finalNote = `Large, ${finalNote}`;
+                    // Jika ada note manual, kita pisahkan dengan koma atau garis
+                    finalNote = `${largeTag}, ${finalNote}`;
                 }
             }
 
