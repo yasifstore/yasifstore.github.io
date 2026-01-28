@@ -1,81 +1,117 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YASIF STORE - Spesial Promo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YASIF STORE - Premium Coffee & Digital</title>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-T3MCJ2C61G"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-T3MCJ2C61G');
     </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        background: '#FAF8F5',
-                        foreground: '#2A2A2A',
-                        card: '#FFFFFF',
-                        border: '#E8E4DB',
-                        muted: '#8C8577',
-                        accent: '#D4AF37',
-                        primary: '#2D7F4F', 
-                        'primary-foreground': '#FFFFFF',
-                        promo: '#C8492B', 
-                        mcd: '#FFBC0D',   
-                        digital: '#0ea5e9',
-                        wa: '#25D366',
-                    },
                     fontFamily: {
-                        sans: ['system-ui', '-apple-system', 'sans-serif'],
-                        serif: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        heading: ['"Outfit"', 'sans-serif'],
                     },
+                    colors: {
+                        background: '#F9F9F7',
+                        surface: '#FFFFFF',
+                        foreground: '#1F2937',
+                        primary: '#1A4D2E',
+                        'primary-light': '#4F6F52',
+                        accent: '#D97706',
+                        border: '#E5E7EB',
+                        subtle: '#9CA3AF',
+                        success: '#10B981',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'float': '0 10px 40px -10px rgba(26, 77, 46, 0.2)',
+                    }
                 }
             }
         }
     </script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #FAF8F5;
-            color: #2A2A2A;
-        }
-        /* Animasi Pop-up */
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        .animate-zoom { animation: zoomIn 0.2s ease-out; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Checkbox Custom Style */
-        .custom-checkbox {
-            width: 1.25rem;
-            height: 1.25rem;
-            accent-color: #2D7F4F;
-            cursor: pointer;
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
+        
+        .glass-dark {
+            background: rgba(26, 77, 46, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up { animation: fadeUp 0.5s ease-out forwards; }
+        
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1); }
+
+        .custom-checkbox {
+            appearance: none;
+            background-color: #fff;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.35em;
+            height: 1.35em;
+            border: 2px solid #D1D5DB;
+            border-radius: 0.35em;
+            display: grid;
+            place-content: center;
+            transition: 0.2s;
+        }
+        .custom-checkbox::before {
+            content: "";
+            width: 0.75em;
+            height: 0.75em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em white;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+        .custom-checkbox:checked { background-color: #1A4D2E; border-color: #1A4D2E; }
+        .custom-checkbox:checked::before { transform: scale(1); }
     </style>
 </head>
-<body>
+<body class="bg-background text-foreground antialiased selection:bg-primary selection:text-white pb-24">
+
     <div id="app"></div>
 
     <script>
-        // --- DATA PRODUK (SUDAH DIKATEGORIKAN) ---
+        // @ts-nocheck
+        
+        // --- DATA PRODUK ---
         const products = [
-            // ==========================================
             // 1. KOPI KENANGAN
-            // ==========================================
-            // --- MENU BARU ---
             { id: "601", category: "Menu Baru", name: "Tiramisu Latte", originalPrice: 20000, promoPrice: 13000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20260112015152034271/detail/5b7a881c_e51e003daf7f31a.webp" },
             { id: "602", category: "Menu Baru", name: "Tiramisu Mocha Latte", originalPrice: 25000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20260112015152025086/detail/d6c4ed8c_b91785953b47883.webp" },
             { id: "603", category: "Menu Baru", name: "Tiramisu Frappe", originalPrice: 28000, promoPrice: 17000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20260112015152044488/detail/5f060e9c_707cd9a994f33cb.webp" },
-
-            // --- COFFEE ---
             { id: "1", category: "Coffee", name: "Kopi Kenangan Mantan", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250812051422019174/detail/5b10a373_2aec27ffffdc9e8.webp" },
             { id: "2", category: "Coffee", name: "Toffee Nut Late", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251123181917021062/detail/bd57be8d_ab0cbd37907d628.webp" },
             { id: "3", category: "Coffee", name: "Toffee Nut Aren Latte", originalPrice: 21000, promoPrice: 13500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251123135412014443/detail/8d36bd27_660f8c0a63880f8.webp" },
@@ -104,8 +140,6 @@
             { id: "46", category: "Coffee", name: "Oatside Latte", originalPrice: 25000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193109060320/detail/ced81934_3fd8d7f1e3af821.webp" },
             { id: "49", category: "Coffee", name: "Butterscotch Kenangan Frape", originalPrice: 30000, promoPrice: 18000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250701082015016768/detail/63a3f71e_c158a0c20395877.webp" },
             { id: "51", category: "Coffee", name: "Kopi Kenangan Mantan Frappe", originalPrice: 30000, promoPrice: 18000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250701082014010059/detail/9c56be81_1e18627861ae747.webp" },
-
-            // --- NON COFFEE ---
             { id: "25", category: "Non-Coffee", name: "Toffe Nut Choco Macchiato", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/1ef5180c-efe9-429d-b255-ce63277548a6_ec742ff0-d8d7-6f86-f84b-daabc4ee543c.png?auto=format" },
             { id: "27", category: "Non-Coffee", name: "Milk Oreo Crumble", originalPrice: 26000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/a15fd431-d33f-45d2-9524-6eb6d914489f_31770136-f420-e0eb-6c9e-080daa295cd6.png?auto=format" },
             { id: "28", category: "Non-Coffee", name: "Babyccino", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://i.imgur.com/xVlrWnc.jpeg" },
@@ -131,8 +165,6 @@
             { id: "52", category: "Non-Coffee", name: "Vanilla Kenangan Frappe", originalPrice: 25000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250701082014035176/detail/f4c784b7_8915c14d7b17582.webp" },
             { id: "53", category: "Non-Coffee", name: "Dutch Choco Kenangan Frappe", originalPrice: 29000, promoPrice: 17500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193136043965/detail/ea2dbc86_126e1df53b45103.webp" },
             { id: "48", category: "Non-Coffee", name: "Pistachio Frappe", originalPrice: 32000, promoPrice: 19000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250922193527045371/detail/516352d3_47da80764322449.webp" },
-
-            // --- MAKANAN ---
             { id: "54", category: "Makanan", name: "Bambang Choco Cheese Toast", originalPrice: 17000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/66499e2e-b9c8-42f4-a32e-296fc8639792_9bcefd8c-c6d2-0bf3-cd8b-d58b53b7c107.png?auto=format" },
             { id: "55", category: "Makanan", name: "Adam Ayam Toast", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/5401f48a-01c5-4981-88aa-f3c1724e75e2_fb8f8b0c-b019-3c84-87a5-753cb136b32f.png?auto=format" },
             { id: "56", category: "Makanan", name: "Wahyu Sapi Toast", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/605c7f65-d7ec-4568-9ea0-3650bb92546e_f8688c41-22fd-a3a2-836f-7491a183eda0.png?auto=format" },
@@ -160,12 +192,7 @@
             { id: "78", category: "Makanan", name: "Donut Abon", originalPrice: 13000, promoPrice: 9500, brand: "Kopi Kenangan", image: "" },
             { id: "79", category: "Makanan", name: "Croissant Abon", originalPrice: 17000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251211192433021856/detail/9c7d5034_00dce96fec491e6.webp" },
 
-            
-            // ==========================================
             // 2. TOMORO COFFEE
-            // ==========================================
-            
-            // --- COFFEE ---
             { id: "109", category: "Coffee", name: "Caramel Cheese Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE202410011221397303144/detail/7ca6b6e58bf54039ae151eabdb45d24c_1767718900688893063.webp" },
             { id: "110", category: "Coffee", name: "Cheese Cloud Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE202410011221397315374/detail/f1babbdc82e544d183b4da1712bd68b0_1767718901087073805.webp" },
             { id: "111", category: "Coffee", name: "TOMORO Coconut Latte", originalPrice: 23000, promoPrice: 14500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20231201052540011833/detail/8d01ad1991a0440daaf7c0937a71234c_1767718899526247736.webp" },
@@ -188,8 +215,6 @@
             { id: "134", category: "Coffee", name: "Peach Americano", originalPrice: 19000, promoPrice: 12500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250423071639302532/detail/699b1ccd6b4c47d9a48c07a13e4d6f6c_1767718899691325777.webp" },
             { id: "140", category: "Coffee", name: "Grapefruit Americano", originalPrice: 20000, promoPrice: 13000, brand: "Tomoro Coffee", image: "https://i.imgur.com/A91deWe.jpeg" },
             { id: "141", category: "Coffee", name: "Lemonade Americano", originalPrice: 20000, promoPrice: 13000, brand: "Tomoro Coffee", image: "https://i.imgur.com/Cu60gON.jpeg" },
-
-             // --- NON COFFEE ---
             { id: "101", category: "Non-Coffee", name: "Chocolate", originalPrice: 21000, promoPrice: 13500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240403024213034788/detail/53f057e0_80b61c9204b.webp" },
             { id: "102", category: "Non-Coffee", name: "Chocolate Frappe", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20220929064725056609/detail/a66426ae_2821ecfca9d.webp" },
             { id: "103", category: "Non-Coffee", name: "Matcha Latte", originalPrice: 27000, promoPrice: 16500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20220929064729010429/detail/18fe3801_206262e13b5.webp" },
@@ -210,17 +235,10 @@
             { id: "139", category: "Non-Coffee", name: "Pink Pop Lemon Tea", originalPrice: 17000, promoPrice: 11500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230116155019049154/detail/85cf8914_28542950b08.webp" },
             { id: "142", category: "Non-Coffee", name: "Chocolate Frappe", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/bce80055-6bf6-493f-9c94-15a8342e0cc9_menu-item-image_1715226267850.jpg?auto=format" },
 
-
-            // ==========================================
             // 3. FORE COFFEE
-            // ==========================================
-            
-            // --- Smooth Like Pistachio! ---
             { id: "201", category: "Smooth Like Pistachio!", name: "Dark Chocochio", originalPrice: 36000, promoPrice: 21000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251120112735012993/detail/123cfc6c_ChocochioID.webp" },
             { id: "202", category: "Smooth Like Pistachio!", name: "Toffee Pistachio Latte", originalPrice: 33000, promoPrice: 19500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251120174741027654/detail/5449f45d_hioLatteID.webp" },
             { id: "203", category: "Smooth Like Pistachio!", name: "Americano Salted Pistachio", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251120174740031592/detail/3163aacf_PistachioID.webp" },
-            
-            // --- COFFEE ---
             { id: "204", category: "Coffee", name: "Kopi Dari Tani", originalPrice: 25000, promoPrice: 15500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250131164822016776/detail/e5b8522c_pidariTani.webp" },
             { id: "205", category: "Coffee", name: "Butterscotch Sea Salt Latte", originalPrice: 33000, promoPrice: 19500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165047223923/detail/8c73c3f6_BSL.webp" },
             { id: "206", category: "Coffee", name: "Buttercream Latte", originalPrice: 33000, promoPrice: 19500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165047896012/detail/2aaff91c_rcreamLatte.webp" },
@@ -241,9 +259,6 @@
             { id: "221", category: "Coffee", name: "Triple Peach Americano", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165024900376/detail/0d65983e_chAmericano.webp" },
             { id: "222", category: "Coffee", name: "Berry Manuka Americano", originalPrice: 31000, promoPrice: 18500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165026374273/detail/3b98132a_kaAmericano.webp" },
             { id: "231", category: "Coffee", name: "Caramel Praline Coffee Ice Blended", originalPrice: 34000, promoPrice: 20000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165107592008/detail/039e1d31_IceBlended.webp" },
-            
-
-            // --- NON COFFEE ---
             { id: "224", category: "Non-Coffee", name: "Dark Chocolate", originalPrice: 34000, promoPrice: 20000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165036527316/detail/8d584af2_rkChocolate.webp" },
             { id: "225", category: "Non-Coffee", name: "Almond Choco", originalPrice: 39000, promoPrice: 22500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165031705117/detail/3a543a83_ndChocolate.webp" },
             { id: "226", category: "Non-Coffee", name: "Matcha Green Tea", originalPrice: 34000, promoPrice: 20000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165033901662/detail/1ed2bc6a_MatchaLatte.webp" },
@@ -263,8 +278,6 @@
             { id: "241", category: "Non-Coffee", name: "Pure Chamomile", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165043836572/detail/f1acf72d_reChamomile.webp" },
             { id: "242", category: "Non-Coffee", name: "Green Tea Mint", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165042806102/detail/20a2e391_eenTeaMint.webp" },
             { id: "238", category: "Non-Coffee", name: "Choco Caramel Cloud", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165107042238/detail/39138bed_elCloud1.webp" },
-
-                        // --- FOREveryone 1L ---
             { id: "702", category: "FOREveryone 1L", name: "Kopi Dari Tani 1L", originalPrice: 84000, promoPrice: 52000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20241122031331014809/detail/f2833b52_TaniRTD1.webp" },
             { id: "703", category: "FOREveryone 1L", name: "Bumi Latte 1L", originalPrice: 84000, promoPrice: 52000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20241122031333017544/detail/5abad829_miLatteRTD.webp" },
             { id: "704", category: "FOREveryone 1L", name: "Coco Peach Fusion 1L", originalPrice: 90000, promoPrice: 58000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250131174806025152/detail/46b92041_coPeachRTD.webp" },
@@ -279,9 +292,6 @@
             { id: "713", category: "FOREveryone 1L", name: "Nutty Oat Latte 1L", originalPrice: 124000, promoPrice: 92000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165100870720/detail/06cd9e7c_atLatteRTD.webp" },
             { id: "714", category: "FOREveryone 1L", name: "Almond Choco 1L", originalPrice: 124000, promoPrice: 92000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165101265774/detail/edcdb206_ndChocoRTD.webp" },
             { id: "715", category: "FOREveryone 1L", name: "Butterscotch Sea Salt Latte 1L", originalPrice: 129000, promoPrice: 97000, brand: "Fore Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20240429165059172763/detail/6644e87e_BSLRTD.webp" },
-
-            
-            // --- MAKANAN ---
             { id: "245", category: "Makanan", name: "Butter Croissant", originalPrice: 24000, promoPrice: 15000, brand: "Fore Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/64f24f5e-24fa-44bb-a3cf-feca43d3bc19_Butter%20Croissant%20_-80.jpg?auto=format" },
             { id: "246", category: "Makanan", name: "Roll Cake Cheese Pandan", originalPrice: 27000, promoPrice: 16500, brand: "Fore Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/cf52926e-92c8-48e8-a5f9-c9d7bc2ef677_Pandan%20Roll%20Cake%20Thumb.jpg?auto=format" },
             { id: "247", category: "Makanan", name: "Roll Cake Peanut Butter & Jam", originalPrice: 27000, promoPrice: 16500, brand: "Fore Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/17d27b52-505d-45de-b096-587fe6df696e_PBnJ%20Roll%20Cake%20Thumb.jpg?auto=format" },
@@ -305,54 +315,38 @@
             { id: "265", category: "Makanan", name: "Pain au Chocolat", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/03c85408-dc7f-481b-bfa3-181df957e6f4_painauchocolat2403.jpg?auto=format" },
             { id: "266", category: "Makanan", name: "Kouign-Amann", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/3426948f-1312-4a41-96c4-77f5fd74aa10_Kouign%20amann-.jpg?auto=format" },
 
-             // ==========================================
-            // 5. PULSA & TOKEN (SUDAH DIPISAH KATEGORINYA)
-            // ==========================================
-            
-            // PULSA
+            // 5. PULSA & TOKEN
             { id: "501", category: "Pulsa All Operator", name: "Pulsa All Operator 20rb", originalPrice: 22500, promoPrice: 19000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/keBDkUI.png" },
             { id: "502", category: "Pulsa All Operator", name: "Pulsa All Operator 50rb", originalPrice: 52500, promoPrice: 47500, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/3Sbnu0N.png" },
             { id: "503", category: "Pulsa All Operator", name: "Pulsa All Operator 100rb", originalPrice: 102500, promoPrice: 95000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/nIMCy4A.png" },
             { id: "504", category: "Pulsa All Operator", name: "Pulsa All Operator 150rb", originalPrice: 152500, promoPrice: 142500, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/FyfdMq7.png" },
             { id: "505", category: "Pulsa All Operator", name: "Pulsa All Operator 200rb", originalPrice: 202500, promoPrice: 190000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/Wd3Nl9d.png" },
-
-            // TOKEN LISTRIK
             { id: "506", category: "Token Listrik", name: "Token Listrik 20rb", originalPrice: 22500, promoPrice: 19000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/4lSre7l.png" },
             { id: "507", category: "Token Listrik", name: "Token Listrik 50rb", originalPrice: 52500, promoPrice: 47500, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/AgOD6Jp.png" },
             { id: "508", category: "Token Listrik", name: "Token Listrik 100rb", originalPrice: 102500, promoPrice: 95000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/XjvTGqn.png" },
             { id: "509", category: "Token Listrik", name: "Token Listrik 200rb", originalPrice: 202500, promoPrice: 190000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/OU0mmcq.png" },
-            
         ];
 
-        // --- STATE MANAGEMENT ---
+        // --- STATE ---
         let state = {
             selectedBrand: null,
             cart: [],
             showCart: false,
+            showTutorial: false,
             storeLocation: '',
             activeProduct: null, 
             tempNote: '',
-            isLarge: false
+            isLarge: false,
+            orderType: 'now',
+            scheduledTime: ''
         };
 
-        // Helper Functions
-        function formatPrice(price) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0,
-            }).format(price);
-        }
+        // --- HELPERS ---
+        const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+        const getTotalItems = () => state.cart.reduce((sum, item) => sum + item.quantity, 0);
+        const getTotalPrice = () => state.cart.reduce((sum, item) => sum + item.promoPrice * item.quantity, 0);
 
-        function getTotalItems() {
-            return state.cart.reduce((sum, item) => sum + item.quantity, 0);
-        }
-
-        function getTotalPrice() {
-            return state.cart.reduce((sum, item) => sum + item.promoPrice * item.quantity, 0);
-        }
-
-        // --- LOGIKA UTAMA ---
+        // --- LOGIC ---
         function openProductPopup(productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
@@ -373,9 +367,7 @@
             render();
         }
 
-        function updateTempNote(value) {
-            state.tempNote = value;
-        }
+        function updateTempNote(value) { state.tempNote = value; }
         
         function toggleLarge(checked) {
             state.isLarge = checked;
@@ -384,13 +376,13 @@
 
         function confirmAddToCart() {
             if (!state.activeProduct) return;
-
+            
             if (state.cart.length > 0) {
                 const currentBrand = state.cart[0].brand; 
                 const newBrand = state.activeProduct.brand; 
                 
                 if (currentBrand !== newBrand) {
-                    alert(`Maaf Kak, keranjangmu saat ini berisi produk ${currentBrand}.\n\nMohon checkout dulu atau hapus keranjang jika ingin memesan menu ${newBrand}.`);
+                    showToast(`Keranjang berisi ${currentBrand}.<br>Checkout atau Hapus dulu ya!`, 'error');
                     return; 
                 }
             }
@@ -400,15 +392,8 @@
 
             if (state.isLarge) {
                 finalPrice += 3500;
-                
                 const largeTag = "✅ UPGRADE LARGE (+3.5k)";
-
-                if (finalNote.trim() === '') {
-                    finalNote = largeTag;
-                } else {
-                    // Jika ada note manual, kita pisahkan dengan koma atau garis
-                    finalNote = `${largeTag}, ${finalNote}`;
-                }
+                finalNote = finalNote.trim() === '' ? largeTag : `${largeTag}, ${finalNote}`;
             }
 
             const existingItem = state.cart.find(item => item.id === state.activeProduct.id && item.note === finalNote && item.promoPrice === finalPrice);
@@ -426,6 +411,7 @@
 
             state.activeProduct = null;
             state.isLarge = false;
+            showToast('Berhasil masuk keranjang! 🛒');
             render();
         }
 
@@ -435,7 +421,7 @@
                 const newBrand = product.brand; 
                 
                 if (currentBrand !== newBrand) {
-                    alert(`Maaf Kak, keranjangmu saat ini berisi produk ${currentBrand}.\n\nMohon checkout dulu atau hapus keranjang jika ingin memesan menu ${newBrand}.`);
+                    showToast(`Keranjang berisi ${currentBrand}.<br>Checkout atau Hapus dulu ya!`, 'error');
                     return; 
                 }
             }
@@ -451,6 +437,7 @@
                     note: ''
                 });
             }
+            showToast('Berhasil masuk keranjang! 🛒');
             render();
         }
 
@@ -462,208 +449,232 @@
         function handleWhatsAppOrder() {
             if (!state.storeLocation.trim()) {
                 const isDigital = state.cart.length > 0 && state.cart[0].brand === 'Pulsa & Token Listrik';
-                alert(isDigital ? 'Mohon isi Nomor HP / ID Pelanggan!' : 'Mohon isi lokasi cabang pengambilan');
+                showToast(isDigital ? 'Isi Nomor HP/ID Pelanggan dulu!' : 'Isi lokasi pengambilan dulu!', 'error');
                 return;
             }
 
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
             const isDigital = orderBrand === 'Pulsa & Token Listrik';
 
-            let message = `*Orderan: ${orderBrand}*\n\n`; 
+            if (!isDigital && state.orderType === 'scheduled' && !state.scheduledTime) {
+                showToast('Jam pengambilan belum diisi!', 'error');
+                return;
+            }
+
+            let message = `*Orderan Baru: ${orderBrand}*\n`;
+            message += `--------------------------------\n`;
             
             state.cart.forEach(item => {
                 message += `• ${item.name} (${item.quantity}x)\n`;
                 if (item.note && item.note.trim() !== '') {
-                    message += `   📝 Note: ${item.note}\n`;
+                    message += `  Note: ${item.note}\n`;
                 }
-                message += `   Harga: ${formatPrice(item.promoPrice * item.quantity)}\n\n`;
+                message += `   Harga: ${formatPrice(item.promoPrice * item.quantity)}\n`;
             });
 
-            message += `*Total: ${formatPrice(getTotalPrice())}*\n`;
+            message += `\n*Total: ${formatPrice(getTotalPrice())}*\n`;
             message += `--------------------------------\n`;
             
             if (isDigital) {
-                message += `*Nomor Tujuan / ID Pelanggan:* ${state.storeLocation}\n\n`;
+                message += `*Nomor/ID:* ${state.storeLocation}`;
             } else {
-                message += `*Lokasi Ambil:* ${state.storeLocation}\n\n`;
+                message += `*Lokasi Ambil:* ${state.storeLocation}\n`;
+                const timeText = state.orderType === 'now' ? 'SEKARANG⚡' : `JAM ${state.scheduledTime}`;
+                message += `*Waktu Ambil:* ${timeText}`;
             }
-            
-            message += '*Segera Di proses ya.*';
 
             const whatsappUrl = `https://wa.me/6287836345807?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         }
 
-        // --- RENDER FUNCTIONS (TAMPILAN) ---
+        function showToast(message, type = 'success') {
+            const existingToast = document.getElementById('active-toast');
+            if (existingToast) existingToast.remove();
+
+            const toastContainer = document.createElement('div');
+            toastContainer.id = 'active-toast';
+            toastContainer.className = 'fixed inset-0 z-[100] flex items-center justify-center px-6 pointer-events-none'; 
+
+            const toastContent = document.createElement('div');
+            const bg = type === 'error' ? 'bg-red-600' : 'bg-zinc-900';
+            
+            toastContent.className = `${bg} text-white p-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-3 text-center w-full max-w-[320px] animate-fade-up pointer-events-auto border-2 border-white/10`;
+
+            const icon = type === 'error' 
+                ? `<div class="bg-white/10 rounded-full p-3 mb-1"><svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg></div>` 
+                : `<div class="bg-green-500 rounded-full p-3 mb-1"><svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg></div>`;
+
+            toastContent.innerHTML = `${icon} <span class="font-bold text-sm leading-relaxed">${message}</span>`;
+            
+            toastContainer.appendChild(toastContent);
+            document.body.appendChild(toastContainer);
+            
+            setTimeout(() => {
+                toastContent.style.transition = 'all 0.3s ease';
+                toastContent.style.opacity = '0';
+                toastContent.style.transform = 'scale(0.8)';
+                setTimeout(() => toastContainer.remove(), 300);
+            }, 2500);
+        }
+
+        // --- RENDER ---
         function render() {
             const app = document.getElementById('app');
             app.innerHTML = `
-                <div class="min-h-screen flex flex-col">
-                    ${renderHeader()}
-                    
-                    <main class="flex-1">
-                        ${!state.selectedBrand ? renderBrandSelection() : renderMenu()}
-                    </main>
-
-                    ${renderFooter()} </div>
-
+                ${renderHeader()}
+                <main class="min-h-screen">
+                    ${!state.selectedBrand ? renderBrandSelection() : renderMenu()}
+                </main>
                 ${getTotalItems() > 0 ? renderFloatingCart() : ''}
                 ${state.showCart ? renderCartModal() : ''}
-                ${state.activeProduct ? renderNotePopup() : ''} 
+                ${state.activeProduct ? renderNotePopup() : ''}
+                
+                ${state.showTutorial ? renderTutorialModal() : ''} 
             `;
         }
 
         function renderHeader() {
             return `
-                <header class="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-border">
-                    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+                <header class="fixed top-0 w-full z-40 glass border-b border-border/40 transition-all duration-300">
+                    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
                         ${state.selectedBrand ? `
-                            <button onclick="selectBrand(null)" class="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors">
-                                ← Kembali
+                            <button onclick="selectBrand(null)" class="flex items-center gap-2 text-sm font-bold text-primary hover:text-primary-light transition-colors group">
+                                <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Kembali
                             </button>
-                        ` : '<div class="w-[80px]"></div>'}
-                        <h1 class="text-2xl font-serif tracking-wide text-accent mx-auto font-bold">YASIF STORE</h1>
-                        <div class="w-[80px]"></div>
+                        ` : '<div class="w-8"></div>'}
+                        
+                        <h1 class="text-xl font-heading font-bold text-primary tracking-tight">YASIF STORE<span class="text-accent">.</span></h1>
+                        
+                        <div class="w-8"></div>
                     </div>
                 </header>
+                <div class="h-16"></div>
             `;
         }
 
         function renderBrandSelection() {
             return `
-                <div class="relative min-h-[80vh] flex flex-col justify-center overflow-hidden">
-                    <div class="absolute -top-20 -right-20 w-72 h-72 bg-accent/20 rounded-full blur-[80px] pointer-events-none"></div>
-                    <div class="absolute -bottom-20 -left-20 w-72 h-72 bg-primary/15 rounded-full blur-[80px] pointer-events-none"></div>
-                    
-                    <div class="container mx-auto px-4 py-12 max-w-4xl relative z-10">
-                        <div class="text-center mb-10">
-                            <span class="inline-block py-1 px-3 rounded-full bg-accent/10 text-accent text-xs font-bold tracking-wider mb-4 border border-accent/20">MENU PROMO</span>
-                            <h2 class="text-4xl md:text-5xl font-serif text-foreground mb-3">Cek Promo Terbaru<br>Di bawah.</h2>
-                            
-                            <p class="text-muted text-base md:text-lg mt-3 max-w-lg mx-auto leading-relaxed">
-                                Harga Sudah Termasuk Fee/Biaya Admin!
-                            </p>
-                        </div>
+                <div class="container mx-auto px-4 py-8 max-w-lg animate-fade-up">
+                    <div class="text-center mb-10 mt-4">
+                        <span class="inline-block py-1.5 px-4 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase mb-4 border border-primary/20">Spesial Promo</span>
+                        <h2 class="text-4xl font-heading font-bold text-foreground mb-3 leading-tight">Mau Ngopi Apa<br>Hari Ini?</h2>
+                        <p class="text-subtle text-sm">Pilih brand favoritmu, harga sudah termasuk admin.</p>
+                    </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            
-                            <button onclick="selectBrand('Kopi Kenangan')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-accent transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
-                                <div>
-                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-accent transition-colors">Kopi Kenangan</h3>
-                                    </div>
-                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-accent group-hover:scale-110 transition-transform">❤️</div>
-                            </button>
-
-                            <button onclick="selectBrand('Tomoro Coffee')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-primary transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
-                                <div>
-                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-primary transition-colors">Tomoro Coffee</h3>
-                                    </div>
-                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">☀️</div>
-                            </button>
-
-                            <button onclick="selectBrand('Fore Coffee')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-green-600 transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
-                                <div>
-                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-green-600 transition-colors">Fore Coffee</h3>
-                                    </div>
-                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">🌿</div>
-                            </button>
-
-                            <button onclick="window.open('https://chat.whatsapp.com/Bk73XNM1R3D5p8ZdMlna1W', '_blank')" class="group relative overflow-hidden rounded-xl bg-white border border-border p-6 hover:border-wa transition-all duration-300 shadow-sm hover:shadow-md text-left flex items-center justify-between">
-                                <div>
-                                    <h3 class="text-xl font-serif mb-1 text-foreground group-hover:text-wa transition-colors">Gabung Grup WhatsApp</h3>
-                                    <p class="text-xs text-muted">Yasif Store</p>
+                    <div class="grid grid-cols-1 gap-4">
+                        ${renderBrandCard('Kopi Kenangan', '❤️', 'bg-gradient-to-br from-red-50 to-white border-red-100', 'text-red-500')}
+                        ${renderBrandCard('Tomoro Coffee', '☀️', 'bg-gradient-to-br from-orange-50 to-white border-orange-100', 'text-orange-500')}
+                        ${renderBrandCard('Fore Coffee', '🌿', 'bg-gradient-to-br from-green-50 to-white border-green-100', 'text-green-600')}
+                        
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <a href="https://chat.whatsapp.com/Bk73XNM1R3D5p8ZdMlna1W" target="_blank" class="group relative p-4 rounded-2xl border bg-white border-green-200 shadow-sm card-hover flex flex-col items-center justify-center text-center gap-2">
+                                <div class="w-10 h-10 rounded-full bg-[#25D366]/10 flex items-center justify-center text-xl text-[#25D366]">
+                                    💬
                                 </div>
-                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-wa group-hover:scale-110 transition-transform">💬</div>
-                            </button>
+                                <div>
+                                    <h3 class="font-bold text-sm text-foreground">Grup WA</h3>
+                                    <p class="text-[10px] text-subtle">Info Promo</p>
+                                </div>
+                            </a>
 
+                            <button onclick="state.showTutorial=true;render()" class="group relative p-4 rounded-2xl border bg-white border-blue-200 shadow-sm card-hover flex flex-col items-center justify-center text-center gap-2">
+                                <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-xl text-blue-500">
+                                    ❓
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm text-foreground">Cara Order</h3>
+                                    <p class="text-[10px] text-subtle">Panduan</p>
+                                </div>
+                            </button>
                         </div>
                     </div>
+
+                    <footer class="mt-12 text-center text-xs text-subtle font-medium">
+                        <p class="opacity-50">Designed by Yasif Store 😼</p>
+                    </footer>
                 </div>
             `;
         }
 
-        // --- FUNGSI RENDER MENU TERBARU (DENGAN KATEGORI) ---
+        function renderBrandCard(name, icon, bgClass, iconClass) {
+            return `
+                <button onclick="selectBrand('${name}')" class="group relative w-full p-5 rounded-2xl border ${bgClass} shadow-sm card-hover flex items-center justify-between text-left overflow-hidden">
+                    <div class="relative z-10 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-2xl border border-gray-100 group-hover:scale-110 transition-transform duration-300">
+                            ${icon}
+                        </div>
+                        <div>
+                            <h3 class="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors">${name}</h3>
+                            <p class="text-xs text-subtle">Lihat Menu Promo</p>
+                        </div>
+                    </div>
+                    <div class="text-subtle group-hover:translate-x-1 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                </button>
+            `;
+        }
+
         function renderMenu() {
             const brandProducts = products.filter(p => p.brand === state.selectedBrand);
-            
-            // Mengambil Kategori Unik (Contoh: "Coffee", "Non-Coffee", "Makanan")
             const categories = [...new Set(brandProducts.map(p => p.category))];
-
-            const brandNotes = {
-                "Kopi Kenangan": `
-                    <ul class="list-decimal pl-5 space-y-1 text-left">
-                        <li>Harga setiap daerah dan store BERBEDA-BEDA (Bisa lebih murah/mahal).</li>
-                        <li>Pesanan Pick up, Jadi Tinggal Ambil Di Store Yang Sudah Di Pilih (Tidak Ada Pembayaran Lagi).</li>
-                        <li>Bisa Request Sugar/Ice/Up Size (harga berbeda) Di Note Produk.</li>
-                    </ul>
-                `,
-                "Tomoro Coffee": `
-                    <ul class="list-decimal pl-5 space-y-1 text-left">
-                        <li>Hanya Ukuran Small Untuk Semua Menu Tomoro Coffee.</li>
-                        <li>Pesanan Pick up, Jadi Tinggal Ambil Di Store Yang Sudah Di Pilih (Tidak Ada Pembayaran Lagi).</li>
-                        <li>Bisa Request Sugar/Ice (Minuman Tertentu).</li>
-                    </ul>
-                `,
-                "Fore Coffee": `
-                    <ul class="list-decimal pl-5 space-y-1 text-left">
-                        <li>Harga setiap daerah dan store BERBEDA-BEDA (Bisa lebih murah/mahal).</li>
-                        <li>Pesanan Pick up, Jadi Tinggal Ambil Di Store Yang Sudah Di Pilih (Tidak Ada Pembayaran Lagi).</li>
-                        <li>Sudah ada opsi <b>Upgrade Large (+3.5k)</b> saat klik menu.</li>
-                    </ul>
-                `,
-                "Pulsa & Token Listrik": `
-                    <ul class="list-decimal pl-5 space-y-1 text-left">
-                        <li>Pastikan Nomor HP / Nomor Meteran Benar.</li>
-                        <li>Kesalahan nomor bukan tanggung jawab Admin.</li>
-                        <li>Konfirmasi pesanan melalui WhatsApp.</li>
-                    </ul>
-                `
+            
+            const notes = {
+                "Kopi Kenangan": "💡 <b>Info:</b> Mau ukuran Large? Tulis request di <b>Catatan Produk</b> ya. Harga yang tertera sudah <b>FINAL</b> (Termasuk Diskon & Biaya Admin).",
+                "Tomoro Coffee": "✅ <b>Info:</b> Harga yang tertera sudah <b>FINAL</b> (Termasuk Diskon & Biaya Admin). Tinggal ambil pesanan di store.",
+                "Fore Coffee": "🌿 <b>Info:</b> Harga yang tertera sudah <b>FINAL</b> (Termasuk Diskon & Biaya Admin). Opsi Upgrade Large tersedia saat klik menu.",
+                "Pulsa & Token Listrik": "⚡ <b>Penting:</b> Pastikan Nomor HP / ID PLN sudah benar. Kesalahan nomor bukan tanggung jawab Admin."
             };
 
-            const currentNote = brandNotes[state.selectedBrand] || "";
-
             return `
-                <div class="container mx-auto px-4 py-6 pb-32 max-w-4xl">
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-serif mb-2">${state.selectedBrand}</h2>
-                        
-                        <div class="text-red-600 font-bold text-xs md:text-sm bg-red-50 border border-red-200 p-3 rounded-lg">
-                            ${currentNote}
+                <div class="pb-32 animate-fade-up">
+                    <div class="container mx-auto px-4 py-6">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h2 class="text-2xl font-heading font-bold text-primary">${state.selectedBrand}</h2>
+                        </div>
+                        <div class="bg-white border-l-4 border-accent shadow-sm rounded-r-lg p-4 flex gap-3 items-start">
+                            <div class="text-sm text-foreground/80 leading-relaxed">
+                                ${notes[state.selectedBrand] || "Nikmati promo spesial hari ini!"}
+                            </div>
                         </div>
                     </div>
 
-                    <div class="space-y-8">
-                        ${categories.map(cat => {
-                            const productsByCategory = brandProducts.filter(p => p.category === cat);
-                            
+                    <div class="sticky top-16 z-30 bg-background/95 backdrop-blur border-b border-border/50 py-3 overflow-x-auto hide-scroll">
+                        <div class="flex gap-2 px-4 min-w-max">
+                            ${categories.map((cat, index) => `
+                                <a href="#cat-${index}" class="px-4 py-2 rounded-full text-xs font-bold transition-all bg-white border border-border text-subtle hover:text-primary hover:border-primary focus:bg-primary focus:text-white focus:border-primary shadow-sm">
+                                    ${cat}
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="container mx-auto px-4 py-6 space-y-10">
+                        ${categories.map((cat, index) => {
+                            const catProducts = brandProducts.filter(p => p.category === cat);
                             return `
-                                <div>
-                                    <div class="flex items-center gap-4 mb-4">
-                                        <h3 class="text-lg font-bold text-foreground bg-white/80 backdrop-blur px-3 py-1 rounded border border-border/50 inline-block shadow-sm">
-                                            ${cat}
-                                        </h3>
-                                        <div class="h-[1px] bg-border flex-1"></div>
-                                    </div>
-
-                                    <div class="grid grid-cols-2 gap-3 md:grid-cols-3">
-                                        ${productsByCategory.map(product => `
-                                            <div class="bg-card border border-border overflow-hidden rounded-lg hover:border-accent/50 transition-colors flex flex-col shadow-sm">
-                                                <div class="w-full aspect-square bg-gray-100 relative">
-                                                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x400/png?text=No+Image'"/>
+                                <div id="cat-${index}" class="scroll-mt-32">
+                                    <h3 class="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                                        <span class="w-1.5 h-6 bg-accent rounded-full"></span>
+                                        ${cat}
+                                    </h3>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                        ${catProducts.map(product => `
+                                            <div class="bg-white rounded-xl border border-border shadow-sm overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow duration-300 group cursor-pointer" onclick='openProductPopup("${product.id}")'>
+                                                <div class="aspect-square relative overflow-hidden bg-gray-100">
+                                                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" onerror="this.src='https://placehold.co/400x400/png?text=No+Image'"/>
+                                                    <div class="absolute bottom-2 right-2 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-sm text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                                    </div>
                                                 </div>
-
                                                 <div class="p-3 flex flex-col flex-1">
-                                                    <h3 class="font-semibold text-sm leading-tight mb-2 line-clamp-2 h-[40px] overflow-hidden">${product.name}</h3>
-                                                    
+                                                    <h4 class="font-medium text-sm text-foreground leading-tight mb-2 line-clamp-2">${product.name}</h4>
                                                     <div class="mt-auto">
-                                                        <div class="flex flex-col mb-3">
-                                                            <span class="text-[11px] text-muted line-through">${formatPrice(product.originalPrice)}</span>
-                                                            <span class="text-base font-bold text-promo">${formatPrice(product.promoPrice)}</span>
+                                                        <div class="flex flex-col">
+                                                            <span class="text-[10px] text-subtle line-through decoration-red-400">${formatPrice(product.originalPrice)}</span>
+                                                            <span class="text-base font-bold text-primary">${formatPrice(product.promoPrice)}</span>
                                                         </div>
-
-                                                        <button onclick='openProductPopup("${product.id}")' class="w-full bg-primary text-primary-foreground py-2 rounded text-[10px] sm:text-xs font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
-                                                            Tambahkan Keranjang
-                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -679,64 +690,56 @@
 
         function renderNotePopup() {
             const p = state.activeProduct;
-            
-            const idNum = parseInt(p.id);
             const isFore = p.brand === 'Fore Coffee';
+            const idNum = parseInt(p.id);
             const isFood = idNum >= 245 && idNum <= 266;
-            
-            // LOGIKA BARU: Cek kategori 1L
             const is1L = p.category === 'FOREveryone 1L';
-            
-            // Syarat muncul opsi Large: Brand Fore, Bukan Makanan, DAN Bukan 1L
             const showLargeOption = isFore && !isFood && !is1L;
-            
-            let notePlaceholder = "Contoh: Less Ice, Gula sedikit..."; 
-
-            if (p.brand === 'Kopi Kenangan') {
-                notePlaceholder = "Contoh: Request Up Size Large, Less Ice, Gula sedikit...";
-            }
 
             return `
-                <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-zoom">
-                    <div class="bg-card w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden border border-border">
-                        <div class="p-4 border-b border-border bg-gray-50 flex justify-between items-center">
-                            <h3 class="font-bold text-foreground truncate pr-4">${p.name}</h3>
-                            <button onclick="closeProductPopup()" class="text-muted hover:text-red-500 font-bold text-xl">×</button>
-                        </div>
+                <div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeProductPopup()"></div>
+                    <div class="bg-surface w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl z-10 overflow-hidden flex flex-col max-h-[90vh] animate-fade-up">
                         
-                        <div class="p-6">
-                            <div class="mb-4">
-                                <span class="text-xs font-bold text-promo bg-red-50 px-2 py-1 rounded border border-red-100">Harga Promo: ${formatPrice(p.promoPrice)}</span>
+                        <div class="h-48 relative bg-gray-100">
+                            <img src="${p.image}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400?text=No+Image'">
+                            <button onclick="closeProductPopup()" class="absolute top-4 right-4 w-8 h-8 bg-black/30 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/50 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+
+                        <div class="p-6 flex-1 overflow-y-auto">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-xl font-heading font-bold text-foreground w-3/4">${p.name}</h3>
+                                <div class="text-right">
+                                    <span class="block text-xs text-subtle line-through">${formatPrice(p.originalPrice)}</span>
+                                    <span class="block text-lg font-bold text-primary">${formatPrice(p.promoPrice)}</span>
+                                </div>
                             </div>
 
                             ${showLargeOption ? `
-                                <div class="mb-4 bg-green-50 p-3 rounded-lg border border-green-100">
-                                    <label class="flex items-center gap-3 cursor-pointer">
-                                        <input type="checkbox" onchange="toggleLarge(this.checked)" ${state.isLarge ? 'checked' : ''} class="custom-checkbox">
-                                        <div>
-                                            <span class="text-sm font-bold text-foreground block">Upgrade Large</span>
-                                            <span class="text-xs text-muted">+ Rp 3.500</span>
-                                        </div>
-                                    </label>
-                                </div>
+                                <label class="flex items-center gap-4 p-4 rounded-xl border border-primary/20 bg-primary/5 cursor-pointer hover:bg-primary/10 transition mb-6">
+                                    <input type="checkbox" onchange="toggleLarge(this.checked)" ${state.isLarge ? 'checked' : ''} class="custom-checkbox text-primary">
+                                    <div class="flex-1">
+                                        <span class="font-bold text-sm text-foreground">Upgrade Large Size</span>
+                                        <span class="block text-xs text-subtle">Lebih puas + Rp 3.500</span>
+                                    </div>
+                                </label>
                             ` : ''}
 
-                            <label class="block text-sm font-bold text-foreground mb-2">
-                                Catatan Opsional (Kosongkan jika Normal)
-                            </label>
-                            <textarea 
-                                oninput="updateTempNote(this.value)"
-                                placeholder="${notePlaceholder}"
-                                class="w-full h-24 p-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent text-sm resize-none"
-                            ></textarea>
-                            
-                            <p class="text-[10px] text-red-500 mt-2 italic">*Biaya tambahan lain (jika ada) akan diinfokan Admin via Chat.</p>
+                            <div class="mb-2">
+                                <label class="text-sm font-bold text-foreground mb-2 block">Catatan Pesanan (Opsional)</label>
+                                <textarea 
+                                    oninput="updateTempNote(this.value)"
+                                    placeholder="Contoh: Less Sugar, Less Ice..."
+                                    class="w-full p-4 bg-background border-none rounded-xl focus:ring-2 focus:ring-primary/20 text-sm resize-none h-24 placeholder:text-subtle/50"
+                                ></textarea>
+                            </div>
                         </div>
 
-                        <div class="p-4 bg-gray-50 border-t border-border flex gap-3">
-                            <button onclick="closeProductPopup()" class="flex-1 py-3 text-sm font-bold text-muted bg-gray-200 rounded-xl hover:bg-gray-300 transition">Batal</button>
-                            <button onclick="confirmAddToCart()" class="flex-1 py-3 text-sm font-bold text-white bg-primary rounded-xl hover:opacity-90 transition shadow-lg shadow-green-200">
-                                Simpan (${formatPrice(state.isLarge ? p.promoPrice + 3500 : p.promoPrice)})
+                        <div class="p-4 border-t border-border bg-white pb-8 sm:pb-4">
+                            <button onclick="confirmAddToCart()" class="w-full py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary-light transition-all shadow-lg shadow-primary/30 active:scale-95 flex items-center justify-center gap-2">
+                                <span>Tambah - ${formatPrice(state.isLarge ? p.promoPrice + 3500 : p.promoPrice)}</span>
                             </button>
                         </div>
                     </div>
@@ -746,80 +749,127 @@
 
         function renderFloatingCart() {
             return `
-                <button onclick="state.showCart=true;render()" class="fixed bottom-6 right-6 bg-accent text-white rounded-full px-6 py-4 shadow-xl hover:scale-105 transition-transform z-40 animate-bounce flex items-center gap-3 border-2 border-white/20">
-                    <div class="relative">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <div class="fixed bottom-6 w-full px-4 z-50 flex justify-center animate-fade-up">
+                    <button onclick="state.showCart=true;render()" class="bg-primary text-white w-full max-w-md rounded-full p-2 pr-6 shadow-2xl flex items-center justify-between border border-white/20 hover:scale-[1.02] transition-transform cursor-pointer">
                         
-                        <span class="absolute -top-2 -right-2 bg-promo text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border border-white">
+                        <div class="bg-white text-primary font-bold w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm">
                             ${getTotalItems()}
-                        </span>
-                    </div>
-                    
-                    <div class="flex flex-col items-start">
-                        <span class="text-[10px] opacity-90 leading-none">Total Items: ${getTotalItems()}</span>
-                        <span class="font-bold text-sm leading-tight">Lihat Pesanan</span>
-                    </div>
-                </button>
+                        </div>
+
+                        <div class="flex flex-col items-start flex-1 ml-4">
+                            <span class="text-[10px] uppercase tracking-wider opacity-80 font-medium">Total: ${formatPrice(getTotalPrice())}</span>
+                            <span class="text-sm font-bold">Lihat Keranjang & Checkout</span>
+                        </div>
+
+                        <div class="text-white/80">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                    </button>
+                </div>
             `;
         }
 
         function renderCartModal() {
             const isDigital = state.cart.length > 0 && state.cart[0].brand === 'Pulsa & Token Listrik';
-            
-            const inputLabel = isDigital ? 'Nomor HP / ID Pelanggan (Wajib)' : 'Lokasi Cabang Pengambilan (Wajib)';
-            const inputPlaceholder = isDigital ? 'Contoh: 0812xxxx (Pulsa) atau 1412xxxx (PLN)' : 'Contoh: Cabang Grand Indonesia...';
+            const inputLabel = isDigital ? 'Nomor HP / ID Pelanggan' : 'Lokasi Cabang Pengambilan';
+            const inputIcon = isDigital ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>' : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>';
 
             return `
-                <div class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end md:items-center md:justify-center">
-                    <div class="bg-card w-full md:max-w-2xl md:rounded-2xl border-t md:border border-border overflow-hidden max-h-[90vh] flex flex-col shadow-2xl">
-                        <div class="p-6 border-b border-border flex items-center justify-between bg-white">
-                            <h3 class="text-2xl font-serif text-accent font-bold">Keranjang Belanja</h3>
-                            <button onclick="state.showCart=false;render()" class="text-muted hover:text-foreground">Tutup</button>
+                <div class="fixed inset-0 z-50 flex items-end md:items-center justify-center">
+                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="state.showCart=false;render()"></div>
+                    <div class="bg-background w-full md:max-w-xl h-[90vh] md:h-auto md:max-h-[85vh] md:rounded-3xl rounded-t-3xl shadow-2xl z-10 flex flex-col animate-fade-up">
+                        
+                        <div class="p-6 border-b border-border bg-white flex justify-between items-center rounded-t-3xl">
+                            <h2 class="text-2xl font-heading font-bold text-primary">Keranjang</h2>
+                            <button onclick="state.showCart=false;render()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-subtle hover:bg-red-100 hover:text-red-500 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
                         </div>
 
-                        <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                        <div class="flex-1 overflow-y-auto p-4 space-y-4">
                             ${state.cart.length === 0 ? `
-                                <p class="text-muted text-center py-8">Keranjang Anda masih kosong</p>
+                                <div class="flex flex-col items-center justify-center h-64 text-center">
+                                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-300">
+                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                    </div>
+                                    <p class="text-subtle font-medium">Keranjang masih kosong nih.</p>
+                                </div>
                             ` : `
-                                <div class="space-y-4">
+                                <div class="space-y-3">
                                     ${state.cart.map(item => `
-                                        <div class="flex gap-4 p-4 bg-white rounded-xl border border-border shadow-sm relative">
-                                            <div class="flex-1">
-                                                <h4 class="font-semibold text-foreground mb-1">${item.name}</h4>
-                                                ${item.note ? `<div class="text-xs text-muted bg-yellow-50 p-1.5 rounded border border-yellow-100 inline-block mb-1">📝 ${item.note}</div>` : ''}
-                                                <p class="text-sm text-primary font-bold">${formatPrice(item.promoPrice)} x ${item.quantity}</p>
+                                        <div class="flex gap-4 p-4 bg-white rounded-2xl border border-border/50 shadow-sm relative group">
+                                            <div class="w-16 h-16 rounded-xl bg-gray-100 overflow-hidden shrink-0">
+                                                <img src="${item.image}" class="w-full h-full object-cover">
                                             </div>
-                                            <button onclick="removeFromCart('${item.id}', '${item.note}')" class="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors">
-                                                ✕
+                                            <div class="flex-1 pr-8">
+                                                <h4 class="font-bold text-foreground text-sm line-clamp-1">${item.name}</h4>
+                                                ${item.note ? `<div class="text-[10px] text-accent mt-1 bg-accent/5 px-2 py-0.5 rounded w-fit">${item.note}</div>` : ''}
+                                                <div class="flex justify-between items-center mt-2">
+                                                    <p class="text-sm font-bold text-primary">${formatPrice(item.promoPrice)}</p>
+                                                    <span class="text-xs text-subtle font-medium bg-gray-100 px-2 py-1 rounded">x${item.quantity}</span>
+                                                </div>
+                                            </div>
+                                            <button onclick="removeFromCart('${item.id}', '${item.note}')" class="absolute top-4 right-4 text-gray-300 hover:text-red-500 p-1">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </div>
                                     `).join('')}
                                 </div>
+                                
+                                ${!isDigital ? `
+                                    <div class="bg-white p-4 rounded-xl border border-border mt-6">
+                                        <label class="block text-xs font-bold text-primary uppercase tracking-wide mb-3 flex items-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Waktu Pengambilan
+                                        </label>
+                                        
+                                        <div class="flex gap-2 mb-3">
+                                            <button onclick="state.orderType='now'; render()" class="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all border ${state.orderType === 'now' ? 'bg-primary text-white border-primary shadow-md' : 'bg-gray-50 text-subtle border-border hover:bg-gray-100'}">
+                                                Sekarang
+                                            </button>
+                                            <button onclick="state.orderType='scheduled'; render()" class="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all border ${state.orderType === 'scheduled' ? 'bg-primary text-white border-primary shadow-md' : 'bg-gray-50 text-subtle border-border hover:bg-gray-100'}">
+                                                Jadwalkan
+                                            </button>
+                                        </div>
 
-                                <div class="mt-6">
-                                    <label class="block text-sm font-bold text-foreground mb-2">
-                                        ${inputLabel} <span class="text-promo">*</span>
+                                        ${state.orderType === 'scheduled' ? `
+                                            <div class="animate-fade-up">
+                                                <input 
+                                                    type="time" 
+                                                    value="${state.scheduledTime}"
+                                                    oninput="state.scheduledTime = this.value"
+                                                    class="w-full bg-gray-50 border border-border px-4 py-3 rounded-lg text-sm font-bold focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-foreground"
+                                                />
+                                                <p class="text-[10px] text-accent mt-2 italic">*Masukkan jam berapa pesanan ingin diambil.</p>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                ` : ''}
+
+                                <div class="bg-primary/5 p-4 rounded-xl border border-primary/10 mt-2">
+                                    <label class="block text-xs font-bold text-primary uppercase tracking-wide mb-2 flex items-center gap-2">
+                                        ${inputIcon} ${inputLabel} <span class="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         value="${state.storeLocation}"
                                         oninput="state.storeLocation = this.value"
-                                        placeholder="${inputPlaceholder}"
-                                        class="w-full px-4 py-3 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+                                        placeholder="${isDigital ? 'Contoh: 0812xxxx' : 'Contoh: Cabang Grand Indonesia...'}"
+                                        class="w-full bg-white border border-border px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium"
                                     />
                                 </div>
                             `}
                         </div>
 
                         ${state.cart.length > 0 ? `
-                            <div class="p-6 border-t border-border bg-white">
+                            <div class="p-6 bg-white border-t border-border pb-10 md:pb-6 rounded-b-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
                                 <div class="flex items-center justify-between mb-4">
-                                    <span class="text-lg font-medium text-muted">Total Pembayaran</span>
-                                    <span class="text-2xl font-bold text-accent">${formatPrice(getTotalPrice())}</span>
+                                    <span class="text-subtle font-medium">Total Pembayaran</span>
+                                    <span class="text-2xl font-bold text-primary font-heading">${formatPrice(getTotalPrice())}</span>
                                 </div>
-                                <button onclick="handleWhatsAppOrder()" class="w-full bg-[#25D366] text-white py-4 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-green-100 flex justify-center items-center gap-2">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.846 0 01-1.353-5.033c0-5.42 4.409-9.85 9.85-9.85 2.632 0 5.108 1.025 6.969 2.887 1.861 1.862 2.887 4.337 2.887 6.968.001 5.423-4.41 9.85-9.853 9.85"/></svg>
-                                    Pesan via WhatsApp
+                                <button onclick="handleWhatsAppOrder()" class="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-green-200 transition-all flex items-center justify-center gap-3">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.846 0 01-1.353-5.033c0-5.42 4.409-9.85 9.85-9.85 2.632 0 5.108 1.025 6.969 2.887 1.861 1.862 2.887 4.337 2.887 6.968.001 5.423-4.41 9.85-9.853 9.85"/></svg>
+                                    Checkout WhatsApp
                                 </button>
                             </div>
                         ` : ''}
@@ -828,21 +878,53 @@
             `;
         }
 
-        function renderFooter() {
+        function renderTutorialModal() {
+            const steps = [
+                { icon: "🛍️", title: "Pilih Menu", desc: "Pilih menu favoritmu, masukkan keranjang. Harga sudah final (termasuk admin)." },
+                { icon: "📍", title: "Checkout WA", desc: "Isi lokasi store pengambilan (atau No. HP untuk Pulsa), lalu kirim ke WhatsApp Admin." },
+                { icon: "💳", title: "Pembayaran", desc: "Lakukan pembayaran via Transfer sesuai instruksi Admin di WhatsApp." },
+                { icon: "☕", title: "Ambil Pesanan", desc: "Datang ke store, sebutkan Nama/Tunjukkan Barcode yang dikasih Admin. Selesai!" }
+            ];
+
             return `
-                <footer class="py-10 text-center border-t border-border mt-auto bg-white/50">
-                    <p class="text-[10px] md:text-xs font-serif text-muted tracking-widest uppercase opacity-60 hover:opacity-100 transition-opacity cursor-default">
-                        Di Buat Oleh Admin YASIF STORE 
-                        <span class="text-red-500">😼</span>
-                    </p>
-                    <p class="text-[10px] text-muted mt-1">© ${new Date().getFullYear()} All Rights Reserved</p>
-                </footer>
+                <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="state.showTutorial=false;render()"></div>
+                    <div class="bg-surface w-full max-w-sm rounded-3xl shadow-2xl z-10 overflow-hidden animate-fade-up flex flex-col max-h-[85vh]">
+                        
+                        <div class="p-6 border-b border-border bg-gray-50 flex justify-between items-center">
+                            <h3 class="font-heading font-bold text-lg text-foreground">Cara Pemesanan</h3>
+                            <button onclick="state.showTutorial=false;render()" class="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition">✕</button>
+                        </div>
+
+                        <div class="p-6 overflow-y-auto space-y-6">
+                            ${steps.map((step, idx) => `
+                                <div class="flex gap-4">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-md shrink-0 border-2 border-white ring-2 ring-primary/20">
+                                            ${idx + 1}
+                                        </div>
+                                        ${idx !== steps.length - 1 ? `<div class="w-0.5 h-full bg-gray-200 my-2"></div>` : ''}
+                                    </div>
+                                    <div class="pb-2">
+                                        <h4 class="font-bold text-foreground text-base mb-1 flex items-center gap-2">${step.title} <span class="text-xs font-normal bg-gray-100 px-2 py-0.5 rounded-full">${step.icon}</span></h4>
+                                        <p class="text-sm text-subtle leading-relaxed">${step.desc}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="p-4 bg-gray-50 border-t border-border">
+                            <button onclick="state.showTutorial=false;render()" class="w-full py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+                                Mengerti, Yuk Pesan!
+                            </button>
+                        </div>
+                    </div>
+                </div>
             `;
         }
 
         // Global Handlers
-        window.selectBrand = function(brand) { state.selectedBrand = brand; render(); };
-        window.openProductPopup = openProductPopup; 
+        window.selectBrand = function(brand) { state.selectedBrand = brand; render(); window.scrollTo(0,0); };
         
         render(); // Start App
     </script>
