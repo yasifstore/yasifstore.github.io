@@ -70,33 +70,6 @@
         
         .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1); }
-
-        .custom-checkbox {
-            appearance: none;
-            background-color: #fff;
-            margin: 0;
-            font: inherit;
-            color: currentColor;
-            width: 1.35em;
-            height: 1.35em;
-            border: 2px solid #D1D5DB;
-            border-radius: 0.35em;
-            display: grid;
-            place-content: center;
-            transition: 0.2s;
-        }
-        .custom-checkbox::before {
-            content: "";
-            width: 0.75em;
-            height: 0.75em;
-            transform: scale(0);
-            transition: 120ms transform ease-in-out;
-            box-shadow: inset 1em 1em white;
-            transform-origin: center;
-            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-        }
-        .custom-checkbox:checked { background-color: #1A4D2E; border-color: #1A4D2E; }
-        .custom-checkbox:checked::before { transform: scale(1); }
     </style>
 </head>
 <body class="bg-background text-foreground antialiased selection:bg-primary selection:text-white pb-24">
@@ -107,7 +80,7 @@
         // @ts-nocheck
         
         // --- DATA PRODUK ---
-        const products = [
+        let products = [
             // 1. KOPI KENANGAN
             { id: "910", category: "NEW! Choco Beng Blast Series", name: "Choco Caramel", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/new-item/detail/682d775f_1d9084095f8e90a.webp" },
             { id: "911", category: "NEW! Choco Beng Blast Series", name: "Mocha Caramel", originalPrice: 26000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/new-item/detail/1f006128_d97b9150322d5f3.webp" },
@@ -332,6 +305,39 @@
             { id: "509", category: "Token Listrik", name: "Token Listrik 200rb", originalPrice: 202500, promoPrice: 190000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/OU0mmcq.png" },
         ];
 
+        // --- TRANSFORMASI PROMO B1G1 FORE ---
+        const foreItems = products.filter(p => p.brand === "Fore Coffee");
+        // Mengambil menu minuman saja (mengecualikan Makanan & 1L jika ada)
+        const foreDrinks = foreItems.filter(p => !p.category.includes("Makanan") && !p.category.includes("1L"));
+
+        // Hapus data Fore lama dari array utama
+        products = products.filter(p => p.brand !== "Fore Coffee");
+
+        // 1. Generate Card Custom Mix (PUSH DULUAN AGAR TAMPIL DI ATAS)
+        if (foreDrinks.length > 0) {
+            products.push({
+                id: "fore-custom",
+                category: "Promo 2 Minuman: Mix 2 Menu Berbeda",
+                name: "Custom Mix (Bebas Pilih 2 Menu)",
+                originalPrice: 0,
+                promoPrice: 0, // Base fee 5000 sebelum kalkulasi
+                brand: "Fore Coffee",
+                image: "https://i.imgur.com/dTPBWKT.jpeg",
+                isCustom: true
+            });
+        }
+
+        // 2. Generate Menu Combo Duo (KATEGORI TETAP ASLINYA)
+        foreDrinks.forEach(p => {
+            products.push({
+                ...p,
+                id: p.id + "-duo",
+                category: p.category, // Tetap gunakan kategori asli seperti "Coffee", "Non-Coffee", dll
+                name: p.name + " (Combo 2 Cup)",
+                promoPrice: p.originalPrice + 5000 // Fee jadi 5000
+            });
+        });
+
         // --- STATE ---
         let state = {
             selectedBrand: null,
@@ -341,9 +347,11 @@
             storeLocation: '',
             activeProduct: null, 
             tempNote: '',
-            isLarge: false,
             orderType: 'now',
-            scheduledTime: ''
+            scheduledTime: '',
+            // State khusus untuk Custom Mix
+            custom1: foreDrinks.length > 0 ? foreDrinks[0].id : null,
+            custom2: foreDrinks.length > 0 ? foreDrinks[0].id : null,
         };
 
         // --- HELPERS ---
@@ -360,7 +368,6 @@
                 } else {
                     state.activeProduct = product;
                     state.tempNote = ''; 
-                    state.isLarge = false;
                     render();
                 }
             }
@@ -368,14 +375,13 @@
 
         function closeProductPopup() {
             state.activeProduct = null;
-            state.isLarge = false;
             render();
         }
 
         function updateTempNote(value) { state.tempNote = value; }
-        
-        function toggleLarge(checked) {
-            state.isLarge = checked;
+
+        window.updateCustomMix = function(key, val) {
+            state[key] = val;
             render();
         }
 
@@ -393,21 +399,32 @@
             }
 
             let finalPrice = state.activeProduct.promoPrice;
+            let finalName = state.activeProduct.name;
             let finalNote = state.tempNote;
 
-            if (state.isLarge) {
-                finalPrice += 3500;
-                const largeTag = "✅ UPGRADE LARGE (+3.5k)";
-                finalNote = finalNote.trim() === '' ? largeTag : `${largeTag}, ${finalNote}`;
+            // Logika Harga Custom Mix
+            if (state.activeProduct.isCustom) {
+                const p1 = foreDrinks.find(x => x.id === state.custom1);
+                const p2 = foreDrinks.find(x => x.id === state.custom2);
+                if (p1 && p2) {
+                    const higherPrice = Math.max(p1.originalPrice, p2.originalPrice);
+                    finalPrice = higherPrice + 5000;
+                    finalName = `Mix: ${p1.name} & ${p2.name}`;
+                }
             }
 
-            const existingItem = state.cart.find(item => item.id === state.activeProduct.id && item.note === finalNote && item.promoPrice === finalPrice);
+            // Gunakan finalName sebagai basis ID unik agar mix yang sama bisa ditumpuk
+            const uniqueId = state.activeProduct.isCustom ? `mix-${state.custom1}-${state.custom2}` : state.activeProduct.id;
+
+            const existingItem = state.cart.find(item => item.id === uniqueId && item.note === finalNote && item.promoPrice === finalPrice);
             
             if (existingItem) {
                 existingItem.quantity += 1;
             } else {
                 state.cart.push({ 
-                    ...state.activeProduct, 
+                    ...state.activeProduct,
+                    id: uniqueId,
+                    name: finalName,
                     promoPrice: finalPrice,
                     quantity: 1,
                     note: finalNote 
@@ -415,7 +432,6 @@
             }
 
             state.activeProduct = null;
-            state.isLarge = false;
             showToast('Berhasil masuk keranjang! 🛒');
             render();
         }
@@ -563,7 +579,7 @@
                 <div class="container mx-auto px-4 py-8 max-w-lg animate-fade-up">
                     <div class="text-center mb-10 mt-4">
                         <span class="inline-block py-1.5 px-4 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase mb-4 border border-primary/20">Spesial Promo</span>
-                        <h2 class="text-4xl font-heading font-bold text-foreground mb-3 leading-tight">Mau Ngopi Apa<br>Hari Ini?</h2>
+                        <h2 class="text-4xl font-heading font-bold text-foreground mb-3 leading-tight">Mau Beli Apa<br>Hari Ini?</h2>
                         <p class="text-subtle text-sm">Pilih brand favoritmu, harga sudah termasuk biaya admin.</p>
                     </div>
 
@@ -628,7 +644,7 @@
             const notes = {
                 "Kopi Kenangan": "💡 <b>Info:</b> Harga yang tertera sudah <b>FINAL</b> (Termasuk Diskon & Biaya Admin). Mau ukuran Large? Tulis request di <b>Catatan Produk</b> ya (Harga Berbeda).",
                 "Tomoro Coffee": "✅ <b>Info:</b> Harga yang tertera sudah <b>FINAL</b> (Termasuk Diskon & Biaya Admin). Tinggal ambil pesanan di store. Ukuruan hanya Small Semua menu",
-                "Fore Coffee": "🌿 <b>Info:</b> Harga yang tertera sudah <b>FINAL</b> (Termasuk Diskon & Biaya Admin). Opsi Upgrade Large tersedia saat klik menu.",
+                "Fore Coffee": "🌿 <b>Info Promo:</b> Satu pesanan langsung dapet <b>2 Cup minuman</b> sesuai harga tertera. Hanya tersedia ukuran <b>Regular</b> (No Upgrade Large).",
                 "Pulsa & Token Listrik": "⚡ <b>Penting:</b> Pastikan Nomor HP / ID PLN sudah benar. Kesalahan nomor bukan tanggung jawab Admin."
             };
 
@@ -677,8 +693,8 @@
                                                     <h4 class="font-medium text-sm text-foreground leading-tight mb-2 line-clamp-2">${product.name}</h4>
                                                     <div class="mt-auto">
                                                         <div class="flex flex-col">
-                                                            <span class="text-[10px] text-subtle line-through decoration-red-400">${formatPrice(product.originalPrice)}</span>
-                                                            <span class="text-base font-bold text-primary">${formatPrice(product.promoPrice)}</span>
+                                                            ${product.isCustom ? '' : `<span class="text-[10px] text-subtle line-through decoration-red-400">${formatPrice(product.originalPrice * 2)}</span>`}
+                                                            <span class="text-base font-bold text-primary">${product.isCustom ? 'Mulai ' : ''}${formatPrice(product.promoPrice)}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -695,18 +711,24 @@
 
         function renderNotePopup() {
             const p = state.activeProduct;
-            const isFore = p.brand === 'Fore Coffee';
-            const idNum = parseInt(p.id);
-            const isFood = idNum >= 245 && idNum <= 266;
-            const is1L = p.category === 'FOREveryone 1L';
-            const showLargeOption = isFore && !isFood && !is1L;
+            
+            let displayPrice = p.promoPrice;
+            
+            // Kalkulasi harga realtime untuk Custom Mix UI
+            if (p.isCustom) {
+                const p1 = foreDrinks.find(x => x.id === state.custom1) || foreDrinks[0];
+                const p2 = foreDrinks.find(x => x.id === state.custom2) || foreDrinks[0];
+                if (p1 && p2) {
+                    displayPrice = Math.max(p1.originalPrice, p2.originalPrice) + 5000;
+                }
+            }
 
             return `
                 <div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
                     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeProductPopup()"></div>
                     <div class="bg-surface w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl z-10 overflow-hidden flex flex-col max-h-[90vh] animate-fade-up">
                         
-                        <div class="h-48 relative bg-gray-100">
+                        <div class="h-48 relative bg-gray-100 shrink-0">
                             <img src="${p.image}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400?text=No+Image'">
                             <button onclick="closeProductPopup()" class="absolute top-4 right-4 w-8 h-8 bg-black/30 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/50 transition">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -717,19 +739,26 @@
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-xl font-heading font-bold text-foreground w-3/4">${p.name}</h3>
                                 <div class="text-right">
-                                    <span class="block text-xs text-subtle line-through">${formatPrice(p.originalPrice)}</span>
-                                    <span class="block text-lg font-bold text-primary">${formatPrice(p.promoPrice)}</span>
+                                    <span class="block text-lg font-bold text-primary">${formatPrice(displayPrice)}</span>
                                 </div>
                             </div>
 
-                            ${showLargeOption ? `
-                                <label class="flex items-center gap-4 p-4 rounded-xl border border-primary/20 bg-primary/5 cursor-pointer hover:bg-primary/10 transition mb-6">
-                                    <input type="checkbox" onchange="toggleLarge(this.checked)" ${state.isLarge ? 'checked' : ''} class="custom-checkbox text-primary">
-                                    <div class="flex-1">
-                                        <span class="font-bold text-sm text-foreground">Upgrade Large Size</span>
-                                        <span class="block text-xs text-subtle">Lebih puas + Rp 3.500</span>
+                            ${p.isCustom ? `
+                                <div class="space-y-4 mb-6 p-4 border border-border rounded-xl bg-gray-50">
+                                    <div>
+                                        <label class="block text-xs font-bold text-primary mb-2">PILIH MENU 1</label>
+                                        <select onchange="updateCustomMix('custom1', this.value)" class="w-full p-3 rounded-lg border border-border bg-white text-sm focus:ring-1 focus:ring-primary outline-none">
+                                            ${foreDrinks.map(d => `<option value="${d.id}" ${state.custom1 === d.id ? 'selected' : ''}>${d.name} (Rp ${formatPrice(d.originalPrice)})</option>`).join('')}
+                                        </select>
                                     </div>
-                                </label>
+                                    <div>
+                                        <label class="block text-xs font-bold text-primary mb-2">PILIH MENU 2</label>
+                                        <select onchange="updateCustomMix('custom2', this.value)" class="w-full p-3 rounded-lg border border-border bg-white text-sm focus:ring-1 focus:ring-primary outline-none">
+                                            ${foreDrinks.map(d => `<option value="${d.id}" ${state.custom2 === d.id ? 'selected' : ''}>${d.name} (Rp ${formatPrice(d.originalPrice)})</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <p class="text-[10px] text-accent mt-2">*Harga sudah final.</p>
+                                </div>
                             ` : ''}
 
                             <div class="mb-2">
@@ -742,9 +771,9 @@
                             </div>
                         </div>
 
-                        <div class="p-4 border-t border-border bg-white pb-8 sm:pb-4">
+                        <div class="p-4 border-t border-border bg-white pb-8 sm:pb-4 shrink-0">
                             <button onclick="confirmAddToCart()" class="w-full py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary-light transition-all shadow-lg shadow-primary/30 active:scale-95 flex items-center justify-center gap-2">
-                                <span>Tambah - ${formatPrice(state.isLarge ? p.promoPrice + 3500 : p.promoPrice)}</span>
+                                <span>Tambah - ${formatPrice(displayPrice)}</span>
                             </button>
                         </div>
                     </div>
@@ -784,7 +813,7 @@
                     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="state.showCart=false;render()"></div>
                     <div class="bg-background w-full md:max-w-xl h-[90vh] md:h-auto md:max-h-[85vh] md:rounded-3xl rounded-t-3xl shadow-2xl z-10 flex flex-col animate-fade-up">
                         
-                        <div class="p-6 border-b border-border bg-white flex justify-between items-center rounded-t-3xl">
+                        <div class="p-6 border-b border-border bg-white flex justify-between items-center rounded-t-3xl shrink-0">
                             <h2 class="text-2xl font-heading font-bold text-primary">Keranjang</h2>
                             <button onclick="state.showCart=false;render()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-subtle hover:bg-red-100 hover:text-red-500 transition">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -807,7 +836,7 @@
                                                 <img src="${item.image}" class="w-full h-full object-cover">
                                             </div>
                                             <div class="flex-1 pr-8">
-                                                <h4 class="font-bold text-foreground text-sm line-clamp-1">${item.name}</h4>
+                                                <h4 class="font-bold text-foreground text-sm line-clamp-2">${item.name}</h4>
                                                 ${item.note ? `<div class="text-[10px] text-accent mt-1 bg-accent/5 px-2 py-0.5 rounded w-fit">${item.note}</div>` : ''}
                                                 <div class="flex justify-between items-center mt-2">
                                                     <p class="text-sm font-bold text-primary">${formatPrice(item.promoPrice)}</p>
@@ -867,7 +896,7 @@
                         </div>
 
                         ${state.cart.length > 0 ? `
-                            <div class="p-6 bg-white border-t border-border pb-10 md:pb-6 rounded-b-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+                            <div class="p-6 bg-white border-t border-border pb-10 md:pb-6 rounded-b-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] shrink-0">
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="text-subtle font-medium">Total Pembayaran</span>
                                     <span class="text-2xl font-bold text-primary font-heading">${formatPrice(getTotalPrice())}</span>
