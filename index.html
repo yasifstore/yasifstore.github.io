@@ -126,7 +126,6 @@
             { id: "25", category: "Non-Coffee", name: "Toffe Nut Choco Macchiato", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/1ef5180c-efe9-429d-b255-ce63277548a6_ec742ff0-d8d7-6f86-f84b-daabc4ee543c.png?auto=format" },
             { id: "27", category: "Non-Coffee", name: "Milk Oreo Crumble", originalPrice: 26000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/a15fd431-d33f-45d2-9524-6eb6d914489f_31770136-f420-e0eb-6c9e-080daa295cd6.png?auto=format" },
             { id: "28", category: "Non-Coffee", name: "Babyccino", originalPrice: 19000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://i.imgur.com/xVlrWnc.jpeg" },
-            { id: "29", category: "Non-Coffee", name: "Dubai Pistachio Chocolate", originalPrice: 27000, promoPrice: 16500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/4ff16f63-0cb6-4243-a2fc-993017def44a_efb480ca-31a1-8fd1-8a35-e8e113d73010.png?auto=format" },
             { id: "30", category: "Non-Coffee", name: "Fresh Lemonade", originalPrice: 17000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/c5667775-7849-43b6-979c-10c5e0285cda_76a8abe7-b326-5a87-76bb-f5c2fed5ea31.png?auto=format" },
             { id: "31", category: "Non-Coffee", name: "Huzelnut Choco Milk Tea", originalPrice: 22000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/c5d54390-97e7-4e2a-af34-a6e23277e1eb_ad97caaf-7a0d-7d50-d961-65e06d62f732.png?auto=format" },
             { id: "33", category: "Non-Coffee", name: "Avocado Milk", originalPrice: 24000, promoPrice: 15000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250630193148086543/detail/fd59074d_5395c2fe71dbaa7.webp" },
@@ -721,7 +720,7 @@
                                                     <h4 class="font-medium text-sm text-foreground leading-tight mb-2 line-clamp-2">${product.name}</h4>
                                                     <div class="mt-auto">
                                                         <div class="flex flex-col">
-                                                            ${product.isCustom ? '' : `<span class="text-[10px] text-subtle line-through decoration-red-400">${formatPrice(product.originalPrice * 2)}</span>`}
+                                                            ${product.isCustom ? '' : `<span class="text-[10px] text-subtle line-through decoration-red-400">${formatPrice(product.brand === 'Fore Coffee' ? product.originalPrice * 2 : product.originalPrice)}</span>`}
                                                             <span class="text-base font-bold text-primary">${product.isCustom ? 'Mulai ' : ''}${formatPrice(product.promoPrice)}</span>
                                                         </div>
                                                     </div>
