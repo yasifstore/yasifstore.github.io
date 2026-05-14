@@ -27,52 +27,302 @@
                         heading: ['"Outfit"', 'sans-serif'],
                     },
                     colors: {
-                        background: '#F9F9F7',
-                        surface: '#FFFFFF',
-                        foreground: '#1F2937',
-                        primary: '#1A4D2E',
-                        'primary-light': '#4F6F52',
-                        accent: '#D97706',
-                        border: '#E5E7EB',
-                        subtle: '#9CA3AF',
-                        success: '#10B981',
+                        background: '#F7F5F0',
+                        surface: '#FFFDF8',
+                        foreground: '#191B18',
+                        primary: '#1F2A24',
+                        'primary-light': '#4C6257',
+                        accent: '#7A8F73',
+                        border: '#E8E3DA',
+                        subtle: '#77756D',
+                        success: '#547A5A',
                     },
                     boxShadow: {
-                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-                        'float': '0 10px 40px -10px rgba(26, 77, 46, 0.2)',
+                        'soft': '0 1px 0 rgba(25, 27, 24, 0.06)',
+                        'float': '0 24px 80px -48px rgba(25, 27, 24, 0.35)',
                     }
                 }
             }
         }
     </script>
     <style>
+        :root {
+            --ys-bg: #F7F5F0;
+            --ys-surface: #FFFDF8;
+            --ys-ink: #191B18;
+            --ys-muted: #77756D;
+            --ys-line: #E8E3DA;
+            --ys-accent: #7A8F73;
+            --ys-navy: #18202B;
+        }
+
+
+
+        /* BRAND THEME SYSTEM: subtle, premium, not colorful-overload */
+        .theme-scope {
+            --brand-accent: #7A8F73;
+            --brand-accent-dark: #1F2A24;
+            --brand-accent-soft: rgba(122, 143, 115, 0.10);
+            --brand-accent-softer: rgba(122, 143, 115, 0.055);
+            --brand-accent-border: rgba(122, 143, 115, 0.22);
+            --brand-accent-contrast: #FFFDF8;
+        }
+
+        .brand-text { color: var(--brand-accent) !important; }
+        .brand-border { border-color: var(--brand-accent-border) !important; }
+        .brand-soft {
+            background: var(--brand-accent-soft) !important;
+            border-color: var(--brand-accent-border) !important;
+        }
+        .brand-button {
+            background: var(--brand-accent-dark) !important;
+            color: var(--brand-accent-contrast) !important;
+            border: 1px solid rgba(255,255,255,.14);
+        }
+        .brand-button:hover { background: var(--brand-accent) !important; }
+        .brand-button-soft {
+            background: var(--brand-accent-soft) !important;
+            color: var(--brand-accent-dark) !important;
+            border: 1px solid var(--brand-accent-border) !important;
+        }
+        .brand-hero-shell {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .brand-hero-shell::before {
+            content: "";
+            position: absolute;
+            inset: auto -12% -32% auto;
+            width: min(42vw, 520px);
+            height: min(42vw, 520px);
+            background: radial-gradient(circle, var(--brand-accent-soft) 0%, transparent 68%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .brand-category-pill:hover,
+        .brand-category-pill:focus {
+            color: var(--brand-accent-dark) !important;
+            border-color: var(--brand-accent-border) !important;
+            background: var(--brand-accent-soft) !important;
+        }
+        .brand-option {
+            background: linear-gradient(90deg, var(--brand-accent-softer), transparent 42%);
+        }
+        .brand-option:hover {
+            background: linear-gradient(90deg, var(--brand-accent-soft), transparent 72%);
+        }
+        .brand-option .brand-arrow {
+            border-color: var(--brand-accent-border) !important;
+            color: var(--brand-accent-dark) !important;
+        }
+        .brand-option:hover .brand-arrow {
+            background: var(--brand-accent-dark) !important;
+            color: var(--brand-accent-contrast) !important;
+            border-color: var(--brand-accent-dark) !important;
+        }
+        .theme-scope .product-frame {
+            background: linear-gradient(180deg, rgba(255,255,255,.62), var(--brand-accent-softer));
+            border-color: var(--brand-accent-border);
+        }
+        .theme-scope select:focus,
+        .theme-scope input:focus,
+        .theme-scope textarea:focus {
+            border-color: var(--brand-accent-border) !important;
+            box-shadow: 0 0 0 1px var(--brand-accent-border) !important;
+        }
+
+        html { scroll-padding-top: 132px; }
+        body {
+            min-height: 100vh;
+            background:
+                linear-gradient(180deg, rgba(255,253,248,0.92) 0%, rgba(247,245,240,1) 42%, rgba(244,241,234,1) 100%);
+        }
+
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        
+
         .glass {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(247, 245, 240, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            border-bottom: 1px solid transparent;
+            transition: background 700ms cubic-bezier(.16,1,.3,1), border-color 700ms cubic-bezier(.16,1,.3,1), backdrop-filter 700ms cubic-bezier(.16,1,.3,1);
         }
-        
+
+        @supports (animation-timeline: scroll()) {
+            header.glass {
+                animation: premiumNav linear both;
+                animation-timeline: scroll(root);
+                animation-range: 0 140px;
+            }
+        }
+
+        @supports not (animation-timeline: scroll()) {
+            .glass {
+                background: rgba(247, 245, 240, 0.78);
+                backdrop-filter: blur(18px);
+                -webkit-backdrop-filter: blur(18px);
+                border-bottom-color: rgba(25, 27, 24, 0.07);
+            }
+        }
+
+        @keyframes premiumNav {
+            from {
+                background: rgba(247, 245, 240, 0);
+                backdrop-filter: blur(0px);
+                -webkit-backdrop-filter: blur(0px);
+                border-bottom-color: transparent;
+            }
+            to {
+                background: rgba(247, 245, 240, 0.84);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-bottom-color: rgba(25, 27, 24, 0.08);
+            }
+        }
+
         .glass-dark {
-            background: rgba(26, 77, 46, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(25, 27, 24, 0.86);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(18px) scale(.992); filter: blur(4px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(28px) scale(.975); filter: blur(8px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        .animate-fade-up { animation: fadeUp .72s cubic-bezier(.16,1,.3,1) both; }
+        .animate-modal { animation: modalIn .62s cubic-bezier(.16,1,.3,1) both; }
+
+        .card-hover { transition: transform .7s cubic-bezier(.16,1,.3,1), border-color .7s cubic-bezier(.16,1,.3,1), background .7s cubic-bezier(.16,1,.3,1), opacity .7s cubic-bezier(.16,1,.3,1); }
+        .card-hover:hover { transform: translateY(-2px); }
+
+        .editorial-link { position: relative; }
+        .editorial-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 100%;
+            height: 1px;
+            background: currentColor;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform .45s cubic-bezier(.16,1,.3,1);
+        }
+        .editorial-link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+        .premium-surface {
+            background: rgba(255, 253, 248, 0.72);
+            border: 1px solid rgba(25, 27, 24, 0.07);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        .product-frame {
+            background: linear-gradient(180deg, rgba(255,255,255,.58), rgba(238,234,225,.56));
+            border: 1px solid rgba(25, 27, 24, 0.055);
+        }
+
+        .product-frame img { transition: transform 1s cubic-bezier(.16,1,.3,1), opacity .7s cubic-bezier(.16,1,.3,1); }
+        .product-card:hover .product-frame img { transform: scale(1.045); }
+
+        .diffused-backdrop {
+            background:
+                radial-gradient(circle at 50% 18%, rgba(255,253,248,.18), transparent 42%),
+                rgba(15, 17, 15, 0.42);
+            backdrop-filter: blur(26px) saturate(1.08);
+            -webkit-backdrop-filter: blur(26px) saturate(1.08);
+        }
+
+        .luxury-panel {
+            background: rgba(255, 253, 248, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            box-shadow: 0 40px 120px -70px rgba(0,0,0,.52);
+        }
+
+        input, textarea, select { font-size: 16px; }
+
+        /* FINAL PERFORMANCE PATCH: premium look, lighter rendering */
+        header.glass { animation: none !important; }
+        .glass {
+            background: rgba(247, 245, 240, 0);
+            border-bottom: 1px solid transparent;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            transition: background-color .28s ease, border-color .28s ease, box-shadow .28s ease;
+        }
+        .glass.nav-scrolled {
+            background: rgba(247, 245, 240, 0.96);
+            border-bottom-color: rgba(25, 27, 24, 0.08);
+            box-shadow: 0 1px 0 rgba(25,27,24,.04);
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+        }
+        .premium-surface {
+            background: rgba(255, 253, 248, 0.88) !important;
+            border: 1px solid rgba(25, 27, 24, 0.075) !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-up { animation: fadeUp 0.5s ease-out forwards; }
-        
-        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1); }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(16px) scale(.985); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-fade-up { animation: fadeUp .36s cubic-bezier(.16,1,.3,1) both !important; }
+        .animate-modal { animation: modalIn .32s cubic-bezier(.16,1,.3,1) both !important; }
+        .card-hover { transition: transform .24s ease, border-color .24s ease, background-color .24s ease, opacity .24s ease !important; }
+        .product-card { content-visibility: auto; contain-intrinsic-size: 420px; }
+        .product-frame img { transition: transform .28s ease !important; }
+        .product-card:hover .product-frame img { transform: scale(1.025) !important; }
+        .diffused-backdrop {
+            background: rgba(15, 17, 15, 0.38) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+        }
+        .luxury-panel { box-shadow: 0 28px 80px -50px rgba(0,0,0,.45) !important; }
+        .cart-floating-pill {
+            background: var(--brand-accent-dark) !important;
+            border: 1px solid rgba(255, 253, 248, 0.24) !important;
+            box-shadow: 0 18px 52px -28px rgba(25,27,24,.7), 0 1px 0 rgba(255,255,255,.18) inset !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+        .cart-floating-pill__count { background: #FFFDF8 !important; color: var(--brand-accent-dark) !important; }
+        .cart-floating-pill__price { color: rgba(255, 253, 248, 0.68) !important; }
+        .cart-floating-pill__text { color: #FFFDF8 !important; }
+        .category-rail { background: rgba(247,245,240,.96) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+        @media (max-width: 768px) {
+            .glass.nav-scrolled,
+            .diffused-backdrop {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+            .product-card { contain-intrinsic-size: 360px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .001ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: .001ms !important;
+            }
+        }
+
     </style>
 </head>
-<body class="bg-background text-foreground antialiased selection:bg-primary selection:text-white pb-24">
+<body class="bg-background text-foreground antialiased selection:bg-primary selection:text-white pb-28 md:pb-32">
 
     <div id="app"></div>
 
@@ -294,17 +544,6 @@
             { id: "264", category: "Makanan", name: "Cempedak Cake", originalPrice: 27000, promoPrice: 16500, brand: "Fore Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/49512274-bb28-453f-a92a-cabdf6305d4d_cempedak-80.jpg?auto=format" },
             { id: "265", category: "Makanan", name: "Pain au Chocolat", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/03c85408-dc7f-481b-bfa3-181df957e6f4_painauchocolat2403.jpg?auto=format" },
             { id: "266", category: "Makanan", name: "Kouign-Amann", originalPrice: 29000, promoPrice: 17500, brand: "Fore Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/3426948f-1312-4a41-96c4-77f5fd74aa10_Kouign%20amann-.jpg?auto=format" },
-
-            // 5. PULSA & TOKEN
-            { id: "501", category: "Pulsa All Operator", name: "Pulsa All Operator 20rb", originalPrice: 22500, promoPrice: 19000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/keBDkUI.png" },
-            { id: "502", category: "Pulsa All Operator", name: "Pulsa All Operator 50rb", originalPrice: 52500, promoPrice: 47500, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/3Sbnu0N.png" },
-            { id: "503", category: "Pulsa All Operator", name: "Pulsa All Operator 100rb", originalPrice: 102500, promoPrice: 95000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/nIMCy4A.png" },
-            { id: "504", category: "Pulsa All Operator", name: "Pulsa All Operator 150rb", originalPrice: 152500, promoPrice: 142500, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/FyfdMq7.png" },
-            { id: "505", category: "Pulsa All Operator", name: "Pulsa All Operator 200rb", originalPrice: 202500, promoPrice: 190000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/Wd3Nl9d.png" },
-            { id: "506", category: "Token Listrik", name: "Token Listrik 20rb", originalPrice: 22500, promoPrice: 19000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/4lSre7l.png" },
-            { id: "507", category: "Token Listrik", name: "Token Listrik 50rb", originalPrice: 52500, promoPrice: 47500, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/AgOD6Jp.png" },
-            { id: "508", category: "Token Listrik", name: "Token Listrik 100rb", originalPrice: 102500, promoPrice: 95000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/XjvTGqn.png" },
-            { id: "509", category: "Token Listrik", name: "Token Listrik 200rb", originalPrice: 202500, promoPrice: 190000, brand: "Pulsa & Token Listrik", image: "https://i.imgur.com/OU0mmcq.png" },
         ];
 
         // --- TRANSFORMASI PROMO B1G1 FORE ---
@@ -362,17 +601,56 @@
         const getTotalItems = () => state.cart.reduce((sum, item) => sum + item.quantity, 0);
         const getTotalPrice = () => state.cart.reduce((sum, item) => sum + item.promoPrice * item.quantity, 0);
 
+        // --- BRAND THEME HELPERS ---
+        const BRAND_THEMES = {
+            'Kopi Kenangan': {
+                accent: '#B43A34',
+                dark: '#4A1E1B',
+                soft: 'rgba(180, 58, 52, 0.105)',
+                softer: 'rgba(180, 58, 52, 0.055)',
+                border: 'rgba(180, 58, 52, 0.22)',
+                label: 'red signature accent'
+            },
+            'Tomoro Coffee': {
+                accent: '#D8732A',
+                dark: '#633416',
+                soft: 'rgba(216, 115, 42, 0.115)',
+                softer: 'rgba(216, 115, 42, 0.06)',
+                border: 'rgba(216, 115, 42, 0.24)',
+                label: 'warm orange accent'
+            },
+            'Fore Coffee': {
+                accent: '#3F7A52',
+                dark: '#1F4E33',
+                soft: 'rgba(63, 122, 82, 0.12)',
+                softer: 'rgba(63, 122, 82, 0.06)',
+                border: 'rgba(63, 122, 82, 0.24)',
+                label: 'clean green accent'
+            },
+            default: {
+                accent: '#7A8F73',
+                dark: '#1F2A24',
+                soft: 'rgba(122, 143, 115, 0.10)',
+                softer: 'rgba(122, 143, 115, 0.055)',
+                border: 'rgba(122, 143, 115, 0.22)',
+                label: 'yasif neutral accent'
+            }
+        };
+
+        const getBrandTheme = (brand) => BRAND_THEMES[brand] || BRAND_THEMES.default;
+        const getThemeBrand = () => state.selectedBrand || (state.cart[0] ? state.cart[0].brand : null);
+        const getBrandThemeStyle = (brand) => {
+            const t = getBrandTheme(brand);
+            return `--brand-accent:${t.accent};--brand-accent-dark:${t.dark};--brand-accent-soft:${t.soft};--brand-accent-softer:${t.softer};--brand-accent-border:${t.border};--brand-accent-contrast:#FFFDF8;`;
+        };
+
         // --- LOGIC ---
         function openProductPopup(productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
-                if (product.brand === "Pulsa & Token Listrik") {
-                    directAddToCart(product);
-                } else {
-                    state.activeProduct = product;
-                    state.tempNote = ''; 
-                    render();
-                }
+                state.activeProduct = product;
+                state.tempNote = '';
+                render();
             }
         }
 
@@ -439,32 +717,6 @@
             render();
         }
 
-        function directAddToCart(product) {
-             if (state.cart.length > 0) {
-                const currentBrand = state.cart[0].brand; 
-                const newBrand = product.brand; 
-                
-                if (currentBrand !== newBrand) {
-                    showToast(`Keranjang berisi ${currentBrand}.<br>Checkout atau Hapus dulu ya!`, 'error');
-                    return; 
-                }
-            }
-
-            const existingItem = state.cart.find(item => item.id === product.id);
-            
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                state.cart.push({ 
-                    ...product, 
-                    quantity: 1,
-                    note: ''
-                });
-            }
-            showToast('Berhasil masuk keranjang! 🛒');
-            render();
-        }
-
         function removeFromCart(productId, note) {
             state.cart = state.cart.filter(item => !(item.id === productId && item.note === note));
             render();
@@ -472,15 +724,13 @@
 
         function handleWhatsAppOrder() {
             if (!state.storeLocation.trim()) {
-                const isDigital = state.cart.length > 0 && state.cart[0].brand === 'Pulsa & Token Listrik';
-                showToast(isDigital ? 'Isi Nomor HP/ID Pelanggan dulu!' : 'Isi lokasi pengambilan dulu!', 'error');
+                showToast('Isi lokasi pengambilan dulu!', 'error');
                 return;
             }
 
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
-            const isDigital = orderBrand === 'Pulsa & Token Listrik';
 
-            if (!isDigital && state.orderType === 'scheduled' && !state.scheduledTime) {
+            if (state.orderType === 'scheduled' && !state.scheduledTime) {
                 showToast('Jam pengambilan belum diisi!', 'error');
                 return;
             }
@@ -498,14 +748,9 @@
 
             message += `\n*Total: ${formatPrice(getTotalPrice())}*\n`;
             message += `--------------------------------\n`;
-            
-            if (isDigital) {
-                message += `*Nomor/ID:* ${state.storeLocation}`;
-            } else {
-                message += `*Lokasi Ambil:* ${state.storeLocation}\n`;
-                const timeText = state.orderType === 'now' ? 'SEKARANG⚡' : `JAM ${state.scheduledTime}`;
-                message += `*Waktu Ambil:* ${timeText}`;
-            }
+            message += `*Lokasi Ambil:* ${state.storeLocation}\n`;
+            const timeText = state.orderType === 'now' ? 'SEKARANG⚡' : `JAM ${state.scheduledTime}`;
+            message += `*Waktu Ambil:* ${timeText}`;
 
             const whatsappUrl = `https://wa.me/6287836345807?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
@@ -520,43 +765,46 @@
             toastContainer.className = 'fixed inset-0 z-[100] flex items-center justify-center px-6 pointer-events-none'; 
 
             const toastContent = document.createElement('div');
-            const bg = type === 'error' ? 'bg-red-600' : 'bg-zinc-900';
+            const theme = getBrandTheme(state.activeProduct?.brand || state.selectedBrand || (state.cart[0] ? state.cart[0].brand : null));
+            const bg = type === 'error' ? '#2B1717' : theme.dark;
             
-            toastContent.className = `${bg} text-white p-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-3 text-center w-full max-w-[320px] animate-fade-up pointer-events-auto border-2 border-white/10`;
+            toastContent.className = `text-white px-6 py-5 rounded-[1.75rem] shadow-float flex flex-col items-center justify-center gap-3 text-center w-full max-w-[320px] animate-modal pointer-events-auto border border-white/10`;
+            toastContent.style.background = bg;
 
             const icon = type === 'error' 
-                ? `<div class="bg-white/10 rounded-full p-3 mb-1"><svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg></div>` 
-                : `<div class="bg-green-500 rounded-full p-3 mb-1"><svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg></div>`;
+                ? `<div class="bg-white/10 rounded-full p-3 mb-1"><svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div>` 
+                : `<div class="bg-white/12 rounded-full p-3 mb-1"><svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>`;
 
-            toastContent.innerHTML = `${icon} <span class="font-bold text-sm leading-relaxed">${message}</span>`;
+            toastContent.innerHTML = `${icon} <span class="font-semibold text-sm leading-relaxed tracking-[-0.01em]">${message}</span>`;
             
             toastContainer.appendChild(toastContent);
             document.body.appendChild(toastContainer);
             
             setTimeout(() => {
-                toastContent.style.transition = 'all 0.3s ease';
+                toastContent.style.transition = 'all 0.35s cubic-bezier(.16,1,.3,1)';
                 toastContent.style.opacity = '0';
-                toastContent.style.transform = 'scale(0.8)';
-                setTimeout(() => toastContainer.remove(), 300);
+                toastContent.style.transform = 'translateY(8px) scale(0.98)';
+                setTimeout(() => toastContainer.remove(), 350);
             }, 2500);
         }
 
         function renderDisclaimerModal() {
             return `
                 <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
-                    <div class="bg-surface w-full max-w-sm rounded-3xl shadow-2xl z-10 overflow-hidden animate-fade-up flex flex-col relative">
-                        <div class="p-7 text-center">
-                            <div class="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border-4 border-white shadow-sm">
-                                ⏳
+                    <div class="absolute inset-0 diffused-backdrop transition-opacity"></div>
+                    <div class="luxury-panel w-full max-w-[420px] rounded-[2rem] z-10 overflow-hidden animate-modal flex flex-col relative">
+                        <div class="px-7 py-8 text-left">
+                            <div class="flex items-center justify-between mb-7">
+                                <span class="text-[10px] uppercase tracking-[0.28em] text-subtle font-semibold">Yasif Notice</span>
+                                <span class="w-9 h-9 rounded-full border border-border flex items-center justify-center text-lg">⏳</span>
                             </div>
-                            <h3 class="font-heading font-bold text-xl text-foreground mb-3">Informasi Waktu Tunggu</h3>
-                            <div class="text-sm text-subtle leading-relaxed mb-6 text-left bg-orange-50/50 p-4 rounded-xl border border-orange-100">
-                                <p class="mb-2">Halo Sobat Yasif! 👋</p>
-                                <p class="mb-2">Untuk kenyamanan bersama, mohon perkirakan waktu proses pesanan sekitar <strong>10 - 15 menit</strong> setelah list pesanan dikirim ke WhatsApp Admin.</p>
-                                <p class="text-accent font-medium">⚠️ <b>Catatan:</b> Apabila pesan WhatsApp belum dibalas, mohon kesediaannya untuk bersabar menunggu hingga Admin merespons pesanan kamu.</p>
+                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-4 tracking-[-0.03em]">Informasi Waktu Tunggu</h3>
+                            <div class="text-sm text-subtle leading-relaxed mb-7 space-y-3">
+                                <p>Halo Sobat Yasif! 👋</p>
+                                <p>Untuk kenyamanan bersama, mohon perkirakan waktu proses pesanan sekitar <strong class="text-foreground font-semibold">10 - 15 menit</strong> setelah list pesanan dikirim ke WhatsApp Admin.</p>
+                                <p>Apabila pesan WhatsApp belum dibalas, mohon kesediaannya untuk bersabar hingga Admin merespons pesanan kamu.</p>
                             </div>
-                            <button onclick="state.showDisclaimer=false; render()" class="w-full py-3.5 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all">
+                            <button onclick="state.showDisclaimer=false; render()" class="w-full py-4 brand-button rounded-full font-semibold text-sm tracking-[-0.01em] active:scale-[0.99] transition-all duration-300">
                                 Saya Mengerti, Lanjut Pesan
                             </button>
                         </div>
@@ -568,97 +816,128 @@
         // --- RENDER ---
         function render() {
             const app = document.getElementById('app');
+            const themeBrand = getThemeBrand();
             app.innerHTML = `
-                ${renderHeader()}
-                <main class="min-h-screen">
-                    ${!state.selectedBrand ? renderBrandSelection() : renderMenu()}
-                </main>
-                ${getTotalItems() > 0 ? renderFloatingCart() : ''}
-                ${state.showCart ? renderCartModal() : ''}
-                ${state.activeProduct ? renderNotePopup() : ''}
-                ${state.showTutorial ? renderTutorialModal() : ''} 
-                ${state.showDisclaimer ? renderDisclaimerModal() : ''}
+                <div class="theme-scope" style="${getBrandThemeStyle(themeBrand)}">
+                    ${renderHeader()}
+                    <main class="min-h-screen">
+                        ${!state.selectedBrand ? renderBrandSelection() : renderMenu()}
+                    </main>
+                    ${getTotalItems() > 0 ? renderFloatingCart() : ''}
+                    ${state.showCart ? renderCartModal() : ''}
+                    ${state.activeProduct ? renderNotePopup() : ''}
+                    ${state.showTutorial ? renderTutorialModal() : ''} 
+                    ${state.showDisclaimer ? renderDisclaimerModal() : ''}
+                </div>
             `;
+            requestAnimationFrame(syncHeaderState);
         }
 
         function renderHeader() {
             return `
-                <header class="fixed top-0 w-full z-40 glass border-b border-border/40 transition-all duration-300">
-                    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
-                        ${state.selectedBrand ? `
-                            <button onclick="selectBrand(null)" class="flex items-center gap-2 text-sm font-bold text-primary hover:text-primary-light transition-colors group">
-                                <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                                Kembali
+                <header id="site-header" class="fixed top-0 w-full z-40 glass transition-all duration-300">
+                    <div class="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between">
+                        <div class="w-28 flex justify-start">
+                            ${state.selectedBrand ? `
+                                <button onclick="selectBrand(null)" class="group inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground transition-colors duration-500">
+                                    <svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 19l-7-7 7-7"></path></svg>
+                                    Back
+                                </button>
+                            ` : '<span class="hidden sm:block text-[10px] uppercase tracking-[0.22em] text-subtle">Promo Curated</span>'}
+                        </div>
+                        
+                        <button onclick="selectBrand(null)" class="font-heading text-[15px] sm:text-base font-semibold text-foreground tracking-[0.28em] uppercase hover:opacity-70 transition-opacity duration-500">
+                            YASIF STORE
+                        </button>
+                        
+                        <div class="w-28 flex justify-end">
+                            <button onclick="state.showTutorial=true;render()" class="editorial-link text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground transition-colors duration-500">
+                                Guide
                             </button>
-                        ` : '<div class="w-8"></div>'}
-                        
-                        <h1 class="text-xl font-heading font-bold text-primary tracking-tight">YASIF STORE<span class="text-accent">.</span></h1>
-                        
-                        <div class="w-8"></div>
+                        </div>
                     </div>
                 </header>
-                <div class="h-16"></div>
+                <div class="h-20"></div>
             `;
         }
 
         function renderBrandSelection() {
             return `
-                <div class="container mx-auto px-4 py-8 max-w-lg animate-fade-up">
-                    <div class="text-center mb-10 mt-4">
-                        <span class="inline-block py-1.5 px-4 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase mb-4 border border-primary/20">Spesial Promo</span>
-                        <h2 class="text-4xl font-heading font-bold text-foreground mb-3 leading-tight">Mau Beli Apa<br>Hari Ini?</h2>
-                        <p class="text-subtle text-sm">Pilih brand favoritmu, harga sudah termasuk biaya admin.</p>
-                    </div>
+                <section class="mx-auto max-w-7xl px-5 sm:px-8 pt-12 sm:pt-20 pb-28 animate-fade-up">
+                    <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-14 lg:gap-20 items-end min-h-[calc(100vh-12rem)]">
+                        <div class="max-w-3xl">
+                            <p class="text-[11px] uppercase tracking-[0.32em] brand-text font-semibold mb-8">Coffee promo directory</p>
+                            <h2 class="font-heading text-[clamp(3.2rem,9vw,8.6rem)] leading-[0.86] tracking-[-0.075em] text-foreground font-semibold mb-8">
+                                Mau Beli<br>Apa Hari Ini?
+                            </h2>
+                            <p class="max-w-xl text-base sm:text-lg leading-relaxed text-subtle tracking-[-0.02em]">
+                                Pilih brand favoritmu, lihat menu promo dengan tampilan yang lebih bersih, lalu checkout langsung ke WhatsApp Admin.
+                            </p>
+                        </div>
 
-                    <div class="grid grid-cols-1 gap-4">
-                        ${renderBrandCard('Kopi Kenangan', '❤️', 'bg-gradient-to-br from-red-50 to-white border-red-100', 'text-red-500')}
-                        ${renderBrandCard('Tomoro Coffee', '☀️', 'bg-gradient-to-br from-orange-50 to-white border-orange-100', 'text-orange-500')}
-                        ${renderBrandCard('Fore Coffee', '🌿', 'bg-gradient-to-br from-green-50 to-white border-green-100', 'text-green-600')}
-                        
-                        <div class="grid grid-cols-2 gap-3 mt-2">
-                            <a href="https://chat.whatsapp.com/Bk73XNM1R3D5p8ZdMlna1W" target="_blank" class="group relative p-4 rounded-2xl border bg-white border-green-200 shadow-sm card-hover flex flex-col items-center justify-center text-center gap-2">
-                                <div class="w-10 h-10 rounded-full bg-[#25D366]/10 flex items-center justify-center text-xl text-[#25D366]">
-                                    💬
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-sm text-foreground">Grup WhatsApp</h3>
-                                    <p class="text-[10px] text-subtle">Update Promo</p>
-                                </div>
-                            </a>
+                        <div class="w-full">
+                            <div class="border-y border-border divide-y divide-border">
+                                ${renderBrandCard('Kopi Kenangan', '01', '', '')}
+                                ${renderBrandCard('Tomoro Coffee', '02', '', '')}
+                                ${renderBrandCard('Fore Coffee', '03', '', '')}
+                            </div>
 
-                            <button onclick="state.showTutorial=true;render()" class="group relative p-4 rounded-2xl border bg-white border-blue-200 shadow-sm card-hover flex flex-col items-center justify-center text-center gap-2">
-                                <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-xl text-blue-500">
-                                    ❓
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-sm text-foreground">Cara Order</h3>
-                                    <p class="text-[10px] text-subtle">Panduan</p>
-                                </div>
-                            </button>
+                            <div class="mt-8 grid grid-cols-2 gap-3">
+                                <a href="https://chat.whatsapp.com/Bk73XNM1R3D5p8ZdMlna1W" target="_blank" class="premium-surface group rounded-[1.5rem] px-5 py-5 flex flex-col gap-5 hover:bg-white/70 transition-all duration-500">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold">Community</span>
+                                        <span class="text-lg">💬</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-heading text-lg font-semibold text-foreground tracking-[-0.03em]">Grup WhatsApp</h3>
+                                        <p class="text-xs text-subtle mt-1">Update promo terbaru</p>
+                                    </div>
+                                </a>
+
+                                <button onclick="state.showTutorial=true;render()" class="premium-surface group rounded-[1.5rem] px-5 py-5 flex flex-col gap-5 text-left hover:bg-white/70 transition-all duration-500">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold">Ordering</span>
+                                        <span class="text-lg">⌁</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-heading text-lg font-semibold text-foreground tracking-[-0.03em]">Cara Order</h3>
+                                        <p class="text-xs text-subtle mt-1">Panduan checkout</p>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <footer class="mt-12 flex items-center justify-between text-[10px] uppercase tracking-[0.24em] text-subtle/70 font-semibold">
+                                <span>Designed by Yasif Store</span>
+                                <span>2026</span>
+                            </footer>
                         </div>
                     </div>
-
-                    <footer class="mt-12 text-center text-xs text-subtle font-medium">
-                        <p class="opacity-50">Designed by Yasif Store 😼</p>
-                    </footer>
-                </div>
+                </section>
             `;
         }
 
         function renderBrandCard(name, icon, bgClass, iconClass) {
+            const brandMeta = {
+                'Kopi Kenangan': { label: 'Signature Indonesian coffee menu', accent: 'bg-[#B43A34]' },
+                'Tomoro Coffee': { label: 'Modern espresso & creamy selections', accent: 'bg-[#D8732A]' },
+                'Fore Coffee': { label: 'Clean coffee, matcha, and 2-cup promo', accent: 'bg-[#3F7A52]' },
+            }[name] || { label: 'Lihat menu promo', accent: 'bg-primary' };
+
             return `
-                <button onclick="selectBrand('${name}')" class="group relative w-full p-5 rounded-2xl border ${bgClass} shadow-sm card-hover flex items-center justify-between text-left overflow-hidden">
-                    <div class="relative z-10 flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-2xl border border-gray-100 group-hover:scale-110 transition-transform duration-300">
-                            ${icon}
-                        </div>
-                        <div>
-                            <h3 class="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors">${name}</h3>
-                            <p class="text-xs text-subtle">Lihat Menu Promo</p>
+                <button onclick="selectBrand('${name}')" style="${getBrandThemeStyle(name)}" class="brand-option group relative w-full py-8 sm:py-10 px-2 sm:px-4 flex items-center justify-between text-left overflow-hidden card-hover">
+                    <span class="absolute left-0 top-7 bottom-7 w-[3px] rounded-full" style="background: var(--brand-accent)"></span>
+                    <div class="flex items-baseline gap-6 sm:gap-9 min-w-0 pl-4">
+                        <span class="text-[11px] sm:text-xs uppercase tracking-[0.32em] font-semibold shrink-0" style="color: var(--brand-accent)">${icon}</span>
+                        <div class="min-w-0">
+                            <h3 class="font-heading text-3xl sm:text-5xl font-semibold text-foreground tracking-[-0.065em] leading-none transition-colors duration-300 group-hover:opacity-90">${name}</h3>
+                            <p class="mt-3 text-sm text-subtle tracking-[-0.02em]">${brandMeta.label}</p>
                         </div>
                     </div>
-                    <div class="text-subtle group-hover:translate-x-1 transition-transform">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <div class="ml-6 flex items-center gap-4 shrink-0">
+                        <span class="hidden sm:block w-2 h-2 rounded-full ${brandMeta.accent} opacity-70"></span>
+                        <span class="brand-arrow w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300">
+                            <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M9 5l7 7-7 7"></path></svg>
+                        </span>
                     </div>
                 </button>
             `;
@@ -669,70 +948,86 @@
             const categories = [...new Set(brandProducts.map(p => p.category))];
             
             const notes = {
-                "Kopi Kenangan": "💡 <b>Info:</b> Harga yang tertera sudah <b>FINAL</b> (Termasuk Diskon & Biaya Admin). Mau ukuran Large? Tulis request di <b>Catatan Produk</b> ya (Harga Berbeda).",
-                "Tomoro Coffee": "✅ <b>Info:</b> Harga yang tertera sudah <b>FINAL</b> (Termasuk Diskon & Biaya Admin). Tinggal ambil pesanan di store. Ukuruan hanya Small Semua menu",
-                "Fore Coffee": "🌿 <b>Info Promo:</b> Satu pesanan langsung dapet <b>2 Cup minuman</b> sesuai harga tertera. Hanya tersedia ukuran <b>Regular</b> (No Upgrade Large).",
-                "Pulsa & Token Listrik": "⚡ <b>Penting:</b> Pastikan Nomor HP / ID PLN sudah benar. Kesalahan nomor bukan tanggung jawab Admin."
+                "Kopi Kenangan": "Harga sudah final, termasuk diskon dan biaya admin. Untuk request ukuran Large, tulis di catatan produk karena harga dapat berbeda.",
+                "Tomoro Coffee": "Harga yang tertera sudah final, termasuk diskon dan biaya admin. Tinggal ambil pesanan di store. Ukuran hanya Small untuk semua menu.",
+                "Fore Coffee": "Satu pesanan langsung mendapat 2 cup minuman sesuai harga tertera. Hanya tersedia ukuran Regular, tanpa upgrade Large."
             };
 
             return `
-                <div class="pb-32 animate-fade-up">
-                    <div class="container mx-auto px-4 py-6">
-                        <div class="flex items-center gap-3 mb-2">
-                            <h2 class="text-2xl font-heading font-bold text-primary">${state.selectedBrand}</h2>
-                        </div>
-                        <div class="bg-white border-l-4 border-accent shadow-sm rounded-r-lg p-4 flex gap-3 items-start">
-                            <div class="text-sm text-foreground/80 leading-relaxed">
-                                ${notes[state.selectedBrand] || "Nikmati promo spesial hari ini!"}
+                <section class="pb-36 animate-fade-up">
+                    <div class="mx-auto max-w-7xl px-5 sm:px-8 pt-10 sm:pt-16 pb-8">
+                        <div class="brand-hero-shell grid lg:grid-cols-[1fr_380px] gap-10 lg:gap-20 items-end border-b border-border pb-10 sm:pb-14 rounded-[2rem]">
+                            <div>
+                                <p class="text-[11px] uppercase tracking-[0.32em] brand-text font-semibold mb-5">Selected Brand</p>
+                                <h2 class="font-heading text-[clamp(3rem,7vw,7rem)] leading-[0.88] tracking-[-0.075em] font-semibold text-foreground">${state.selectedBrand}</h2>
+                                <div class="mt-6 inline-flex items-center gap-3 rounded-full brand-button-soft px-4 py-2">
+                                    <span class="w-2 h-2 rounded-full" style="background: var(--brand-accent)"></span>
+                                    <span class="text-[10px] uppercase tracking-[0.18em] font-semibold">${getBrandTheme(state.selectedBrand).label}</span>
+                                </div>
                             </div>
+                            <aside class="premium-surface brand-border rounded-[1.75rem] px-6 py-6">
+                                <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-3">Order Note</p>
+                                <p class="text-sm leading-relaxed text-subtle tracking-[-0.01em]">${notes[state.selectedBrand] || "Nikmati promo spesial hari ini."}</p>
+                            </aside>
                         </div>
                     </div>
 
-                    <div class="sticky top-16 z-30 bg-background/95 backdrop-blur border-b border-border/50 py-3 overflow-x-auto hide-scroll">
-                        <div class="flex gap-2 px-4 min-w-max">
+                    <div class="sticky top-20 z-30 category-rail border-b border-border/70 py-4 overflow-x-auto hide-scroll">
+                        <nav class="mx-auto max-w-7xl px-5 sm:px-8 flex gap-2 min-w-max">
                             ${categories.map((cat, index) => `
-                                <a href="#cat-${index}" class="px-4 py-2 rounded-full text-xs font-bold transition-all bg-white border border-border text-subtle hover:text-primary hover:border-primary focus:bg-primary focus:text-white focus:border-primary shadow-sm">
+                                <a href="#cat-${index}" class="brand-category-pill px-4 sm:px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-semibold transition-all duration-300 bg-transparent border border-border text-subtle hover:text-foreground hover:border-foreground/20">
                                     ${cat}
                                 </a>
                             `).join('')}
-                        </div>
+                        </nav>
                     </div>
 
-                    <div class="container mx-auto px-4 py-6 space-y-10">
+                    <div class="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16 space-y-20 sm:space-y-24">
                         ${categories.map((cat, index) => {
                             const catProducts = brandProducts.filter(p => p.category === cat);
                             return `
-                                <div id="cat-${index}" class="scroll-mt-32">
-                                    <h3 class="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                                        <span class="w-1.5 h-6 bg-accent rounded-full"></span>
-                                        ${cat}
-                                    </h3>
-                                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                        ${catProducts.map(product => `
-                                            <div class="bg-white rounded-xl border border-border shadow-sm overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow duration-300 group cursor-pointer" onclick='openProductPopup("${product.id}")'>
-                                                <div class="aspect-square relative overflow-hidden bg-gray-100">
-                                                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" onerror="this.src='https://placehold.co/400x400/png?text=No+Image'"/>
-                                                    <div class="absolute bottom-2 right-2 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-sm text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                                    </div>
-                                                </div>
-                                                <div class="p-3 flex flex-col flex-1">
-                                                    <h4 class="font-medium text-sm text-foreground leading-tight mb-2 line-clamp-2">${product.name}</h4>
-                                                    <div class="mt-auto">
-                                                        <div class="flex flex-col">
-                                                            ${product.isCustom ? '' : `<span class="text-[10px] text-subtle line-through decoration-red-400">${formatPrice(product.brand === 'Fore Coffee' ? product.originalPrice * 2 : product.originalPrice)}</span>`}
-                                                            <span class="text-base font-bold text-primary">${product.isCustom ? 'Mulai ' : ''}${formatPrice(product.promoPrice)}</span>
+                                <section id="cat-${index}" class="scroll-mt-36">
+                                    <div class="flex items-end justify-between gap-6 mb-8 sm:mb-10">
+                                        <div>
+                                            <p class="text-[10px] uppercase tracking-[0.26em] brand-text font-semibold mb-3">Collection ${String(index + 1).padStart(2, '0')}</p>
+                                            <h3 class="font-heading text-3xl sm:text-5xl font-semibold text-foreground tracking-[-0.06em] leading-none">${cat}</h3>
+                                        </div>
+                                        <span class="text-xs uppercase tracking-[0.18em] text-subtle font-semibold">${catProducts.length} items</span>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-12 sm:gap-y-16">
+                                        ${catProducts.map(product => {
+                                            const comparePrice = product.brand === 'Fore Coffee' ? product.originalPrice * 2 : product.originalPrice;
+                                            return `
+                                                <article class="product-card group cursor-pointer" onclick='openProductPopup("${product.id}")'>
+                                                    <div class="product-frame aspect-[4/5] rounded-[1.75rem] sm:rounded-[2rem] overflow-hidden relative mb-4 sm:mb-5">
+                                                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/600x750/F7F5F0/77756D?text=No+Image'"/>
+                                                        <div class="absolute inset-x-3 bottom-3 flex justify-end opacity-100 sm:opacity-0 sm:translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-700">
+                                                            <span class="w-10 h-10 rounded-full bg-surface/95 border border-white/70 flex items-center justify-center text-foreground">
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v16m8-8H4"></path></svg>
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        `).join('')}
+                                                    <div class="px-1">
+                                                        <p class="text-[10px] uppercase tracking-[0.2em] text-subtle font-semibold mb-2">${product.category}</p>
+                                                        <h4 class="font-heading font-semibold text-[15px] sm:text-lg text-foreground leading-tight tracking-[-0.035em] line-clamp-2 min-h-[2.35rem] sm:min-h-[3rem]">${product.name}</h4>
+                                                        <div class="mt-4 flex items-end justify-between gap-3">
+                                                            <div class="flex flex-col gap-1">
+                                                                ${product.isCustom ? `<span class="text-[11px] text-subtle font-medium">Custom Set</span>` : `<span class="text-[11px] text-subtle line-through decoration-foreground/30">${formatPrice(comparePrice)}</span>`}
+                                                                <span class="text-base sm:text-lg font-semibold text-foreground tracking-[-0.03em]">${product.isCustom ? 'Mulai ' : ''}${formatPrice(product.promoPrice)}</span>
+                                                            </div>
+                                                            <span class="text-[11px] uppercase tracking-[0.16em] brand-text font-semibold editorial-link">Tambah</span>
+                                                        </div>
+                                                    </div>
+                                                </article>
+                                            `;
+                                        }).join('')}
                                     </div>
-                                </div>
+                                </section>
                             `;
                         }).join('')}
                     </div>
-                </div>
+                </section>
             `;
         }
 
@@ -751,68 +1046,68 @@
             }
 
             return `
-                <div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
-                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeProductPopup()"></div>
-                    <div class="bg-surface w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl z-10 overflow-hidden flex flex-col max-h-[90vh] animate-fade-up">
+                <div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5">
+                    <div class="absolute inset-0 diffused-backdrop transition-opacity" onclick="closeProductPopup()"></div>
+                    <div class="luxury-panel w-full sm:max-w-[520px] sm:rounded-[2.25rem] rounded-t-[2rem] z-10 overflow-hidden flex flex-col max-h-[92vh] animate-modal">
                         
-                        <div class="h-48 relative bg-gray-100 shrink-0">
-                            <img src="${p.image}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400?text=No+Image'">
-                            <button onclick="closeProductPopup()" class="absolute top-4 right-4 w-8 h-8 bg-black/30 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/50 transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <div class="relative p-4 sm:p-5 shrink-0">
+                            <div class="product-frame h-64 sm:h-72 rounded-[1.75rem] overflow-hidden">
+                                <img src="${p.image}" class="w-full h-full object-cover" decoding="async" onerror="this.src='https://placehold.co/700x520/F7F5F0/77756D?text=No+Image'">
+                            </div>
+                            <button onclick="closeProductPopup()" class="absolute top-8 right-8 w-10 h-10 bg-surface/95 border border-white/70 rounded-full flex items-center justify-center text-foreground hover:scale-95 transition-all duration-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
 
-                        <div class="p-6 flex-1 overflow-y-auto">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-xl font-heading font-bold text-foreground w-3/4">${p.name}</h3>
-                                <div class="text-right">
-                                    <span class="block text-lg font-bold text-primary">${formatPrice(displayPrice)}</span>
+                        <div class="px-6 sm:px-8 pb-6 flex-1 overflow-y-auto">
+                            <div class="border-b border-border pb-6 mb-6">
+                                <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-3">${p.category}</p>
+                                <div class="flex justify-between items-start gap-5">
+                                    <h3 class="text-3xl sm:text-4xl font-heading font-semibold text-foreground tracking-[-0.06em] leading-[0.95]">${p.name}</h3>
+                                    <div class="text-right shrink-0 pt-1">
+                                        <span class="block text-xl font-semibold text-foreground tracking-[-0.04em]">${formatPrice(displayPrice)}</span>
+                                        <span class="block text-[10px] uppercase tracking-[0.18em] text-subtle mt-1">Final</span>
+                                    </div>
                                 </div>
                             </div>
 
                             ${p.isCustom ? `
-                                <div class="space-y-4 mb-6 p-4 border border-border rounded-xl bg-gray-50 shadow-inner">
-                                    <div>
-                                        <label class="block text-xs font-bold text-primary mb-2">PILIH MENU 1</label>
-                                        <select onchange="updateCustomMix('custom1', this.value)" class="w-full p-3 rounded-lg border border-border bg-white text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-shadow">
-                                            ${foreDrinks.map(d => `<option value="${d.id}" ${state.custom1 === d.id ? 'selected' : ''}>${d.name} (Rp ${formatPrice(d.originalPrice)})</option>`).join('')}
+                                <div class="space-y-4 mb-7">
+                                    <div class="premium-surface rounded-[1.35rem] p-4">
+                                        <label class="block text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold mb-3">Pilih Menu 1</label>
+                                        <select onchange="updateCustomMix('custom1', this.value)" class="w-full p-4 rounded-2xl border border-border bg-surface text-sm focus:ring-1 focus:ring-primary/20 outline-none transition-shadow">
+                                            ${foreDrinks.map(d => `<option value="${d.id}" ${state.custom1 === d.id ? 'selected' : ''}>${d.name} (${formatPrice(d.originalPrice)})</option>`).join('')}
                                         </select>
                                     </div>
-                                    <div>
-                                        <label class="block text-xs font-bold text-primary mb-2">PILIH MENU 2</label>
-                                        <select onchange="updateCustomMix('custom2', this.value)" class="w-full p-3 rounded-lg border border-border bg-white text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-shadow">
-                                            ${foreDrinks.map(d => `<option value="${d.id}" ${state.custom2 === d.id ? 'selected' : ''}>${d.name} (Rp ${formatPrice(d.originalPrice)})</option>`).join('')}
+                                    <div class="premium-surface rounded-[1.35rem] p-4">
+                                        <label class="block text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold mb-3">Pilih Menu 2</label>
+                                        <select onchange="updateCustomMix('custom2', this.value)" class="w-full p-4 rounded-2xl border border-border bg-surface text-sm focus:ring-1 focus:ring-primary/20 outline-none transition-shadow">
+                                            ${foreDrinks.map(d => `<option value="${d.id}" ${state.custom2 === d.id ? 'selected' : ''}>${d.name} (${formatPrice(d.originalPrice)})</option>`).join('')}
                                         </select>
                                     </div>
-                                    
-                                    <div class="mt-4 p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 shadow-sm flex items-center justify-between animate-fade-up">
-                                        <div class="flex flex-col gap-0.5">
-                                            <span class="text-xs font-bold text-green-800 uppercase tracking-wide flex items-center gap-1">
-                                                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                Harga Spesial
-                                            </span>
-                                            <span class="text-[10px] text-green-600 font-medium">*Sudah termasuk diskon & admin</span>
+                                    <div class="rounded-[1.35rem] border brand-soft p-4 flex items-center justify-between">
+                                        <div>
+                                            <p class="text-[10px] uppercase tracking-[0.2em] brand-text font-semibold">Harga Spesial</p>
+                                            <p class="text-xs text-subtle mt-1">Sudah termasuk diskon & admin</p>
                                         </div>
-                                        <div class="text-right bg-white px-3 py-1.5 rounded-lg border border-green-100 shadow-sm">
-                                            <span class="text-lg font-black text-primary">${formatPrice(displayPrice)}</span>
-                                        </div>
+                                        <span class="font-heading text-2xl font-semibold text-foreground tracking-[-0.05em]">${formatPrice(displayPrice)}</span>
                                     </div>
                                 </div>
                             ` : ''}
 
                             <div class="mb-2">
-                                <label class="text-sm font-bold text-foreground mb-2 block">Catatan Pesanan (Opsional)</label>
+                                <label class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold mb-3 block">Catatan Pesanan</label>
                                 <textarea 
                                     oninput="updateTempNote(this.value)"
-                                    placeholder="Contoh: Less Sugar, Less Ice..."
-                                    class="w-full p-4 bg-background border-none rounded-xl focus:ring-2 focus:ring-primary/20 text-sm resize-none h-24 placeholder:text-subtle/50"
+                                    placeholder="Contoh: Less sugar, less ice..."
+                                    class="w-full p-5 bg-surface border border-border rounded-[1.35rem] focus:ring-1 focus:ring-primary/20 focus:border-primary/30 outline-none text-sm resize-none h-28 placeholder:text-subtle/50 transition-all duration-500"
                                 ></textarea>
                             </div>
                         </div>
 
-                        <div class="p-4 border-t border-border bg-white pb-8 sm:pb-4 shrink-0">
-                            <button onclick="confirmAddToCart()" class="w-full py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary-light transition-all shadow-lg shadow-primary/30 active:scale-95 flex items-center justify-center gap-2">
-                                <span>Tambah - ${formatPrice(displayPrice)}</span>
+                        <div class="p-5 sm:px-8 sm:pb-7 border-t border-border/70 bg-surface/80 shrink-0">
+                            <button onclick="confirmAddToCart()" class="w-full py-4 brand-button rounded-full font-semibold text-base transition-all duration-300 active:scale-[0.99] flex items-center justify-center gap-2">
+                                <span>Tambah — ${formatPrice(displayPrice)}</span>
                             </button>
                         </div>
                     </div>
@@ -822,20 +1117,20 @@
 
         function renderFloatingCart() {
             return `
-                <div class="fixed bottom-6 w-full px-4 z-50 flex justify-center animate-fade-up">
-                    <button onclick="state.showCart=true;render()" class="bg-primary text-white w-full max-w-md rounded-full p-2 pr-6 shadow-2xl flex items-center justify-between border border-white/20 hover:scale-[1.02] transition-transform cursor-pointer">
+                <div class="fixed bottom-5 sm:bottom-7 w-full px-4 z-50 flex justify-center animate-fade-up pointer-events-none">
+                    <button onclick="state.showCart=true;render()" class="cart-floating-pill pointer-events-auto text-white w-full max-w-[430px] rounded-full pl-3 pr-5 py-3 flex items-center justify-between transition-all duration-300 active:scale-[0.99] cursor-pointer">
                         
-                        <div class="bg-white text-primary font-bold w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm">
+                        <div class="cart-floating-pill__count bg-white font-semibold w-10 h-10 rounded-full flex items-center justify-center shrink-0">
                             ${getTotalItems()}
                         </div>
 
                         <div class="flex flex-col items-start flex-1 ml-4">
-                            <span class="text-[10px] uppercase tracking-wider opacity-80 font-medium">Total: ${formatPrice(getTotalPrice())}</span>
-                            <span class="text-sm font-bold">Lihat Keranjang & Checkout</span>
+                            <span class="cart-floating-pill__price text-[10px] uppercase tracking-[0.18em] text-white/65 font-semibold">${formatPrice(getTotalPrice())}</span>
+                            <span class="cart-floating-pill__text text-sm font-semibold tracking-[-0.01em]">Keranjang & Checkout</span>
                         </div>
 
-                        <div class="text-white/80">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <div class="text-white/70">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </div>
                     </button>
                 </div>
@@ -843,105 +1138,105 @@
         }
 
         function renderCartModal() {
-            const isDigital = state.cart.length > 0 && state.cart[0].brand === 'Pulsa & Token Listrik';
-            const inputLabel = isDigital ? 'Nomor HP / ID Pelanggan' : 'Lokasi Cabang Pengambilan';
-            const inputIcon = isDigital ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>' : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>';
+            const inputLabel = 'Lokasi Cabang Pengambilan';
+            const inputIcon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>';
 
             return `
-                <div class="fixed inset-0 z-50 flex items-end md:items-center justify-center">
-                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="state.showCart=false;render()"></div>
-                    <div class="bg-background w-full md:max-w-xl h-[90vh] md:h-auto md:max-h-[85vh] md:rounded-3xl rounded-t-3xl shadow-2xl z-10 flex flex-col animate-fade-up">
+                <div class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-5">
+                    <div class="absolute inset-0 diffused-backdrop transition-opacity" onclick="state.showCart=false;render()"></div>
+                    <div class="luxury-panel w-full md:max-w-[640px] h-[92vh] md:h-auto md:max-h-[86vh] md:rounded-[2.25rem] rounded-t-[2rem] z-10 flex flex-col animate-modal overflow-hidden">
                         
-                        <div class="p-6 border-b border-border bg-white flex justify-between items-center rounded-t-3xl shrink-0">
-                            <h2 class="text-2xl font-heading font-bold text-primary">Keranjang</h2>
-                            <button onclick="state.showCart=false;render()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-subtle hover:bg-red-100 hover:text-red-500 transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <div class="px-6 sm:px-8 py-6 border-b border-border/70 bg-surface/70 flex justify-between items-start shrink-0">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-2">Checkout</p>
+                                <h2 class="text-3xl font-heading font-semibold text-foreground tracking-[-0.055em]">Keranjang</h2>
+                            </div>
+                            <button onclick="state.showCart=false;render()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle hover:text-foreground hover:border-foreground/20 transition-all duration-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
 
-                        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                        <div class="flex-1 overflow-y-auto px-5 sm:px-8 py-6 space-y-5">
                             ${state.cart.length === 0 ? `
-                                <div class="flex flex-col items-center justify-center h-64 text-center">
-                                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-300">
-                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                <div class="flex flex-col items-center justify-center h-72 text-center">
+                                    <div class="w-20 h-20 border border-border rounded-full flex items-center justify-center mb-5 text-subtle/50">
+                                        <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                                     </div>
-                                    <p class="text-subtle font-medium">Keranjang masih kosong nih.</p>
+                                    <p class="text-subtle font-medium">Keranjang masih kosong.</p>
                                 </div>
                             ` : `
                                 <div class="space-y-3">
                                     ${state.cart.map(item => `
-                                        <div class="flex gap-4 p-4 bg-white rounded-2xl border border-border/50 shadow-sm relative group">
-                                            <div class="w-16 h-16 rounded-xl bg-gray-100 overflow-hidden shrink-0">
-                                                <img src="${item.image}" class="w-full h-full object-cover">
+                                        <div class="flex gap-4 p-3 sm:p-4 bg-surface/70 rounded-[1.5rem] border brand-border relative group">
+                                            <div class="w-20 h-20 rounded-[1.1rem] product-frame overflow-hidden shrink-0">
+                                                <img src="${item.image}" class="w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/200x200/F7F5F0/77756D?text=No+Image'">
                                             </div>
-                                            <div class="flex-1 pr-8">
-                                                <h4 class="font-bold text-foreground text-sm line-clamp-2">${item.name}</h4>
-                                                ${item.note ? `<div class="text-[10px] text-accent mt-1 bg-accent/5 px-2 py-0.5 rounded w-fit">${item.note}</div>` : ''}
-                                                <div class="flex justify-between items-center mt-2">
-                                                    <p class="text-sm font-bold text-primary">${formatPrice(item.promoPrice)}</p>
-                                                    <span class="text-xs text-subtle font-medium bg-gray-100 px-2 py-1 rounded">x${item.quantity}</span>
+                                            <div class="flex-1 pr-9 min-w-0">
+                                                <h4 class="font-heading font-semibold text-foreground text-base tracking-[-0.03em] line-clamp-2">${item.name}</h4>
+                                                ${item.note ? `<div class="text-[11px] text-subtle mt-2 border border-border rounded-full px-3 py-1 w-fit max-w-full truncate">${item.note}</div>` : ''}
+                                                <div class="flex justify-between items-end mt-3">
+                                                    <p class="text-sm font-semibold text-foreground tracking-[-0.02em]">${formatPrice(item.promoPrice)}</p>
+                                                    <span class="text-xs text-subtle font-semibold uppercase tracking-[0.14em]">Qty ${item.quantity}</span>
                                                 </div>
                                             </div>
-                                            <button onclick="removeFromCart('${item.id}', '${item.note}')" class="absolute top-4 right-4 text-gray-300 hover:text-red-500 p-1">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            <button onclick="removeFromCart('${item.id}', '${item.note}')" class="absolute top-4 right-4 text-subtle/45 hover:text-[#9E3C3C] p-1 transition-colors duration-500">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </div>
                                     `).join('')}
                                 </div>
                                 
-                                ${!isDigital ? `
-                                    <div class="bg-white p-4 rounded-xl border border-border mt-6">
-                                        <label class="block text-xs font-bold text-primary uppercase tracking-wide mb-3 flex items-center gap-2">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            Waktu Pengambilan
-                                        </label>
-                                        
-                                        <div class="flex gap-2 mb-3">
-                                            <button onclick="state.orderType='now'; render()" class="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all border ${state.orderType === 'now' ? 'bg-primary text-white border-primary shadow-md' : 'bg-gray-50 text-subtle border-border hover:bg-gray-100'}">
-                                                Sekarang
-                                            </button>
-                                            <button onclick="state.orderType='scheduled'; render()" class="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all border ${state.orderType === 'scheduled' ? 'bg-primary text-white border-primary shadow-md' : 'bg-gray-50 text-subtle border-border hover:bg-gray-100'}">
-                                                Jadwalkan
-                                            </button>
-                                        </div>
-
-                                        ${state.orderType === 'scheduled' ? `
-                                            <div class="animate-fade-up">
-                                                <input 
-                                                    type="time" 
-                                                    value="${state.scheduledTime}"
-                                                    oninput="state.scheduledTime = this.value"
-                                                    class="w-full bg-gray-50 border border-border px-4 py-3 rounded-lg text-sm font-bold focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-foreground"
-                                                />
-                                                <p class="text-[10px] text-accent mt-2 italic">*Masukkan jam berapa pesanan ingin diambil.</p>
-                                            </div>
-                                        ` : ''}
+                                <div class="premium-surface p-5 rounded-[1.5rem] mt-6">
+                                    <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-4 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Waktu Pengambilan
+                                    </label>
+                                    
+                                    <div class="flex gap-2 mb-4 rounded-full bg-background/70 border border-border p-1">
+                                        <button onclick="state.orderType='now'; render()" class="flex-1 py-3 rounded-full text-sm font-semibold transition-all duration-500 ${state.orderType === 'now' ? 'brand-button' : 'text-subtle hover:text-foreground'}">
+                                            Sekarang
+                                        </button>
+                                        <button onclick="state.orderType='scheduled'; render()" class="flex-1 py-3 rounded-full text-sm font-semibold transition-all duration-500 ${state.orderType === 'scheduled' ? 'brand-button' : 'text-subtle hover:text-foreground'}">
+                                            Jadwalkan
+                                        </button>
                                     </div>
-                                ` : ''}
 
-                                <div class="bg-primary/5 p-4 rounded-xl border border-primary/10 mt-2">
-                                    <label class="block text-xs font-bold text-primary uppercase tracking-wide mb-2 flex items-center gap-2">
-                                        ${inputIcon} ${inputLabel} <span class="text-red-500">*</span>
+                                    ${state.orderType === 'scheduled' ? `
+                                        <div class="animate-fade-up">
+                                            <input 
+                                                type="time" 
+                                                value="${state.scheduledTime}"
+                                                oninput="state.scheduledTime = this.value"
+                                                class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm font-semibold focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 text-foreground"
+                                            />
+                                            <p class="text-[11px] text-subtle mt-2">Masukkan jam berapa pesanan ingin diambil.</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+
+                                <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
+                                    <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-3 flex items-center gap-2">
+                                        ${inputIcon} ${inputLabel} <span class="text-[#9E3C3C]">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         value="${state.storeLocation}"
                                         oninput="state.storeLocation = this.value"
-                                        placeholder="${isDigital ? 'Contoh: 0812xxxx' : 'Contoh: Cabang Grand Indonesia...'}"
-                                        class="w-full bg-white border border-border px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium"
+                                        placeholder="Contoh: Cabang Grand Indonesia..."
+                                        class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all font-medium placeholder:text-subtle/45"
                                     />
                                 </div>
                             `}
                         </div>
 
                         ${state.cart.length > 0 ? `
-                            <div class="p-6 bg-white border-t border-border pb-10 md:pb-6 rounded-b-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] shrink-0">
-                                <div class="flex items-center justify-between mb-4">
-                                    <span class="text-subtle font-medium">Total Pembayaran</span>
-                                    <span class="text-2xl font-bold text-primary font-heading">${formatPrice(getTotalPrice())}</span>
+                            <div class="px-6 sm:px-8 py-6 bg-surface/86 border-t border-border/70 shrink-0">
+                                <div class="flex items-center justify-between mb-5">
+                                    <span class="text-[11px] uppercase tracking-[0.2em] text-subtle font-semibold">Total Pembayaran</span>
+                                    <span class="text-3xl font-heading font-semibold text-foreground tracking-[-0.06em]">${formatPrice(getTotalPrice())}</span>
                                 </div>
-                                <button onclick="handleWhatsAppOrder()" class="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-green-200 transition-all flex items-center justify-center gap-3">
-                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.846 0 01-1.353-5.033c0-5.42 4.409-9.85 9.85-9.85 2.632 0 5.108 1.025 6.969 2.887 1.861 1.862 2.887 4.337 2.887 6.968.001 5.423-4.41 9.85-9.853 9.85"/></svg>
+                                <button onclick="handleWhatsAppOrder()" class="w-full brand-button py-4 rounded-full font-semibold text-base transition-all duration-300 active:scale-[0.99] flex items-center justify-center gap-3">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.846 0 01-1.353-5.033c0-5.42 4.409-9.85 9.85-9.85 2.632 0 5.108 1.025 6.969 2.887 1.861 1.862 2.887 4.337 2.887 6.968.001 5.423-4.41 9.85-9.853 9.85"/></svg>
                                     Checkout WhatsApp
                                 </button>
                             </div>
@@ -953,48 +1248,68 @@
 
         function renderTutorialModal() {
             const steps = [
-                { icon: "🛍️", title: "Pilih Menu", desc: "Pilih menu favoritmu, masukkan keranjang. Harga sudah final (termasuk biaya admin)." },
-                { icon: "📍", title: "Checkout WA", desc: "Isi lokasi store pengambilan, lalu kirim ke WhatsApp Admin." },
-                { icon: "💳", title: "Pembayaran", desc: "Lakukan pembayaran sesuai instruksi Admin di WhatsApp." },
-                { icon: "☕", title: "Ambil Pesanan", desc: "Datang ke store, sebutkan Nama/Tunjukkan bukti pemesanan yang dikasih Admin. Selesai!" }
+                { icon: "01", title: "Pilih Menu", desc: "Pilih menu favoritmu, lalu masukkan ke keranjang. Harga sudah final termasuk biaya admin." },
+                { icon: "02", title: "Checkout WA", desc: "Isi lokasi store pengambilan, kemudian kirim list pesanan ke WhatsApp Admin." },
+                { icon: "03", title: "Pembayaran", desc: "Lakukan pembayaran sesuai instruksi Admin di WhatsApp." },
+                { icon: "04", title: "Ambil Pesanan", desc: "Datang ke store dan tunjukkan bukti pemesanan dari Admin. Selesai." }
             ];
 
             return `
                 <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="state.showTutorial=false;render()"></div>
-                    <div class="bg-surface w-full max-w-sm rounded-3xl shadow-2xl z-10 overflow-hidden animate-fade-up flex flex-col max-h-[85vh]">
+                    <div class="absolute inset-0 diffused-backdrop transition-opacity" onclick="state.showTutorial=false;render()"></div>
+                    <div class="luxury-panel w-full max-w-[440px] rounded-[2rem] z-10 overflow-hidden animate-modal flex flex-col max-h-[86vh]">
                         
-                        <div class="p-6 border-b border-border bg-gray-50 flex justify-between items-center">
-                            <h3 class="font-heading font-bold text-lg text-foreground">Cara Pemesanan</h3>
-                            <button onclick="state.showTutorial=false;render()" class="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition">✕</button>
+                        <div class="px-7 py-7 border-b border-border/70 bg-surface/70 flex justify-between items-start">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-2">Guide</p>
+                                <h3 class="font-heading font-semibold text-3xl text-foreground tracking-[-0.055em]">Cara Pemesanan</h3>
+                            </div>
+                            <button onclick="state.showTutorial=false;render()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle hover:text-foreground hover:border-foreground/20 transition-all duration-500">✕</button>
                         </div>
 
-                        <div class="p-6 overflow-y-auto space-y-6">
+                        <div class="p-7 overflow-y-auto space-y-7">
                             ${steps.map((step, idx) => `
-                                <div class="flex gap-4">
+                                <div class="flex gap-5">
                                     <div class="flex flex-col items-center">
-                                        <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-md shrink-0 border-2 border-white ring-2 ring-primary/20">
-                                            ${idx + 1}
+                                        <div class="w-10 h-10 rounded-full brand-button flex items-center justify-center text-[10px] tracking-[0.14em] font-semibold shrink-0">
+                                            ${step.icon}
                                         </div>
-                                        ${idx !== steps.length - 1 ? `<div class="w-0.5 h-full bg-gray-200 my-2"></div>` : ''}
+                                        ${idx !== steps.length - 1 ? `<div class="w-px h-full bg-border my-3"></div>` : ''}
                                     </div>
                                     <div class="pb-2">
-                                        <h4 class="font-bold text-foreground text-base mb-1 flex items-center gap-2">${step.title} <span class="text-xs font-normal bg-gray-100 px-2 py-0.5 rounded-full">${step.icon}</span></h4>
+                                        <h4 class="font-heading font-semibold text-foreground text-lg tracking-[-0.035em] mb-1">${step.title}</h4>
                                         <p class="text-sm text-subtle leading-relaxed">${step.desc}</p>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
 
-                        <div class="p-4 bg-gray-50 border-t border-border">
-                            <button onclick="state.showTutorial=false;render()" class="w-full py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
-                                Mengerti, Yuk Pesan!
+                        <div class="p-5 bg-surface/80 border-t border-border/70">
+                            <button onclick="state.showTutorial=false;render()" class="w-full py-4 brand-button rounded-full font-semibold transition-all duration-300 active:scale-[0.99]">
+                                Mengerti, Yuk Pesan
                             </button>
                         </div>
                     </div>
                 </div>
             `;
         }
+
+
+        // Lightweight nav scroll state (replaces heavy scroll-timeline blur)
+        let headerTicking = false;
+        function syncHeaderState() {
+            const header = document.getElementById('site-header');
+            if (!header) return;
+            header.classList.toggle('nav-scrolled', window.scrollY > 8);
+        }
+        window.addEventListener('scroll', () => {
+            if (headerTicking) return;
+            headerTicking = true;
+            requestAnimationFrame(() => {
+                syncHeaderState();
+                headerTicking = false;
+            });
+        }, { passive: true });
 
         // Global Handlers
         window.selectBrand = function(brand) { state.selectedBrand = brand; render(); window.scrollTo(0,0); };
