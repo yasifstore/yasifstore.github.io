@@ -731,6 +731,490 @@
             });
         });
 
+
+        // --- DATA CABANG KOPI KENANGAN (untuk dropdown, desain tetap sama) ---
+        const KOPI_KENANGAN_STORES_BY_CITY = {
+            "Jakarta": [
+                        "Menara Standart Chartered",
+                        "Setiabudi One",
+                        "Kota Kasablanka",
+                        "Grand Indonesia (L&C)",
+                        "Plaza Oleos (HANA)",
+                        "Capital Place",
+                        "Skyline Building",
+                        "Graha CIMB Niaga",
+                        "Sahid Sudirman",
+                        "Cibubur Junction",
+                        "Pasaraya Blok M",
+                        "Summitmas Tower",
+                        "Plaza Festival",
+                        "Baywalk Mall Pluit",
+                        "Menara Jamsostek",
+                        "Lotte Mart Fatmawati",
+                        "City Plaza Jatinegara",
+                        "Gandaria City",
+                        "Mall Taman Anggrek",
+                        "Citywalk Gajah Mada (L&C)",
+                        "ITC Cempaka Mas",
+                        "ITC Mangga Dua",
+                        "Plaza Indonesia",
+                        "Smartfren Sabang",
+                        "Mall Ciputra Jakarta",
+                        "Lippo Mall Puri (2)",
+                        "NEO SOHO (L&C)",
+                        "Grab Kitchen Cengkareng",
+                        "UOB Plaza",
+                        "Citra Towers Kemayoran",
+                        "Cilandak Town Square",
+                        "Lokasari Square",
+                        "Plaza Senayan",
+                        "Ruko PIK",
+                        "Artha Graha",
+                        "Shell Antasari",
+                        "RS. Polri",
+                        "Thamrin City",
+                        "SPBU Arta Gading",
+                        "Menara Digitaraya",
+                        "One Bell Park Cinere",
+                        "Ruko Cempaka Putih",
+                        "Ruko Rawamangun (Jl. Paus)",
+                        "Cik Ditiro Menteng (Container)",
+                        "Lotte Grosir Kelapa Gading",
+                        "Plaza Kuningan",
+                        "Shell Cipinang",
+                        "Plaza Kalibata",
+                        "Ruko Lebak Bulus",
+                        "Food Hub Cyber Tower 2",
+                        "Metro Park Residence",
+                        "Ruko Metro Pondok Indah",
+                        "Senayan Park",
+                        "FX Mall Sudirman",
+                        "BP Meruya (Container)",
+                        "Superindo M. Kahfi (Container)",
+                        "Ruko Cipayung",
+                        "SPBU Pertamina COCO S Parman",
+                        "BP Meruya (Container)",
+                        "RDTX Tower (HANA)",
+                        "Tempo Scan Tower",
+                        "Menara Karya",
+                        "Electronic City",
+                        "Mayapada Hospital",
+                        "Lippo Mall Puri",
+                        "Pejaten Village",
+                        "Kyai Maja",
+                        "Mall Kelapa Gading 3",
+                        "Thamrin Residence (HANA)",
+                        "Wisma KEIAI",
+                        "Mall @BASSURA CITY",
+                        "Sopo Del Tower",
+                        "Kelapa Gading Barat (HANA)",
+                        "Lippo Plaza Kramat Jati",
+                        "AEON Mall Jakarta Garden City",
+                        "Pusat Grosir Cililitan",
+                        "Central Park",
+                        "Emporium Pluit",
+                        "Blok M Plaza",
+                        "Mall Metro Cipulir",
+                        "La Codefin Kemang",
+                        "The Vida Kebon Jeruk",
+                        "Grab Kitchen Fatmawati",
+                        "Grab Kitchen Tendean",
+                        "Padang Merdeka Kota Tua",
+                        "Grab Kitchen Kramat",
+                        "Ruko Tanjung Duren",
+                        "Gedung Aurum Container",
+                        "Tamini Square",
+                        "Wisma BNI 46",
+                        "Grab Kitchen Tomang",
+                        "Grab Kitchen Pasar Minggu",
+                        "Bidakara",
+                        "Shell Pasar Minggu",
+                        "Shell Gunung Sahari",
+                        "RS. Saint Carolus",
+                        "The Crest West Vista",
+                        "SPBU Jalan Supomo",
+                        "Ruko Jalan Bek. Murad",
+                        "Mandiri Lounge Senayan City",
+                        "Mall Artha Gading",
+                        "Ruko MOI",
+                        "Shell Kedoya (Container)",
+                        "Green Terrace Mall",
+                        "Ruko Rawa Belong",
+                        "Ruko Cideng",
+                        "Point Square",
+                        "Ruko Jalan Tebet Raya",
+                        "Ruko Radio Dalam",
+                        "Ruko Citra 6",
+                        "Ruko Taman Mutiara Palem",
+                        "Plaza Bintaro Satoe (Superindo)",
+                        "SPBU Pertamina COCO Lenteng Agung",
+                        "Cibis Tower 9",
+                        "Generali Tower",
+                        "Naga Swalayan Ciracas",
+                        "Equity Tower (HANA)",
+                        "Plaza Semanggi",
+                        "Mangkuluhur City (HANA)",
+                        "Lotte Avenue",
+                        "Plaza Atrium",
+                        "Kalibata City",
+                        "Mall Ambasador",
+                        "Citywalk Sudirman",
+                        "Tempo Pavilion 1",
+                        "Pondok Indah Mall 2 (L&C)",
+                        "Food Centrum Sunter",
+                        "Pacific Place",
+                        "Green Pramuka Square",
+                        "Sudirman Park",
+                        "Smartfren Plaza BII",
+                        "Pluit Village",
+                        "Epicentrum Walk",
+                        "Transmart Cempaka Putih",
+                        "Season City",
+                        "Grab Kitchen Kelapa Gading",
+                        "Grab Kitchen Kemayoran",
+                        "Grab Kitchen Pluit",
+                        "BP Jamsostek",
+                        "Lippo Mall Kemang",
+                        "Grand Cakung Mall",
+                        "Raffles Square Juanda Jakarta",
+                        "Gojek Kitchen Cilandak",
+                        "Transmart Cilandak",
+                        "JB Tower",
+                        "Mangga Dua Square",
+                        "Teras Benhil",
+                        "Ratu Plaza",
+                        "SPBU Jalan Panjang",
+                        "Gedung GKBI",
+                        "City Plaza Wisma Mulia",
+                        "Mall Graha Cijantung",
+                        "SOHO Pancoran",
+                        "Pancoran China Town",
+                        "Pasar Pagi Mangga Dua",
+                        "Grab Kitchen Pahlawan Revolusi",
+                        "Shell Ciputat 1 (Container)",
+                        "Alamanda Tower",
+                        "Shell Semper Koja (Container)",
+                        "Ruko Citra 7",
+                        "Mal Cipinang Indah",
+                        "LA Terrace",
+                        "Menara Tendean Office",
+                        "Green Sedayu Mall",
+                        "Mall Matahari Daan Mogot",
+                        "SPBU Pertamina COCO S Parman"
+            ],
+            "Tangerang": [
+                        "Summarecon Mall Serpong",
+                        "Giant Supermarket Bintaro",
+                        "The Breeze",
+                        "Lotte Mart Bintaro",
+                        "Aeon Mall BSD",
+                        "Paramount BSD",
+                        "BP Metland",
+                        "Bintaro Jaya Exchange",
+                        "TerasKota",
+                        "Transpark Bintaro",
+                        "Ruko UIN",
+                        "Mall Balekota Tangerang",
+                        "CBD Ciledug",
+                        "Padang Merdeka Bintaro",
+                        "Living Plaza Pamulang",
+                        "Bandara Soekarno Hatta Terminal 2D",
+                        "Living World Alam Sutera",
+                        "AEON BSD (Food Court)",
+                        "Garuda HQ",
+                        "Supermall Karawaci",
+                        "Bintaro Plaza",
+                        "Shell Serpong",
+                        "Shell Pamulang",
+                        "BP Ciater Pamulang",
+                        "Ruko Tangerang City",
+                        "Ruko Cipondoh",
+                        "Ruko Palem Semi Karawaci",
+                        "RS Medika BSD",
+                        "Mall Ciputra Citraraya",
+                        "Giant Ekspres Pondok Cabe Gaplek",
+                        "BP BSD Delatinos",
+                        "Grab Kitchen Pondok Aren",
+                        "Grab Kitchen Karawaci",
+                        "Giant Supermarket BSD",
+                        "Living Plaza Bintaro",
+                        "Shell Suwarna Cengkareng",
+                        "City Plaza Kotabumi",
+                        "Shell Puspitek",
+                        "Tangerang City Mall",
+                        "Giant Supermarket Rempoa",
+                        "Ruko Azores",
+                        "Ruko Daan Mogot",
+                        "Padang Merdeka Bez Serpong",
+                        "Summarecon Digital Center (SDC Serpong)",
+                        "Ruko Curug",
+                        "SPBU DODO Pertamina Cirendeu Raya",
+                        "Serpong Paradise Walk"
+            ],
+            "Sidoarjo": [
+                        "Suncity Sidoarjo",
+                        "Transmart Sidoarjo"
+            ],
+            "Semarang": [
+                        "Paragon Mall Semarang",
+                        "DP Mall",
+                        "Transmart Majapahit Semarang",
+                        "Stasiun Tawang",
+                        "SIM Square",
+                        "Rest Area KM 429 Semarang",
+                        "Gedung Pelni",
+                        "Ruko Ngaliyan",
+                        "Queen City Semarang",
+                        "Tentrem Mall Semarang",
+                        "Ruko UNDIP"
+            ],
+            "Bandung": [
+                        "Bandung Indah Plaza",
+                        "Festival Citylink Bandung",
+                        "Istana Plaza",
+                        "Grab Kitchen Bandung Tubis",
+                        "Grab Kitchen Moh.Ramdan Bandung",
+                        "Transmart Buah Batu Square Bandung",
+                        "Ruko Paskal",
+                        "Miko Mall",
+                        "Ubertos",
+                        "Limijati Container (Riau Bandung)",
+                        "Bursa Efek Bandung",
+                        "Paris Van Java",
+                        "Metro Indah Mall",
+                        "Ruko Jalan Setia Budi",
+                        "Ruko Surya Sumantri",
+                        "Cihampelas Walk",
+                        "Bandung Electronic Center",
+                        "Toserba Yogya (Pahlawan)",
+                        "Toserba Yogya (Ciumbuleuit)",
+                        "Braga City Walk",
+                        "Toserba Yogya (Sunda)",
+                        "Ruko Buah Batu",
+                        "Ramayana Mal Padalarang",
+                        "Ruko Cibaduyut"
+            ],
+            "Sumedang": [
+                        "Stand Alone Ijen Malang"
+            ],
+            "Solo": [
+                        "Solo Paragon",
+                        "Hartono Mall Solo",
+                        "Solo Square",
+                        "Solo Grand Mall",
+                        "The Park Mall Solo",
+                        "Ruko Adi Sucipto"
+            ],
+            "Bogor": [
+                        "Botani Square Mall",
+                        "Lippo Plaza Ekalokasari",
+                        "Transmart Yasmin Bogor",
+                        "Bogor Trade Mall",
+                        "Mall Boxies 123",
+                        "Ruko Legenda Wisata",
+                        "Ruko Kota Wisata",
+                        "Lotte Grosir Pakansari",
+                        "SPBU Cibogo",
+                        "Cibinong City Mall",
+                        "Toserba Yogya (Grand Dramaga)",
+                        "Metland Cileungsi",
+                        "Aeon Mall Sentul City",
+                        "Plaza Jambu Dua",
+                        "Superindo Limus Pratama",
+                        "SPBU Pertamina COCO Mayor Oking Cibinong (Container)"
+            ],
+            "Karawang": [
+                        "Resinda Park Mall",
+                        "BP Karawang Barat",
+                        "Rest Area KM 62B",
+                        "Toserba Yogya (Karawang)",
+                        "Rest Area KM 57",
+                        "Shell Galuhmas",
+                        "Ruko Mall Cikampek"
+            ],
+            "Lampung": [
+                        "City Plaza Ramayana Lampung",
+                        "Transmart Lampung",
+                        "Ruko Antasari Lampung",
+                        "Ruko Ahmad Yani Lampung"
+            ],
+            "Makassar": [
+                        "Trans Studio Mall Makassar",
+                        "Phinisi Point Makassar",
+                        "Nipah Mall",
+                        "Panakkukang Mall",
+                        "Panakkukang Square",
+                        "Mall Ratu Indah Makassar",
+                        "Makassar Town Square"
+            ],
+            "Palembang": [
+                        "Palembang Icon",
+                        "Palembang Square",
+                        "Palembang Square Extension",
+                        "Opi Mall",
+                        "Singapore Station M. Isa",
+                        "Palembang Indah Mall",
+                        "Dermaga Point",
+                        "Kenten Food Market",
+                        "Ruko Palembang Trade Center",
+                        "Ruko Lemabang Palembang"
+            ],
+            "Bekasi": [
+                        "Transmart Juanda Bekasi",
+                        "Mall Lippo CIkarang",
+                        "Revo Town",
+                        "Blu Plaza",
+                        "Mega Bekasi Hypermall",
+                        "Rest Area KM 39 Cikampek",
+                        "Plasa Cibubur",
+                        "Living Plaza Kota Harapan Indah",
+                        "Plaza Pondok Gede",
+                        "BP Cikarang",
+                        "Ruko Galaxy Bekasi",
+                        "Metropolitan Mall Bekasi",
+                        "Summarecon Mall Bekasi",
+                        "BP KHI Boulevard",
+                        "BP Jababeka Hollywood",
+                        "Living World Plaza Jababeka",
+                        "Mall Ciputra Cibubur",
+                        "Naga Swalayan Hankam (Container)",
+                        "Naga Swalayan Pekayon",
+                        "Ruko Grand Wisata Bekasi",
+                        "Grand Icon Caman",
+                        "District 1 Meikarta",
+                        "Ruko Grand Kota Bintang",
+                        "Grand Mal Bekasi",
+                        "Citrus Department Store",
+                        "Ruko Bintara",
+                        "Ruko Jatiasih",
+                        "Ruko Kemang Pratama Bekasi",
+                        "Ruko Gading Terrace Bekasi",
+                        "Rest Area KM 19 (Container)",
+                        "Naga Swalayan Wisma Asri (Container)",
+                        "Dapur Kitchen Bekasi"
+            ],
+            "Surabaya": [
+                        "Tunjungan Plaza 3)",
+                        "Grand City Surabaya)",
+                        "Lenmarc Mall Surabaya)",
+                        "Ciputra World Surabaya)",
+                        "Pakuwon Mall)",
+                        "Royal Residence Square)",
+                        "Galaxy Mall 3 Surabaya)",
+                        "Ruko Mulyosari Surabaya)",
+                        "Ruko G Walk)",
+                        "Graha Pena Surabaya)",
+                        "City Of Tomorrow Surabaya)",
+                        "BP Kertajaya Indah)",
+                        "Surabaya Town Square)",
+                        "Pasar Atom Mall)",
+                        "Royal Plaza Surabaya)",
+                        "Ruko Ngagel)",
+                        "East Coast Centre Mall)",
+                        "Transmart Rungkut Surabaya)",
+                        "BP Pemuda)",
+                        "BP Margorejo)",
+                        "WTC Surabaya)",
+                        "BG Junction)",
+                        "Lagoon Avenue Sungkono)",
+                        "Bengawan Darmo)",
+                        "Rest Area KM 754 (Container)",
+                        "East Coast Centre Mall"
+            ],
+            "Yogyakarta": [
+                        "Hartono Mall Jogja",
+                        "Jogya City Mall",
+                        "Galeria Mall",
+                        "Sleman City Hall",
+                        "Lippo Plaza Jogja",
+                        "Malioboro Mall",
+                        "Ramai Malioboro",
+                        "Wisma Hartono",
+                        "Ruko Jalan Seturan",
+                        "Ruko Malioboro 39"
+            ],
+            "Gresik": [
+                        "Icon Mall Gresik",
+                        "Rest Area KM 726"
+            ],
+            "Depok": [
+                        "Pesona Square Depok",
+                        "DMall Depok",
+                        "Trans Studio Mall Cibubur",
+                        "Cinere Bellevue",
+                        "Mall Cinere",
+                        "Transmart Depok",
+                        "SPBU Pertamina COCO Margonda (Container)",
+                        "Lippo Cinere",
+                        "Universitas Indonesia",
+                        "Ruko Margonda",
+                        "Giant Supermarket Bojong Sari",
+                        "Giant Supermarket Cimanggis",
+                        "SPBU Buperta Cibubur",
+                        "The Park Sawangan",
+                        "Ruko Waterpark Grand Depok City",
+                        "Ruko Sawangan Depok",
+                        "Living Plaza Cinere"
+            ],
+            "Cirebon": [
+                        "Cirebon Super Block",
+                        "Shell Cirebon",
+                        "Toserba Yogya (Cherbon Junction)"
+            ],
+            "Banten": [
+                        "Ruko Serang"
+            ],
+            "Batu": [
+                        "Lippo Plaza Batu"
+            ],
+            "Purwakarta": [
+                        "BP Rest Area KM 72"
+            ],
+            "Cilegon": [
+                        "Cilegon Centre Mall",
+                        "Mall of Serang",
+                        "City Mall Cilegon",
+                        "Ciplaz Ramayana Cilegon",
+                        "Transmart Cilegon"
+            ],
+            "Malang": [
+                        "Malang Town Square",
+                        "Malang City Point",
+                        "Dinoyo Mall Malang",
+                        "Transmart MX Mall Malang",
+                        "Ruko Jalan Soekarno Hatta",
+                        "Ruko Sarinah Malang",
+                        "Ruko Kawi",
+                        "Stand Alone Ijen Malang"
+            ],
+            "Medan": [
+                        "Sun Plaza",
+                        "Deli Park",
+                        "Medan Fair",
+                        "Thamrin Plaza",
+                        "Binjai Supermall",
+                        "Centre Point Medan",
+                        "Ruko Iskandar Muda Medan",
+                        "SPBU Pertamina DODO Sisingamangaraja No 76 Medan Amplas",
+                        "Manhattan Time Square",
+                        "Bandara Kualanamu Medan",
+                        "Irian Supermarket Marelan",
+                        "Suzuya Plaza Marelan",
+                        "Lippo Plaza Medan",
+                        "Ruko Komplek OCBC Medan",
+                        "Ruko JCity Jl. Karyawisata No 9 Medan",
+                        "SPBU Pertamina DODO AR Hakim No 118 Medan",
+                        "Singapore Station Brig. Katamso",
+                        "Suzuya Plaza Tamora",
+                        "Singapore Station 2 Adam Malik",
+                        "SPBU H. Anif Cemara Asri",
+                        "Suzuya Plaza Binjai",
+                        "Mansur Residence",
+                        "Ruko Komplek OCBC Medan",
+                        "SPBU Pertamina DODO Gaperta Helvetia Medan"
+            ]
+};
+
         // --- STATE ---
         let state = {
             showDisclaimer: true,
@@ -739,6 +1223,9 @@
             showCart: false,
             showTutorial: false,
             storeLocation: '',
+            selectedStoreCity: '',
+            selectedStoreName: '',
+            manualStoreMode: false,
             activeProduct: null, 
             tempNote: '',
             orderType: 'now',
@@ -752,6 +1239,150 @@
         const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
         const getTotalItems = () => state.cart.reduce((sum, item) => sum + item.quantity, 0);
         const getTotalPrice = () => state.cart.reduce((sum, item) => sum + item.promoPrice * item.quantity, 0);
+
+
+        const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, char => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[char]));
+
+        const getOrderBrand = () => state.cart.length > 0 ? state.cart[0].brand : state.selectedBrand;
+        const isKopiKenanganOrder = () => getOrderBrand() === 'Kopi Kenangan';
+
+        function getPickupStoreText() {
+            const manualStore = (state.storeLocation || '').trim();
+
+            if (isKopiKenanganOrder()) {
+                if (state.manualStoreMode) return manualStore;
+                if (state.selectedStoreCity && state.selectedStoreName) {
+                    return `${state.selectedStoreName}, ${state.selectedStoreCity}`;
+                }
+                return '';
+            }
+
+            return manualStore;
+        }
+
+        function sortTextList(list) {
+            return [...new Set(list || [])].sort((a, b) => String(a).localeCompare(String(b), 'id', { sensitivity: 'base' }));
+        }
+
+        function setKopkenStoreMode(mode) {
+            const useManual = mode === 'manual';
+            if (state.manualStoreMode === useManual) return;
+
+            state.manualStoreMode = useManual;
+            if (useManual) {
+                state.selectedStoreCity = '';
+                state.selectedStoreName = '';
+            } else {
+                state.storeLocation = '';
+            }
+            render();
+        }
+
+        function updateStoreCity(city) {
+            state.manualStoreMode = false;
+            state.selectedStoreCity = city;
+            state.selectedStoreName = '';
+            state.storeLocation = '';
+            render();
+        }
+
+        function updateStoreName(storeName) {
+            state.manualStoreMode = false;
+            state.selectedStoreName = storeName;
+            state.storeLocation = '';
+            render();
+        }
+
+        function updateManualStoreLocation(value) {
+            state.manualStoreMode = true;
+            state.storeLocation = value;
+            state.selectedStoreCity = '';
+            state.selectedStoreName = '';
+        }
+
+        function renderPickupStoreField(inputIcon, inputLabel) {
+            const isKopken = isKopiKenanganOrder();
+            const cities = sortTextList(Object.keys(KOPI_KENANGAN_STORES_BY_CITY || {}));
+            const stores = state.selectedStoreCity ? sortTextList(KOPI_KENANGAN_STORES_BY_CITY[state.selectedStoreCity] || []) : [];
+
+            if (isKopken) {
+                const listActive = !state.manualStoreMode;
+                const manualActive = state.manualStoreMode;
+                const listCardClass = listActive
+                    ? 'border-[#B43A34]/35 bg-[#B43A34]/[0.035]'
+                    : 'border-border bg-surface/55 opacity-70';
+                const manualCardClass = manualActive
+                    ? 'border-[#B43A34]/35 bg-[#B43A34]/[0.035]'
+                    : 'border-border bg-surface/55 opacity-70';
+
+                return `
+                    <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
+                        <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-3 flex items-center gap-2">
+                            ${inputIcon} Pilih Cabang Kopi Kenangan <span class="text-[#9E3C3C]">*</span>
+                        </label>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div onclick="setKopkenStoreMode('list')" class="rounded-[1.35rem] border p-2.5 transition-all duration-200 ${listCardClass}">
+                                <div class="space-y-3">
+                                    <select
+                                        onchange="updateStoreCity(this.value)"
+                                        class="w-full bg-surface border border-border px-5 py-4 rounded-[1.15rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all font-medium text-foreground"
+                                    >
+                                        <option value="">Pilih kota</option>
+                                        ${cities.map(city => `<option value="${escapeHtml(city)}" ${state.selectedStoreCity === city ? 'selected' : ''}>${escapeHtml(city)}</option>`).join('')}
+                                    </select>
+
+                                    <select
+                                        onchange="updateStoreName(this.value)"
+                                        ${!state.selectedStoreCity ? 'disabled' : ''}
+                                        class="w-full bg-surface border border-border px-5 py-4 rounded-[1.15rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all font-medium text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <option value="">Pilih store</option>
+                                        ${stores.map(store => `<option value="${escapeHtml(store)}" ${state.selectedStoreName === store ? 'selected' : ''}>${escapeHtml(store)}</option>`).join('')}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div onclick="setKopkenStoreMode('manual')" class="rounded-[1.35rem] border p-2.5 transition-all duration-200 ${manualCardClass}">
+                                <input
+                                    type="text"
+                                    value="${escapeHtml(state.storeLocation)}"
+                                    oninput="updateManualStoreLocation(this.value)"
+                                    onfocus="setKopkenStoreMode('manual')"
+                                    placeholder="Ketik cabang manual..."
+                                    class="w-full h-full min-h-[112px] bg-surface border border-border px-5 py-4 rounded-[1.15rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all font-medium placeholder:text-subtle/45"
+                                />
+                            </div>
+                        </div>
+
+                        <p class="mt-3 text-[11px] sm:text-xs leading-relaxed font-semibold text-[#B43A34]">
+                            Cabang tidak ada di daftar? Pakai kolom manual & ketik store pick up :)
+                        </p>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
+                    <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-3 flex items-center gap-2">
+                        ${inputIcon} ${inputLabel} <span class="text-[#9E3C3C]">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        value="${escapeHtml(state.storeLocation)}"
+                        oninput="state.storeLocation = this.value"
+                        placeholder="Contoh: Cabang Grand Indonesia..."
+                        class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all font-medium placeholder:text-subtle/45"
+                    />
+                </div>
+            `;
+        }
 
         // --- BRAND THEME HELPERS ---
         const BRAND_THEMES = {
@@ -990,8 +1621,9 @@
         }
 
         function handleWhatsAppOrder() {
-            if (!state.storeLocation.trim()) {
-                showToast('Isi lokasi pengambilan dulu!', 'error');
+            const pickupStore = getPickupStoreText();
+            if (!pickupStore) {
+                showToast(isKopiKenanganOrder() ? (state.manualStoreMode ? 'Isi cabang manual dulu!' : 'Pilih kota dan store Kopi Kenangan dulu!') : 'Isi lokasi pengambilan dulu!', 'error');
                 return;
             }
 
@@ -1015,7 +1647,7 @@
 
             message += `\n*Total: ${formatPrice(getTotalPrice())}*\n`;
             message += `--------------------------------\n`;
-            message += `*Lokasi Ambil:* ${state.storeLocation}\n`;
+            message += `*Lokasi Ambil:* ${pickupStore}\n`;
             const timeText = state.orderType === 'now' ? 'SEKARANG⚡' : `JAM ${state.scheduledTime}`;
             message += `*Waktu Ambil:* ${timeText}`;
 
@@ -1472,18 +2104,7 @@
                                     ` : ''}
                                 </div>
 
-                                <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
-                                    <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-3 flex items-center gap-2">
-                                        ${inputIcon} ${inputLabel} <span class="text-[#9E3C3C]">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value="${state.storeLocation}"
-                                        oninput="state.storeLocation = this.value"
-                                        placeholder="Contoh: Cabang Grand Indonesia..."
-                                        class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all font-medium placeholder:text-subtle/45"
-                                    />
-                                </div>
+                                ${renderPickupStoreField(inputIcon, inputLabel)}
                             `}
                         </div>
 
