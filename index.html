@@ -1056,6 +1056,13 @@
 
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
 
+            // --- ATURAN BARU KOPI KENANGAN: MINIMAL 2 ITEM ---
+            if (orderBrand === 'Kopi Kenangan' && getTotalItems() < 2) {
+                showToast('Minimal pembelian Kopi Kenangan adalah 2 item (bebas minuman/makanan).', 'error');
+                return;
+            }
+            // --------------------------------------------------
+
             if (state.orderType === 'scheduled' && !state.scheduledTime) {
                 showToast('Jam pengambilan belum diisi!', 'error');
                 return;
