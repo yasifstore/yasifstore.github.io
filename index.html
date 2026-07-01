@@ -56,8 +56,6 @@
             --ys-navy: #18202B;
         }
 
-
-
         /* BRAND THEME SYSTEM: subtle, premium, not colorful-overload */
         .theme-scope {
             --brand-accent: #7A8F73;
@@ -320,8 +318,6 @@
             }
         }
 
-    
-
         /* PRODUCT CARD REVAMP + BEST SELLER SECTION - MOBILE FIRST FIX V3 */
         .best-seller-shell {
             background:
@@ -483,11 +479,11 @@
         
         // --- DATA PRODUK ---
         let products = [
+            // KOPI KENANGAN EXISTING DATA
             { id: "921", category: "NEW! Blueberry Series", name: "Blueberry Americano", originalPrice: 19000, promoPrice: 13000, brand: "Kopi Kenangan", image: "https://huawei-food-cms.grab.com/compressed_webp/items/url-b450ad17/photo/907f271ead5b2acd.webp" },
             { id: "922", category: "NEW! Blueberry Series", name: "Blueberry Frappe", originalPrice: 23000, promoPrice: 15000, brand: "Kopi Kenangan", image: "https://huawei-food-cms.grab.com/compressed_webp/items/url-6583d06a/photo/a46a1fb1a146f5de.webp" },
             { id: "923", category: "NEW! Blueberry Series", name: "Coffeeberry Frappe", originalPrice: 27000, promoPrice: 17000, brand: "Kopi Kenangan", image: "https://huawei-food-cms.grab.com/compressed_webp/items/url-3efbf577/photo/3402bc12b110167e.webp" },
             { id: "924", category: "NEW! Blueberry Series", name: "Chocoberry Frappe", originalPrice: 25000, promoPrice: 16000, brand: "Kopi Kenangan", image: "https://huawei-food-cms.grab.com/compressed_webp/items/url-f8295be9/photo/671de38d58d351e3.webp" },
-
 
             { id: "916", category: "NEW! Thai Tea Series", name: "OG Thai Tea", originalPrice: 19000, promoPrice: 13000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20260504023427013103/detail/a874415f_2101e81a7c0f32a.webp" },
             { id: "917", category: "NEW! Thai Tea Series", name: "Thai Tea Aren", originalPrice: 24000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20260504023427033231/detail/91b3b8b5_34f1a63a4220933.webp" },
@@ -563,19 +559,25 @@
             { id: "60", category: "Makanan", name: "Sugar Donut", originalPrice: 10000, promoPrice: 8500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20250213181305025046/detail/97b20569_a7aa8c317a3c525.webp" },
             { id: "62", category: "Makanan", name: "Roti Coklat Klasik", originalPrice: 9000, promoPrice: 8000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/a638a121-fe33-46e8-8a90-abd75706c1ec_9e12c70d-aa2b-5e0e-aebe-70e0ea1ebfd9.png?auto=format" },
             { id: "63", category: "Makanan", name: "Roti Susu Manis", originalPrice: 10000, promoPrice: 8500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/396da488-0f99-4e03-9e4d-a60c2c979074_33396a34-db50-f763-4f98-7ec86de19e27.png?auto=format" },
-            { id: "64", category: "Makanan", name: "Roti Keju Manis", originalPrice: 12000, promoPrice: 9500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/72acff80-65d0-4ccb-8018-c6abb90e76da_4d56bebd-84b0-00e6-34d0-2a7f4bbd7003.png?auto=format" },
+            { id: "64", category: "Makanan", name: "Roti Keju Manis", originalPrice: 13000, promoPrice: 10000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/72acff80-65d0-4ccb-8018-c6abb90e76da_4d56bebd-84b0-00e6-34d0-2a7f4bbd7003.png?auto=format" },
             { id: "65", category: "Makanan", name: "Roti Srikaya", originalPrice: 15000, promoPrice: 11000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/bb7f1969-adf1-4402-b565-871903609693_dbf90a98-0acd-2f08-0505-b83f77186496.png?auto=format" },
             { id: "66", category: "Makanan", name: "Choco Chip Cookies", originalPrice: 14000, promoPrice: 10500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/26fda6fc-f6aa-4fc0-b6e6-304be6c3c38a_e4d2e3fc-27e8-c6b3-8746-363e0e135588.png?auto=format" },
             { id: "67", category: "Makanan", name: "Join the Dark Side Cookie", originalPrice: 21000, promoPrice: 14000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/abce5af0-e7d7-4699-b2ab-efaed6f3ac45_9e36632a-bf36-8360-39f7-91b3c733e5d4.png?auto=format" },
             { id: "68", category: "Makanan", name: "Friend Chip Cookie", originalPrice: 17000, promoPrice: 12000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/056f4a54-9897-438c-8439-8924ce1aec37_31f64dbd-4d3f-10a9-f95e-ecc735c98dba.png?auto=format" },
-            { id: "83", category: "Makanan", name: "Choco Muffin", originalPrice: 16000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/48b6dfe9-6642-4f01-a2db-5fe5443c9944_b7bb083c-dc42-4221-b368-d262394e63cb.png?auto=format" },
-            { id: "84", category: "Makanan", name: "Blueberry Muffin", originalPrice: 16000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/32e30e0d-9103-4e37-a7ba-d82545d8d945_cd7feac8-efcb-4e4e-8521-abdca51e7b4a.png?auto=format" },
-            { id: "85", category: "Makanan", name: "Chocolate Choux Puff", originalPrice: 13000, promoPrice: 10000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/4e97635e-d433-42db-a9b5-7aaba05ab108_eb464661-b1cc-4bc8-a729-6cb15151ffc0.png?auto=format" },
-            { id: "86", category: "Makanan", name: "Strawberry Choux Puff", originalPrice: 13000, promoPrice: 10000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/c80d7e27-3dbf-4824-9c50-b2dd94ad46bf_3ea6cf0b-7377-4849-b597-94441ba7cbfe.png?auto=format" },
-            { id: "87", category: "Makanan", name: "Vanila Choux Puff", originalPrice: 13000, promoPrice: 10000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/129e1c5a-38a6-43d9-b1cb-ce5513aad89b_1d03fedc-2774-4f02-ad41-4c8d708f8bc6.png?auto=format" },
+            { id: "83", category: "Makanan", name: "Choco Muffin", originalPrice: 15000, promoPrice: 11000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/48b6dfe9-6642-4f01-a2db-5fe5443c9944_b7bb083c-dc42-4221-b368-d262394e63cb.png?auto=format" },
+            { id: "84", category: "Makanan", name: "Blueberry Muffin", originalPrice: 15000, promoPrice: 11000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/32e30e0d-9103-4e37-a7ba-d82545d8d945_cd7feac8-efcb-4e4e-8521-abdca51e7b4a.png?auto=format" },
+            { id: "85", category: "Makanan", name: "Chocolate Choux Puff", originalPrice: 12000, promoPrice: 9500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/4e97635e-d433-42db-a9b5-7aaba05ab108_eb464661-b1cc-4bc8-a729-6cb15151ffc0.png?auto=format" },
+            { id: "86", category: "Makanan", name: "Strawberry Choux Puff", originalPrice: 12000, promoPrice: 9500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/c80d7e27-3dbf-4824-9c50-b2dd94ad46bf_3ea6cf0b-7377-4849-b597-94441ba7cbfe.png?auto=format" },
+            { id: "951", category: "Makanan", name: "Salt Bread Choco Butter", originalPrice: 11000, promoPrice: 9000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/7341908f-c1c9-404e-a877-76e2efad8560_c8198f5b-ee48-47c2-a598-9fb61f1e2081.png?auto=format" },
+            { id: "952", category: "Makanan", name: "Salt Bread Sausage", originalPrice: 14000, promoPrice: 10500, brand: "Kopi Kenangan", image: "https://huawei-food-cms.grab.com/compressed_webp/items/url-d59bae1d/photo/a11e720809d5e4fb.webp" },
+            { id: "953", category: "Makanan", name: "Salt Bread Abon", originalPrice: 14000, promoPrice: 10500, brand: "Kopi Kenangan", image: "https://huawei-food-cms.grab.com/compressed_webp/items/new-item/photo/09b7f146_e401bd2a47aff24.webp" },
+            { id: "954", category: "Makanan", name: "Aren Apple Pie", originalPrice: 17000, promoPrice: 12000, brand: "Kopi Kenangan", image: "https://huawei-food-cms.grab.com/compressed_webp/items/url-9216826f/photo/ba454472b5208f2d.webp" },
+            { id: "955", category: "Makanan", name: "Thai Chicken Spaghetti", originalPrice: 22000, promoPrice: 14500, brand: "Kopi Kenangan", image: "https://huawei-food-cms.grab.com/compressed_webp/items/url-968df5db/photo/2bfd90a07d28ed4.webp" },
+            { id: "956", category: "Makanan", name: "Spaghetti Tuna Aglio Olio", originalPrice: 22000, promoPrice: 14500, brand: "Kopi Kenangan", image: "https://huawei-food-cms.grab.com/compressed_webp/items/url-517ba09c/photo/4599f8f43c4b9ff7.webp" },
+            { id: "87", category: "Makanan", name: "Vanila Choux Puff", originalPrice: 12000, promoPrice: 9500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/129e1c5a-38a6-43d9-b1cb-ce5513aad89b_1d03fedc-2774-4f02-ad41-4c8d708f8bc6.png?auto=format" },
             { id: "88", category: "Makanan", name: "Roti Gulung Abon", originalPrice: 18000, promoPrice: 12500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/5cec4577-f126-471c-97d8-48aab38857e5_d7030c09-50e9-f29c-0a18-d32c3c51cf88.png?auto=format" },
-            { id: "89", category: "Makanan", name: "Salt Bread Original", originalPrice: 12000, promoPrice: 9500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/f193bae7-f819-4927-9eb5-2649ea8ba27e_4f833503-36a0-cc16-5b72-5c624190b5be.png?auto=format" },
-            { id: "90", category: "Makanan", name: "Salt Bread Beef and Cheese", originalPrice: 15000, promoPrice: 11000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/fab74fca-bc4a-4dff-bad3-7f758510c460_7289c848-7c1c-e767-8582-5fde0af01f81.png?auto=format" },
+            { id: "89", category: "Makanan", name: "Salt Bread Original", originalPrice: 11000, promoPrice: 9000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/f193bae7-f819-4927-9eb5-2649ea8ba27e_4f833503-36a0-cc16-5b72-5c624190b5be.png?auto=format" },
+            { id: "90", category: "Makanan", name: "Salt Bread Beef and Cheese", originalPrice: 14000, promoPrice: 10500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/fab74fca-bc4a-4dff-bad3-7f758510c460_7289c848-7c1c-e767-8582-5fde0af01f81.png?auto=format" },
             { id: "69", category: "Makanan", name: "Pasta Mentai", originalPrice: 24000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/fb629113-34ef-4ea0-923f-9f6a81681b9b_cfc504ae-2cd8-641d-a09d-b8e8426e43bf.png?auto=format" },
             { id: "70", category: "Makanan", name: "Pasta Indoghetti", originalPrice: 22000, promoPrice: 14500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251212052608012601/detail/505f058b_303643db99c0fa4.webp" },
             { id: "71", category: "Makanan", name: "Chicken Japanese Curry  Rice", originalPrice: 24000, promoPrice: 15500, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251212052609023189/detail/80161efd_ba6140742e7b7b3.webp" },
@@ -589,13 +591,12 @@
             { id: "79", category: "Makanan", name: "Croissant Abon", originalPrice: 17000, promoPrice: 12000, brand: "Kopi Kenangan", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20251211192433021856/detail/9c7d5034_00dce96fec491e6.webp" },
             { id: "80", category: "Makanan", name: "Danish Tiramisu", originalPrice: 19000, promoPrice: 13000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/9deded55-e668-4e73-8043-8ad481c2e942_f94795a8-cd83-a9e8-23d2-899ec5806a08.png?auto=format" },
             { id: "81", category: "Makanan", name: "Donut Tiramisu", originalPrice: 13000, promoPrice: 10000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/904d74f8-3662-4b91-a65e-ac29fe7689ef_e2b19cb8-f44a-9ee5-de23-371e709f105a.png?auto=format" },
-            { id: "82", category: "Makanan", name: "Canele Aren", originalPrice: 16000, promoPrice: 11500, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/b839edd5-c9f8-44d3-97e8-b60cdddf1f2c_951c3451-e0e3-46d2-9f8a-c2cfd1700147.png?auto=format" },
+            { id: "82", category: "Makanan", name: "Canele Aren", originalPrice: 15000, promoPrice: 11000, brand: "Kopi Kenangan", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/b839edd5-c9f8-44d3-97e8-b60cdddf1f2c_951c3451-e0e3-46d2-9f8a-c2cfd1700147.png?auto=format" },
            
-
-
-
-
             // 2. TOMORO COFFEE
+            { id: "901", category: "Coffee", name: "Matcha Caramel Coffee Mousse", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/f4d1db53-13b7-4a0d-a9f6-ca6742859419_116R_XfVNh51pkIzKrd1cLqYGdtemHsOC.jpeg?auto=format" },
+            { id: "902", category: "Non-Coffee", name: "Matcha Jasmine Milk Tea", originalPrice: 23000, promoPrice: 14500, brand: "Tomoro Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/406f23c9-d9cb-4654-8f49-e65771100493_1M8ujUGNZpCMJPVx7AXKMGmShNeIkjj27.jpeg?auto=format" },
+            { id: "903", category: "Coffee", name: "Matcha Espresso", originalPrice: 30000, promoPrice: 18000, brand: "Tomoro Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/9886bffc-35f7-464d-829f-cf4b521239dd_1JD-OY9GOJH6-SuL6Ub9u8_JujS6I_mp4.jpeg?auto=format" },
             { id: "109", category: "Coffee", name: "Caramel Cheese Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE202410011221397303144/detail/7ca6b6e58bf54039ae151eabdb45d24c_1767718900688893063.webp" },
             { id: "110", category: "Coffee", name: "Cheese Cloud Latte", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE202410011221397315374/detail/f1babbdc82e544d183b4da1712bd68b0_1767718901087073805.webp" },
             { id: "111", category: "Coffee", name: "TOMORO Coconut Latte", originalPrice: 23000, promoPrice: 14500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20231201052540011833/detail/8d01ad1991a0440daaf7c0937a71234c_1767718899526247736.webp" },
@@ -1125,25 +1126,30 @@
             }, 2500);
         }
 
+        // --- UPDATE: Modal Peringatan dengan Info Grup WA & 2 Tombol ---
         function renderDisclaimerModal() {
             return `
                 <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div class="absolute inset-0 diffused-backdrop transition-opacity"></div>
                     <div class="luxury-panel w-full max-w-[420px] rounded-[2rem] z-10 overflow-hidden animate-modal flex flex-col relative">
-                        <div class="px-7 py-8 text-left">
-                            <div class="flex items-center justify-between mb-7">
+                        <div class="px-6 py-7 text-left">
+                            <div class="flex items-center justify-between mb-6">
                                 <span class="text-[10px] uppercase tracking-[0.28em] text-subtle font-semibold">Yasif Notice</span>
                                 <span class="w-9 h-9 rounded-full border border-border flex items-center justify-center text-lg">⏳</span>
                             </div>
-                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-4 tracking-[-0.03em]">Informasi Waktu Tunggu</h3>
-                            <div class="text-sm text-subtle leading-relaxed mb-7 space-y-3">
-                                <p>Halo Sobat Yasif! 👋</p>
-                                <p>Untuk kenyamanan bersama, mohon perkirakan waktu proses pesanan sekitar <strong class="text-foreground font-semibold">10 - 15 menit</strong> setelah list pesanan dikirim ke WhatsApp Admin.</p>
-                                <p>Apabila Chat WhatsApp belum dibalas, mohon tunggu sampai Admin merespons ya.</p>
+                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">Info Pesanan & Promo</h3>
+                            <div class="text-sm text-subtle leading-relaxed mb-6 space-y-2">
+                                <p>Halo! 👋 Waktu proses pesanan sekitar <strong class="text-foreground font-semibold">10-15 menit</strong> setelah list dikirim ke Admin ya.</p>
+                                <p>Pantau terus update promo terbaru (menu & diskon) dengan join Grup WA Yasif Store!</p>
                             </div>
-                            <button onclick="state.showDisclaimer=false; render()" class="w-full py-4 brand-button rounded-full font-semibold text-sm tracking-[-0.01em] active:scale-[0.99] transition-all duration-300">
-                                Saya Mengerti, Lanjut Pesan
-                            </button>
+                            <div class="flex gap-3">
+                                <a href="https://chat.whatsapp.com/Bk73XNM1R3D5p8ZdMlna1W" target="_blank" class="flex-1 py-3.5 brand-button-soft rounded-full font-semibold text-sm tracking-[-0.01em] active:scale-[0.99] transition-all duration-300 text-center flex items-center justify-center gap-1.5">
+                                    <span>💬</span> Join Grup
+                                </a>
+                                <button onclick="state.showDisclaimer=false; render()" class="flex-1 py-3.5 brand-button rounded-full font-semibold text-sm tracking-[-0.01em] active:scale-[0.99] transition-all duration-300">
+                                    Lanjut Pesan
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1610,7 +1616,6 @@
                 </div>
             `;
         }
-
 
         // Lightweight nav scroll state (replaces heavy scroll-timeline blur)
         let headerTicking = false;
