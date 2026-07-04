@@ -328,15 +328,13 @@
 
         function saveCart() { localStorage.setItem('yasif_cart', JSON.stringify(state.cart)); }
 
-        function closeProductPopup() {
-            state.activeProduct = null;
-            render();
-        }
-
-        function closeCartModal() {
-            state.showCart = false;
-            render();
-        }
+        window.safeBack = function() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.hash = state.selectedBrand ? 'brand-' + encodeURIComponent(state.selectedBrand) : '';
+            }
+        };
 
         const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price || 0);
         const getTotalItems = () => state.cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
@@ -396,7 +394,7 @@
 
             if (isFeatured) {
                 return `
-                    <article class="product-card featured-product-card group cursor-pointer rounded-[1.75rem] sm:rounded-[2.1rem] p-3 sm:p-4 overflow-hidden" onclick='openProductPopup("${product.id}")'>
+                    <article class="product-card featured-product-card group cursor-pointer rounded-[1.75rem] sm:rounded-[2.1rem] p-3 sm:p-4 overflow-hidden" onclick="window.location.hash = 'product-${product.id}'">
                         <div class="grid grid-cols-[96px_1fr] sm:grid-cols-[150px_1fr] gap-3 sm:gap-5 items-center">
                             <div class="featured-product-frame aspect-square rounded-[1.2rem] sm:rounded-[1.75rem] overflow-hidden relative p-2.5 sm:p-4">
                                 ${cartBadgeHtml}
@@ -426,7 +424,7 @@
             }
 
             return `
-                <article class="product-card modern-product-card group cursor-pointer rounded-[1.45rem] sm:rounded-[1.85rem] overflow-hidden" onclick='openProductPopup("${product.id}")'>
+                <article class="product-card modern-product-card group cursor-pointer rounded-[1.45rem] sm:rounded-[1.85rem] overflow-hidden" onclick="window.location.hash = 'product-${product.id}'">
                     <div class="p-2 sm:p-3 pb-0">
                         <div class="modern-product-frame aspect-square rounded-[1.15rem] sm:rounded-[1.55rem] overflow-hidden relative p-2.5 sm:p-4">
                             ${cartBadgeHtml}
@@ -447,18 +445,6 @@
                 </article>
             `;
         };
-
-        function openProductPopup(productId) {
-            const product = products.find(p => p.id === productId);
-            if (product) {
-                state.activeProduct = product;
-                state.tempNote = '';
-                state.tempQty = 1;
-                state.tempSize = product.sizes && product.sizes.length > 0 ? product.sizes[0].name : null;
-                state.tempSugar = product.defaultSugar || null;
-                render();
-            }
-        }
 
         function updateTempNote(value) { state.tempNote = value; }
 
@@ -508,9 +494,9 @@
             }
 
             saveCart();
-            state.activeProduct = null;
             render(); 
             showToast('Berhasil masuk keranjang! 🛒');
+            safeBack();
         }
 
         function updateCartQty(cartItemId, delta) {
@@ -557,10 +543,11 @@
 
             localStorage.removeItem('yasif_cart');
             state.cart = [];
+            render();
 
             const whatsappUrl = `https://wa.me/6287836345807?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
-            closeCartModal();
+            safeBack();
         }
 
         function showToast(message, type = 'success') {
@@ -669,11 +656,11 @@
                 <header id="site-header" class="fixed top-0 w-full z-40 glass transition-all duration-300">
                     <div class="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between">
                         <div class="w-28 flex justify-start">
-                            ${state.selectedBrand ? `<button onclick="selectBrand(null)" class="group inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground transition-colors duration-500"><svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 19l-7-7 7-7"></path></svg>Back</button>` : '<span class="hidden sm:block text-[10px] uppercase tracking-[0.22em] text-subtle">Promo Curated</span>'}
+                            ${state.selectedBrand ? `<button onclick="window.location.hash = ''" class="group inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground transition-colors duration-500"><svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 19l-7-7 7-7"></path></svg>Back</button>` : '<span class="hidden sm:block text-[10px] uppercase tracking-[0.22em] text-subtle">Promo Curated</span>'}
                         </div>
-                        <button onclick="selectBrand(null)" class="font-heading text-[15px] sm:text-base font-semibold text-foreground tracking-[0.28em] uppercase hover:opacity-70 transition-opacity duration-500">YASIF STORE</button>
+                        <button onclick="window.location.hash = ''" class="font-heading text-[15px] sm:text-base font-semibold text-foreground tracking-[0.28em] uppercase hover:opacity-70 transition-opacity duration-500">YASIF STORE</button>
                         <div class="w-28 flex justify-end">
-                            <button onclick="state.showTutorial=true; render()" class="editorial-link text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground transition-colors duration-500">Guide</button>
+                            <button onclick="window.location.hash = 'tutorial'" class="editorial-link text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground transition-colors duration-500">Guide</button>
                         </div>
                     </div>
                 </header>
@@ -700,7 +687,7 @@
                                     <div class="flex items-center justify-between"><span class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold">Community</span><span class="text-lg">💬</span></div>
                                     <div><h3 class="font-heading text-lg font-semibold text-foreground tracking-[-0.03em]">Grup WhatsApp</h3><p class="text-xs text-subtle mt-1">Update promo terbaru</p></div>
                                 </a>
-                                <button onclick="state.showTutorial=true; render()" class="premium-surface group rounded-[1.5rem] px-5 py-5 flex flex-col gap-5 text-left hover:bg-white/70 transition-all duration-500">
+                                <button onclick="window.location.hash = 'tutorial'" class="premium-surface group rounded-[1.5rem] px-5 py-5 flex flex-col gap-5 text-left hover:bg-white/70 transition-all duration-500">
                                     <div class="flex items-center justify-between"><span class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold">Ordering</span><span class="text-lg">⌁</span></div>
                                     <div><h3 class="font-heading text-lg font-semibold text-foreground tracking-[-0.03em]">Cara Order</h3><p class="text-xs text-subtle mt-1">Panduan checkout</p></div>
                                 </button>
@@ -718,7 +705,7 @@
                 'Tomoro Coffee': { label: 'Modern espresso & creamy selections', accent: 'bg-[#D8732A]' }
             }[name];
             return `
-                <button onclick="selectBrand('${name}')" style="${getBrandThemeStyle(name)}" class="brand-option group relative w-full py-8 sm:py-10 px-2 sm:px-4 flex items-center justify-between text-left overflow-hidden card-hover">
+                <button onclick="window.location.hash = 'brand-${encodeURIComponent(name)}'" style="${getBrandThemeStyle(name)}" class="brand-option group relative w-full py-8 sm:py-10 px-2 sm:px-4 flex items-center justify-between text-left overflow-hidden card-hover">
                     <span class="absolute left-0 top-7 bottom-7 w-[3px] rounded-full" style="background: var(--brand-accent)"></span>
                     <div class="flex items-baseline gap-6 sm:gap-9 min-w-0 pl-4">
                         <span class="text-[11px] sm:text-xs uppercase tracking-[0.32em] font-semibold shrink-0" style="color: var(--brand-accent)">${icon}</span>
@@ -810,13 +797,13 @@
 
             return `
                 <div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5">
-                    <div class="absolute inset-0 diffused-backdrop transition-opacity" onclick="closeProductPopup()"></div>
+                    <div class="absolute inset-0 diffused-backdrop transition-opacity" onclick="safeBack()"></div>
                     <div class="luxury-panel w-full sm:max-w-[520px] sm:rounded-[2.25rem] rounded-t-[2rem] z-10 overflow-hidden flex flex-col max-h-[92vh] animate-modal">
                         <div class="relative p-4 sm:p-5 shrink-0">
                             <div class="product-frame h-64 sm:h-72 rounded-[1.75rem] overflow-hidden">
                                 <img src="${p.image}" class="w-full h-full object-cover" decoding="async" onerror="this.src='https://placehold.co/700x520/F7F5F0/77756D?text=No+Image'">
                             </div>
-                            <button onclick="closeProductPopup()" class="absolute top-8 right-8 w-10 h-10 bg-surface/95 border border-white/70 rounded-full flex items-center justify-center text-foreground hover:scale-95 transition-all duration-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                            <button onclick="safeBack()" class="absolute top-8 right-8 w-10 h-10 bg-surface/95 border border-white/70 rounded-full flex items-center justify-center text-foreground hover:scale-95 transition-all duration-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                         </div>
 
                         <div class="px-6 sm:px-8 pb-6 flex-1 overflow-y-auto">
@@ -875,7 +862,7 @@
         function renderFloatingCart() {
             return `
                 <div class="fixed bottom-5 sm:bottom-7 w-full px-4 z-40 flex justify-center animate-fade-up pointer-events-none">
-                    <button onclick="state.showCart=true; render()" class="cart-floating-pill pointer-events-auto text-white w-full max-w-[430px] rounded-full pl-3 pr-5 py-3 flex items-center justify-between transition-all duration-300 active:scale-[0.99] cursor-pointer">
+                    <button onclick="window.location.hash = 'cart'" class="cart-floating-pill pointer-events-auto text-white w-full max-w-[430px] rounded-full pl-3 pr-5 py-3 flex items-center justify-between transition-all duration-300 active:scale-[0.99] cursor-pointer">
                         <div class="cart-floating-pill__count bg-white font-semibold w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="color: var(--brand-accent-dark)">${getTotalItems()}</div>
                         <div class="flex flex-col items-start flex-1 ml-4">
                             <span class="cart-floating-pill__price text-[10px] uppercase tracking-[0.18em] text-white/65 font-semibold">${formatPrice(getTotalPrice())}</span>
@@ -893,12 +880,12 @@
 
             return `
                 <div class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-5">
-                    <div class="absolute inset-0 diffused-backdrop transition-opacity" onclick="closeCartModal()"></div>
+                    <div class="absolute inset-0 diffused-backdrop transition-opacity" onclick="safeBack()"></div>
                     <div class="luxury-panel w-full md:max-w-[640px] h-[92vh] md:h-auto md:max-h-[86vh] md:rounded-[2.25rem] rounded-t-[2rem] z-10 flex flex-col animate-modal overflow-hidden">
                         
                         <div class="px-6 sm:px-8 py-6 border-b border-border/70 bg-surface/70 flex justify-between items-start shrink-0">
                             <div><p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-2">Checkout</p><h2 class="text-3xl font-heading font-semibold text-foreground tracking-[-0.055em]">Keranjang</h2></div>
-                            <button onclick="closeCartModal()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle hover:text-foreground hover:border-foreground/20 transition-all duration-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                            <button onclick="safeBack()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle hover:text-foreground hover:border-foreground/20 transition-all duration-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                         </div>
 
                         <div class="flex-1 overflow-y-auto px-5 sm:px-8 py-6 space-y-5">
@@ -970,11 +957,11 @@
             ];
             return `
                 <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div class="absolute inset-0 diffused-backdrop transition-opacity" onclick="state.showTutorial=false; render()"></div>
+                    <div class="absolute inset-0 diffused-backdrop transition-opacity" onclick="safeBack()"></div>
                     <div class="luxury-panel w-full max-w-[440px] rounded-[2rem] z-10 overflow-hidden animate-modal flex flex-col max-h-[86vh]">
                         <div class="px-7 py-7 border-b border-border/70 bg-surface/70 flex justify-between items-start">
                             <div><p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-2">Guide</p><h3 class="font-heading font-semibold text-3xl text-foreground tracking-[-0.055em]">Cara Pemesanan</h3></div>
-                            <button onclick="state.showTutorial=false; render()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle hover:text-foreground hover:border-foreground/20 transition-all duration-500">✕</button>
+                            <button onclick="safeBack()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle hover:text-foreground hover:border-foreground/20 transition-all duration-500">✕</button>
                         </div>
                         <div class="p-7 overflow-y-auto space-y-7">
                             ${steps.map((step, idx) => `
@@ -985,7 +972,7 @@
                             `).join('')}
                         </div>
                         <div class="p-5 bg-surface/80 border-t border-border/70">
-                            <button onclick="state.showTutorial=false; render()" class="w-full py-4 brand-button rounded-full font-semibold transition-all duration-300 active:scale-[0.99]">Mengerti, Yuk Pesan</button>
+                            <button onclick="safeBack()" class="w-full py-4 brand-button rounded-full font-semibold transition-all duration-300 active:scale-[0.99]">Mengerti, Yuk Pesan</button>
                         </div>
                     </div>
                 </div>
@@ -1003,20 +990,63 @@
             headerTicking = true;
             requestAnimationFrame(() => { syncHeaderState(); headerTicking = false; });
         }, { passive: true });
+        
+        window.handleHashChange = function() {
+            const hash = window.location.hash;
+            const prevProduct = state.activeProduct;
+            
+            state.activeProduct = null;
+            state.showCart = false;
+            state.showTutorial = false;
 
-        window.selectBrand = function(brand) { 
-            state.selectedBrand = brand; 
-            if(brand) {
-                if(brand === 'Kopi Kenangan' && !state.hasSeenKKPopup) {
+            if (hash.startsWith('#product-')) {
+                const id = hash.replace('#product-', '');
+                const product = products.find(p => p.id === id);
+                if (product) {
+                    if (!prevProduct || prevProduct.id !== id) {
+                        state.tempNote = '';
+                        state.tempQty = 1;
+                        state.tempSize = product.sizes && product.sizes.length > 0 ? product.sizes[0].name : null;
+                        state.tempSugar = product.defaultSugar || null;
+                    }
+                    state.activeProduct = product;
+                    
+                    if (!state.selectedBrand) {
+                        state.selectedBrand = product.brand;
+                    }
+                } else {
+                    safeBack();
+                    return; 
+                }
+            } 
+            else if (hash === '#cart') {
+                state.showCart = true;
+            } 
+            else if (hash === '#tutorial') {
+                state.showTutorial = true;
+            } 
+            else if (hash.startsWith('#brand-')) {
+                const brand = decodeURIComponent(hash.replace('#brand-', ''));
+                state.selectedBrand = brand;
+                
+                if (brand === 'Kopi Kenangan' && !state.hasSeenKKPopup) {
                     state.showKKDisclaimer = true;
                     state.hasSeenKKPopup = true;
                 }
+            } 
+            else {
+                state.selectedBrand = null;
             }
-            render(); 
-            window.scrollTo(0,0); 
+            
+            render();
+            
+            if (hash === '' || hash.startsWith('#brand-')) {
+                 window.scrollTo(0,0);
+            }
         };
-        
-        render();
+
+        window.addEventListener('hashchange', handleHashChange);
+        handleHashChange(); 
     </script>
 </body>
 </html>
