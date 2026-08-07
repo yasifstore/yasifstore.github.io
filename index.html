@@ -104,7 +104,9 @@
             tempSugar: null,
             orderType: 'now',
             scheduledTime: '',
-            searchQuery: ''
+            searchQuery: '',
+            pickupNameType: 'yasif', // Fitur Pilihan Nama Baru
+            customPickupName: ''      // Fitur Input Nama Kustom Baru
         };
 
         function saveCart() { localStorage.setItem('yasif_cart', JSON.stringify(state.cart)); }
@@ -122,6 +124,7 @@
         const getTotalPrice = () => state.cart.reduce((sum, item) => sum + ((item.promoPrice || 0) * (item.quantity || 0)), 0);
         const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
+        // Komponen Input Lokasi Cabang
         function renderPickupStoreField(inputIcon, inputLabel) {
             return `
                 <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
@@ -130,6 +133,26 @@
                     </label>
                     <p class="mb-4 text-[11px] sm:text-xs leading-relaxed font-semibold text-subtle">Ketik nama cabang/lokasi pengambilan pesanan.</p>
                     <input type="text" value="${escapeHtml(state.storeLocation)}" oninput="state.storeLocation = this.value" placeholder="Contoh: Cabang Grand Indonesia..." class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-medium placeholder:text-subtle/45" />
+                </div>
+            `;
+        }
+
+        // Komponen Input Atas Nama Baru
+        function renderPickupNameField() {
+            return `
+                <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
+                    <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg> Atas Nama Pengambilan <span class="text-[#9E3C3C]">*</span>
+                    </label>
+                    <div class="flex gap-2 mb-3 rounded-full bg-background/70 border border-border p-1">
+                        <button onclick="state.pickupNameType='yasif'; render()" class="flex-1 py-3 rounded-full text-sm font-semibold transition-all ${state.pickupNameType === 'yasif' ? 'brand-button' : 'text-subtle'}">Yasif</button>
+                        <button onclick="state.pickupNameType='custom'; render()" class="flex-1 py-3 rounded-full text-sm font-semibold transition-all ${state.pickupNameType === 'custom' ? 'brand-button' : 'text-subtle'}">Nama Lain</button>
+                    </div>
+                    ${state.pickupNameType === 'custom' ? `
+                        <div class="mt-4">
+                            <input type="text" value="${escapeHtml(state.customPickupName)}" oninput="state.customPickupName = this.value" placeholder="Ketik nama untuk pick up..." class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-medium placeholder:text-subtle/45" />
+                        </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -145,15 +168,15 @@
         const getBrandThemeStyle = (brand) => { const t = getBrandTheme(brand); return `--brand-accent:${t.accent};--brand-accent-dark:${t.dark};--brand-accent-soft:${t.soft};--brand-accent-softer:${t.softer};--brand-accent-border:${t.border};--brand-accent-contrast:#FFFDF8;`; };
 
         const BEST_SELLER_PRODUCTS = {
-    'Kopi Kenangan': [
-        { name: 'Kopi Kenangan Mantan' }, 
-        { name: 'Creamy Aren Latte' }
-    ],
-    'Tomoro Coffee': [
-        { id: '106', name: 'Matcha Oat Latte' }, 
-        { id: '121', name: 'TOMORO Aren Latte' }
-    ]
-};
+            'Kopi Kenangan': [
+                { name: 'Kopi Kenangan Mantan' }, 
+                { name: 'Creamy Aren Latte' }
+            ],
+            'Tomoro Coffee': [
+                { id: '106', name: 'Matcha Oat Latte' }, 
+                { id: '121', name: 'TOMORO Aren Latte' }
+            ]
+        };
         const normalizeText = (value) => String(value || '').toLowerCase().replace(/\s+/g, ' ').trim();
 
         const getBestSellerProducts = (brand) => {
@@ -304,6 +327,14 @@
         function handleWhatsAppOrder() {
             const pickupStore = (state.storeLocation || '').trim();
             if (!pickupStore) { showToast('Isi lokasi pengambilan dulu!', 'error'); return; }
+
+            // Validasi Atas Nama Baru
+            let finalName = 'Yasif';
+            if (state.pickupNameType === 'custom') {
+                finalName = (state.customPickupName || '').trim();
+                if (!finalName) { showToast('Isi atas nama pengambilan dulu!', 'error'); return; }
+            }
+
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
 
             if (orderBrand === 'Kopi Kenangan' && getTotalItems() < 2) {
@@ -316,16 +347,34 @@
             }
 
             let message = `*Orderan Baru: ${orderBrand}*\n--------------------------------\n`;
+            
+            // Revisi Template WhatsApp Pesanan Baru
             state.cart.forEach(item => {
                 message += `• ${item.name} (${item.quantity}x)\n`;
-                if (item.size) message += `   Ukuran: ${item.size}\n`;
-                if (item.sugar) message += `   Gula: ${item.sugar}\n`;
-                if (item.note && item.note.trim() !== '') message += `   Note: ${item.note}\n`;
-                message += `   Harga: ${formatPrice(item.promoPrice * item.quantity)}\n`;
+                
+                let details = [];
+                if (item.size) {
+                    let s = item.size.toLowerCase().includes('large') ? 'L' : 'R';
+                    details.push(`size: ${s}`);
+                }
+                if (item.sugar) {
+                    let sg = item.sugar.toLowerCase().replace(' sugar', '').replace('sugar', '').trim();
+                    details.push(`sugar: ${sg}`);
+                }
+                
+                // KOMA DIHILANGKAN DI SINI, DIGANTI SPASI
+                if (details.length > 0) message += `   ${details.join('  ')}\n`; 
+                
+                if (item.note && item.note.trim() !== '') message += `   note: ${item.note}\n`;
+                message += `   harga: ${formatPrice(item.promoPrice * item.quantity)}\n`;
             });
+            
             message += `\n*Total: ${formatPrice(getTotalPrice())}*\n--------------------------------\n`;
+            
+            // Penyesuaian Teks Atas Nama ke WA
+            message += `*Pick Up Atas Nama:* ${finalName}\n`; 
             message += `*Lokasi Ambil:* ${pickupStore}\n`;
-            message += `*Waktu Ambil:* ${state.orderType === 'now' ? 'SEKARANG⚡' : `JAM ${state.scheduledTime}`}`;
+            message += `*Waktu Ambil:* ${state.orderType === 'now' ? 'Sekarang' : `JAM ${state.scheduledTime}`}`;
 
             localStorage.removeItem('yasif_cart');
             state.cart = [];
@@ -741,6 +790,7 @@
                                         </div>
                                     ` : ''}
                                 </div>
+                                ${renderPickupNameField()}
                                 ${renderPickupStoreField(inputIcon, inputLabel)}
                             `}
                         </div>
