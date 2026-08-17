@@ -976,5 +976,54 @@
         }
     });
 </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB1sNl7HsyQoG_3_UbS-H8QYmjla8i6fKc",
+        authDomain: "yasif-store.firebaseapp.com",
+        databaseURL: "https://yasif-store-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "yasif-store",
+        storageBucket: "yasif-store.firebasestorage.app",
+        messagingSenderId: "76503690642",
+        appId: "1:76503690642:web:e9f3b1d73a545e102ae54b",
+        measurementId: "G-P10WDJPSK4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    function showClosedScreen(reason) {
+        document.body.innerHTML = `
+            <div class="fixed inset-0 bg-[#F7F5F0] z-[999] flex flex-col items-center justify-center p-5 text-center">
+                <div class="bg-white p-8 rounded-[2rem] shadow-xl max-w-sm w-full border border-gray-100">
+                    <h2 class="text-2xl font-bold mb-3">Yasif Store Sedang Tutup</h2>
+                    <p class="mb-6 text-gray-600 text-sm italic">"${reason}"</p>
+                    
+                    <a href="https://wa.me/6287836345807" class="block w-full py-2 mb-4 border border-gray-200 text-gray-400 text-xs rounded-full hover:bg-gray-50">
+                        Hubungi Admin
+                    </a>
+                    
+                    <button onclick="location.reload()" class="text-[10px] text-gray-300 underline">Refresh Halaman</button>
+                </div>
+            </div>`;
+    }
+
+    onValue(ref(db, 'store_status'), (snapshot) => {
+        const data = snapshot.val();
+        const status = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Mohon maaf, admin sedang ada kesibukan lain." };
+        
+        // 1. Cek Jam Otomatis (01:00 - 08:59)
+        const hour = new Date().getHours();
+        if (hour >= 1 && hour < 9) {
+            showClosedScreen("Admin sudah tepar dan tertidur nyenyak.");
+        } 
+        // 2. Jika bukan jam tidur, cek status dari Firebase
+        else if (!status.isOpen) {
+            showClosedScreen(status.reason);
+        }
+    });
+</script>
 </body>
 </html>
