@@ -9,14 +9,14 @@
     <div class="bg-white p-8 rounded-[2rem] shadow-xl text-center max-w-sm w-full border border-gray-100">
         <h1 class="text-2xl font-bold mb-6">Admin Yasif Store</h1>
         
-        <select id="reasonSelect" class="w-full mb-4 p-3 border rounded-xl text-sm">
+        <select id="reasonSelect" class="w-full mb-4 p-3 border rounded-xl text-sm focus:outline-none focus:border-emerald-700">
             <option value="Admin sedang ada kesibukan lain.">Admin sedang ada kesibukan lain.</option>
             <option value="Lagi istirahat & makan dulu ya.">Lagi istirahat & makan dulu ya.</option>
             <option value="Stok promo sedang habis.">Stok promo sedang habis.</option>
             <option value="Admin sudah tepar dan tertidur nyenyak.">Admin sudah tepar dan tertidur nyenyak.</option>
         </select>
 
-        <button id="toggleBtn" class="w-full py-4 rounded-full font-bold text-white text-lg mb-4" style="background-color: gray;">Loading...</button>
+        <button id="toggleBtn" class="w-full py-4 rounded-full font-bold text-white text-lg mb-4 shadow-md transition-all" style="background-color: gray;">Loading...</button>
         <p id="statusText" class="text-gray-500 font-medium text-sm"></p>
     </div>
 
@@ -40,11 +40,11 @@
         const btn = document.getElementById('toggleBtn');
         const text = document.getElementById('statusText');
         const reasonSelect = document.getElementById('reasonSelect');
-        let currentStatus = { isOpen: true, reason: "" };
+        let currentStatus = { isOpen: true, reason: "", time: "" };
 
         onValue(ref(db, 'store_status'), (snapshot) => {
             const data = snapshot.val();
-            currentStatus = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang sibuk." };
+            currentStatus = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang sibuk.", time: "" };
             
             if (currentStatus.isOpen) {
                 btn.style.backgroundColor = '#1F2A24';
@@ -54,16 +54,28 @@
             } else {
                 btn.style.backgroundColor = '#9E3C3C';
                 btn.innerText = 'BUKA TOKO';
-                text.innerText = '🔴 Toko: TUTUP (' + currentStatus.reason + ')';
+                text.innerText = '🔴 Toko: TUTUP';
                 reasonSelect.disabled = true;
             }
         });
 
         btn.onclick = () => {
             if (currentStatus.isOpen) {
-                set(ref(db, 'store_status'), { isOpen: false, reason: reasonSelect.value });
+                // Ambil jam saat ini secara real-time
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+                
+                set(ref(db, 'store_status'), { 
+                    isOpen: false, 
+                    reason: reasonSelect.value, 
+                    time: timeString 
+                });
             } else {
-                set(ref(db, 'store_status'), { isOpen: true, reason: "" });
+                set(ref(db, 'store_status'), { 
+                    isOpen: true, 
+                    reason: "", 
+                    time: "" 
+                });
             }
         };
     </script>
