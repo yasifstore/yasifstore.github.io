@@ -474,6 +474,51 @@
 
         function render() {
             const app = document.getElementById('app');
+            const hour = new Date().getHours();
+            const isNightClosed = (hour >= 1 && hour < 9);
+            const isClosed = isNightClosed || (typeof state !== 'undefined' && !state.isStoreOpen);
+
+            if (isClosed) {
+                const reason = isNightClosed ? "Admin sudah tepar dan tertidur nyenyak." : (state.closeReason || "Admin sedang ada kesibukan lain.");
+                const timeText = isNightClosed ? "Jam 01:00 WIB (Otomatis)" : (state.closeTime || "");
+
+                app.innerHTML = `
+                    <div class="min-h-screen bg-gradient-to-br from-[#F7F5F0] via-[#EFECE6] to-[#E5E0D5] flex flex-col items-center justify-center p-5 text-center">
+                        <div class="bg-white/95 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full border border-amber-900/10 relative overflow-hidden">
+                            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-600 via-orange-500 to-rose-600"></div>
+                            
+                            <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-rose-100">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+
+                            <h2 class="text-2xl font-bold text-gray-900 mb-2 tracking-tight">Yasif Store Sedang Tutup</h2>
+                            <p class="text-gray-700 text-sm leading-relaxed mb-4">${reason}</p>
+                            
+                            ${timeText ? `
+                                <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mb-6 shadow-2xs">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Ditutup sejak: ${timeText}
+                                </div>
+                            ` : ''}
+
+                            <div class="space-y-2.5">
+                                <a href="https://wa.me/6287836345807" class="block w-full py-3 border border-gray-300 text-gray-800 font-semibold text-xs rounded-full hover:bg-gray-50 transition-all shadow-2xs">
+                                    Hubungi Admin
+                                </a>
+                                
+                                <button onclick="location.reload()" class="w-full py-2.5 border border-gray-200 text-gray-600 font-medium text-[11px] rounded-full hover:bg-gray-50 transition-all">
+                                    Refresh Halaman
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return; 
+            }
             const themeBrand = getThemeBrand();
             const activeId = document.activeElement ? document.activeElement.id : null;
             
@@ -994,57 +1039,23 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    function showClosedScreen(reason, timeText) {
-        document.body.innerHTML = `
-            <div class="fixed inset-0 bg-gradient-to-br from-[#F7F5F0] via-[#EFECE6] to-[#E5E0D5] z-[999] flex flex-col items-center justify-center p-5 text-center">
-                <div class="bg-white/95 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full border border-amber-900/10 relative overflow-hidden">
-                    
-                    <!-- Aksen garis warna di bagian atas kartu -->
-                    <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-600 via-orange-500 to-rose-600"></div>
-                    
-                    <!-- Ikon Indikator Tutup -->
-                    <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-rose-100">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2 tracking-tight">Yasif Store Sedang Tutup</h2>
-                    <p class="text-gray-700 text-sm leading-relaxed mb-4">${reason}</p>
-                    
-                    <!-- Label Waktu Penutupan -->
-                    ${timeText ? `
-                        <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mb-6 shadow-2xs">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            Ditutup sejak: ${timeText}
-                        </div>
-                    ` : ''}
-
-                    <div class="space-y-2.5">
-                        <a href="https://wa.me/6287836345807" class="block w-full py-3 border border-gray-300 text-gray-800 font-semibold text-xs rounded-full hover:bg-gray-50 transition-all shadow-2xs">
-                            Hubungi Admin
-                        </a>
-                        
-                        <button onclick="location.reload()" class="w-full py-2.5 border border-gray-200 text-gray-600 font-medium text-[11px] rounded-full hover:bg-gray-50 transition-all">
-                            Refresh Halaman
-                        </button>
-                    </div>
-                </div>
-            </div>`;
+    // Tambahkan variabel status toko ke dalam objek state global yang sudah ada
+    if (typeof state !== 'undefined') {
+        state.isStoreOpen = true;
+        state.closeReason = "";
+        state.closeTime = "";
     }
 
+    // Dengarkan perubahan dari Firebase secara real-time
     onValue(ref(db, 'store_status'), (snapshot) => {
         const data = snapshot.val();
-        const status = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Mohon maaf, admin sedang ada kesibukan lain.", time: "" };
+        const storeData = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang ada kesibukan lain.", time: "" };
         
-        const hour = new Date().getHours();
-        if (hour >= 1 && hour < 9) {
-            showClosedScreen("Admin sudah tepar dan tertidur nyenyak.", "Jam 01:00 WIB (Otomatis)");
-        } 
-        else if (!status.isOpen) {
-            showClosedScreen(status.reason, status.time || "");
+        if (typeof state !== 'undefined') {
+            state.isStoreOpen = storeData.isOpen;
+            state.closeReason = storeData.reason;
+            state.closeTime = storeData.time;
+            if (typeof render === 'function') render();
         }
     });
 </script>
