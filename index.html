@@ -366,8 +366,10 @@
 
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
 
-            if (orderBrand === 'Kopi Kenangan' && getTotalItems() < 2) {
-                showToast('Minimal pembelian Kopi Kenangan adalah 2 item.', 'error');
+            const hasPackageInCart = state.cart.some(item => item.isPackage);
+
+            if (orderBrand === 'Kopi Kenangan' && !hasPackageInCart && getTotalItems() < 2) {
+                showToast('Minimal pembelian menu biasa Kopi Kenangan adalah 2 item.', 'error');
                 return;
             }
             if (state.orderType === 'scheduled' && !state.scheduledTime) {
@@ -1011,73 +1013,42 @@
         window.addEventListener('hashchange', handleHashChange);
         handleHashChange(); 
     </script>
+    <!-- Script lainnya di atas ... -->
     <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyB1sNl7HsyQoG_3_UbS-H8QYmjla8i6fKc",
-        authDomain: "yasif-store.firebaseapp.com",
-        databaseURL: "https://yasif-store-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "yasif-store",
-        storageBucket: "yasif-store.firebasestorage.app",
-        messagingSenderId: "76503690642",
-        appId: "1:76503690642:web:e9f3b1d73a545e102ae54b",
-        measurementId: "G-P10WDJPSK4"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyB1sNl7HsyQoG_3_UbS-H8QYmjla8i6fKc",
+            authDomain: "yasif-store.firebaseapp.com",
+            databaseURL: "https://yasif-store-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "yasif-store",
+            storageBucket: "yasif-store.firebasestorage.app",
+            messagingSenderId: "76503690642",
+            appId: "1:76503690642:web:e9f3b1d73a545e102ae54b",
+            measurementId: "G-P10WDJPSK4"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-    onValue(ref(db, 'store_status'), (snapshot) => {
-        const isOpen = snapshot.exists() ? snapshot.val() : true;
-        if (!isOpen) {
-            document.body.innerHTML = `
-                <div class="fixed inset-0 bg-[#F7F5F0] z-[999] flex flex-col items-center justify-center p-5 text-center">
-                    <div class="bg-white p-8 rounded-[2rem] shadow-xl max-w-sm w-full border border-gray-100">
-                        <h2 class="text-2xl font-bold mb-4">Toko Sedang Tutup</h2>
-                        <p class="mb-6 text-gray-600">Mohon maaf, admin sedang ada kesibukan lain.</p>
-                        <a href="https://wa.me/6287836345807" class="block w-full py-4 bg-[#1F2A24] text-white rounded-full font-bold">Hubungi Admin</a>
-                    </div>
-                </div>`;
-        }
-    });
-</script>
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyB1sNl7HsyQoG_3_UbS-H8QYmjla8i6fKc",
-        authDomain: "yasif-store.firebaseapp.com",
-        databaseURL: "https://yasif-store-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "yasif-store",
-        storageBucket: "yasif-store.firebasestorage.app",
-        messagingSenderId: "76503690642",
-        appId: "1:76503690642:web:e9f3b1d73a545e102ae54b",
-        measurementId: "G-P10WDJPSK4"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    if (typeof state !== 'undefined') {
-        state.isStoreOpen = true;
-        state.closeReason = "";
-        state.closeTime = "";
-    }
-
-    onValue(ref(db, 'store_status'), (snapshot) => {
-        const data = snapshot.val();
-        const storeData = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang ada kesibukan lain.", time: "" };
-        
         if (typeof state !== 'undefined') {
-            state.isStoreOpen = storeData.isOpen;
-            state.closeReason = storeData.reason;
-            state.closeTime = storeData.time;
-            if (typeof render === 'function') render();
+            state.isStoreOpen = true;
+            state.closeReason = "";
+            state.closeTime = "";
         }
-    });
-</script>
+
+        onValue(ref(db, 'store_status'), (snapshot) => {
+            const data = snapshot.val();
+            const storeData = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang ada kesibukan lain.", time: "" };
+            
+            if (typeof state !== 'undefined') {
+                state.isStoreOpen = storeData.isOpen;
+                state.closeReason = storeData.reason;
+                state.closeTime = storeData.time;
+                if (typeof render === 'function') render();
+            }
+        });
+    </script>
 </body>
 </html>
