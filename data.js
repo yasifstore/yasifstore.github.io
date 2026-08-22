@@ -101,7 +101,7 @@ const rawKK = [
     ["Makanan","Thai Chicken Spaghetti",22000,null,"https://huawei-food-cms.grab.com/compressed_webp/items/url-968df5db/photo/2bfd90a07d28ed4.webp"],
     ["Makanan","Vanila Choux Puff",12000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/129e1c5a-38a6-43d9-b1cb-ce5513aad89b_1d03fedc-2774-4f02-ad41-4c8d708f8bc6.png?auto=format"],
     ["Makanan","Wahyu Sapi Toast",19000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/605c7f65-d7ec-4568-9ea0-3650bb92546e_f8688c41-22fd-a3a2-836f-7491a183eda0.png?auto=format"]
-    ];
+];
 
 const generatedKKProducts = rawKK.map((item, idx) => {
     const [category, name, reg, lrg, image] = item;
@@ -136,11 +136,88 @@ const generatedKKProducts = rawKK.map((item, idx) => {
         promoPrice: category === "Makanan" ? promoReg : (sizes.length > 0 ? sizes[0].promoPrice : 0),
         brand: "Kopi Kenangan",
         image: image,
+        isPackage: false,
         sizes,
         sugars,
         defaultSugar
     };
 });
+
+// Penambahan menu Paket dari gambar yang dikirimkan
+const paketKopiKenangan = [
+    {
+        id: "kk-paket-1",
+        category: "Paket Bundling",
+        name: "2 Pcs Butterscotch Aren Latte + 2 Pcs Roti Susu",
+        originalPrice: 60000,
+        promoPrice: 35000,
+        brand: "Kopi Kenangan",
+        image: "https://i.imgur.com/vBPYtMI.png", 
+        isPackage: true,
+        sizes: [],
+        sugars: []
+    },
+    {
+        id: "kk-paket-2",
+        category: "Paket Bundling",
+        name: "3 Pcs Kopi Kenangan Mantan",
+        originalPrice: 57000,
+        promoPrice: 37000,
+        brand: "Kopi Kenangan",
+        image: "https://i.imgur.com/7AJXMkW.png", 
+        isPackage: true,
+        sizes: [],
+        sugars: []
+    },
+    {
+        id: "kk-paket-3",
+        category: "Paket Bundling",
+        name: "2 Pcs Large Kopi Kenangan Mantan",
+        originalPrice: 50000,
+        promoPrice: 30000,
+        brand: "Kopi Kenangan",
+        image: "https://i.imgur.com/0zJE2ca.png", 
+        isPackage: true,
+        sizes: [],
+        sugars: []
+    },
+    {
+        id: "kk-paket-4",
+        category: "Paket Bundling",
+        name: "2 Pcs Matcha Latte",
+        originalPrice: 50000,
+        promoPrice: 30000,
+        brand: "Kopi Kenangan",
+        image: "https://i.imgur.com/KgdUnd5.png", 
+        isPackage: true,
+        sizes: [],
+        sugars: []
+    },
+    {
+        id: "kk-paket-5",
+        category: "Paket Bundling",
+        name: "Hazelnut Dutch Choco + Adam Ayam Toast + Roti Coklat Klasik",
+        originalPrice: 56000,
+        promoPrice: 36500,
+        brand: "Kopi Kenangan",
+        image: "blob:https://imgur.com/4af2b881-7469-4c89-9229-0b8dca15096e", 
+        isPackage: true,
+        sizes: [],
+        sugars: []
+    },
+    {
+        id: "kk-paket-6",
+        category: "Paket Bundling",
+        name: "2 Pcs Butterscotch Kenangan Frappe",
+        originalPrice: 60000,
+        promoPrice: 35000,
+        brand: "Kopi Kenangan",
+        image: "https://i.imgur.com/k7Yv795.png", 
+        isPackage: true,
+        sizes: [],
+        sugars: []
+    }
+];
 
 window.products = [
     { id: "901", category: "Coffee", name: "Matcha Caramel Coffee Mousse", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/f4d1db53-13b7-4a0d-a9f6-ca6742859419_116R_XfVNh51pkIzKrd1cLqYGdtemHsOC.jpeg?auto=format" },
@@ -187,4 +264,4 @@ window.products = [
     { id: "138", category: "Non-Coffee", name: "Pink Pop Lemonade", originalPrice: 14000, promoPrice: 10000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230116155019015218/detail/36076b86_3a72d99a8b4.webp" },
     { id: "139", category: "Non-Coffee", name: "Pink Pop Lemon Tea", originalPrice: 17000, promoPrice: 11500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230116155019049154/detail/85cf8914_28542950b08.webp" },
     { id: "142", category: "Non-Coffee", name: "Chocolate Frappe", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/bce80055-6bf6-493f-9c94-15a8342e0cc9_menu-item-image_1715226267850.jpg?auto=format" }
-].concat(generatedKKProducts);
+].concat(generatedKKProducts).concat(paketKopiKenangan);
