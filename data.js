@@ -200,7 +200,7 @@ const paketKopiKenangan = [
         originalPrice: 56000,
         promoPrice: 36500,
         brand: "Kopi Kenangan",
-        image: "blob:https://imgur.com/4af2b881-7469-4c89-9229-0b8dca15096e", 
+        image: "https://i.imgur.com/h5LkRPs.png", 
         isPackage: true,
         sizes: [],
         sugars: []
