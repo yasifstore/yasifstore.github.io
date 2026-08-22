@@ -105,8 +105,8 @@
             orderType: 'now',
             scheduledTime: '',
             searchQuery: '',
-            pickupNameType: 'yasif', // Fitur Pilihan Nama Baru
-            customPickupName: ''      // Fitur Input Nama Kustom Baru
+            pickupNameType: 'yasif', 
+            customPickupName: ''      
         };
 
         function saveCart() { localStorage.setItem('yasif_cart', JSON.stringify(state.cart)); }
@@ -123,7 +123,7 @@
         const getTotalItems = () => state.cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
         const getTotalPrice = () => state.cart.reduce((sum, item) => sum + ((item.promoPrice || 0) * (item.quantity || 0)), 0);
         const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
-        // DATA PASSWORD WIFI KOPI KENANGAN REALTIME
+        
         const KK_WIFI_PASSWORDS = {
             1: "TemanKenangan#01", 2: "SelaluSeru@02", 3: "WorkFromKenangan+03", 4: "SahabatSetia=4",
             5: "PaduanPas!05", 6: "AndalanMantan#06", 7: "NyantaiNgopi@07", 8: "KenanganNyaman+08",
@@ -135,7 +135,6 @@
             29: "JajanKenangan=29", 30: "SehidupSehati!30", 31: "KopiFavoritmu#31"
         };
 
-        // FUNGSI UNTUK TOMBOL SALIN
         window.copyToClipboard = function(text) {
             navigator.clipboard.writeText(text).then(() => {
                 showToast('Password WiFi berhasil disalin! 📋');
@@ -144,7 +143,6 @@
             });
         };
 
-        // Komponen Input Lokasi Cabang
         function renderPickupStoreField(inputIcon, inputLabel) {
             return `
                 <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
@@ -157,7 +155,6 @@
             `;
         }
 
-        // Komponen Input Atas Nama Baru
         function renderPickupNameField() {
             return `
                 <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
@@ -287,6 +284,19 @@
                     showToast(`Keranjang berisi ${currentBrand}.<br>Checkout atau Hapus dulu ya!`, 'error');
                     return; 
                 }
+
+                // VALIDASI MENU PAKET VS MENU BIASA
+                const hasPackageInCart = state.cart.some(item => item.isPackage);
+                const isAddingPackage = state.activeProduct.isPackage;
+
+                if (hasPackageInCart && !isAddingPackage) {
+                    showToast('Keranjang berisi Menu Paket.<br>Tidak bisa digabung dengan menu biasa!', 'error');
+                    return;
+                }
+                if (!hasPackageInCart && isAddingPackage) {
+                    showToast('Menu Paket tidak bisa digabung.<br>Checkout menu biasa dulu ya!', 'error');
+                    return;
+                }
             }
 
             let finalPrice = state.activeProduct.promoPrice;
@@ -348,7 +358,6 @@
             const pickupStore = (state.storeLocation || '').trim();
             if (!pickupStore) { showToast('Isi lokasi pengambilan dulu!', 'error'); return; }
 
-            // Validasi Atas Nama Baru
             let finalName = 'Yasif';
             if (state.pickupNameType === 'custom') {
                 finalName = (state.customPickupName || '').trim();
@@ -368,7 +377,6 @@
 
             let message = `*Orderan Baru: ${orderBrand}*\n--------------------------------\n`;
             
-            // Revisi Template WhatsApp Pesanan Baru
             state.cart.forEach(item => {
                 message += `• ${item.name} (${item.quantity}x)\n`;
                 
@@ -382,7 +390,6 @@
                     details.push(`sugar: ${sg}`);
                 }
                 
-                // KOMA DIHILANGKAN DI SINI, DIGANTI SPASI
                 if (details.length > 0) message += `   ${details.join('  ')}\n`; 
                 
                 if (item.note && item.note.trim() !== '') message += `   note: ${item.note}\n`;
@@ -391,7 +398,6 @@
             
             message += `\n*Total: ${formatPrice(getTotalPrice())}*\n--------------------------------\n`;
             
-            // Penyesuaian Teks Atas Nama ke WA
             message += `*Pick Up Atas Nama:* ${finalName}\n`; 
             message += `*Lokasi Ambil:* ${pickupStore}\n`;
             message += `*Waktu Ambil:* ${state.orderType === 'now' ? 'Sekarang' : `JAM ${state.scheduledTime}`}`;
@@ -631,16 +637,19 @@
                 p.brand === state.selectedBrand && 
                 p.name.toLowerCase().includes(query)
             );
+
+            // Filter menu biasa dan paket
+            const regularProducts = brandProducts.filter(p => !p.isPackage);
+            const packageProducts = brandProducts.filter(p => p.isPackage);
             
-            const bestSellerProducts = state.searchQuery === '' ? getBestSellerProducts(state.selectedBrand) : [];
-            const categories = [...new Set(brandProducts.map(p => p.category))];
+            const bestSellerProducts = state.searchQuery === '' ? getBestSellerProducts(state.selectedBrand).filter(p => !p.isPackage) : [];
+            const categories = [...new Set(regularProducts.map(p => p.category))];
             
             const notes = {
                 "Kopi Kenangan": "Harga sudah final, termasuk diskon dan biaya admin. Pilih ukuran Large atau Regular (jika tersedia) di masing-masing produk.",
                 "Tomoro Coffee": "Harga yang tertera sudah final, termasuk diskon dan biaya admin. Ukuran hanya Small untuk semua menu."
             };
 
-            // AMBIL TANGGAL HARI INI SECARA REAL-TIME
             const todayDate = new Date().getDate(); 
             const wifiPassword = KK_WIFI_PASSWORDS[todayDate] || "Password belum diupdate";
 
@@ -657,14 +666,12 @@
                                 </div>
                             </div>
                             
-                            <!-- BUNGKUSAN ORDER NOTE & WIFI -->
                             <aside class="flex flex-col gap-4">
                                 <div class="premium-surface brand-border rounded-[1.75rem] px-6 py-6">
                                     <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-3">Order Note</p>
                                     <p class="text-sm leading-relaxed text-subtle tracking-[-0.01em]">${notes[state.selectedBrand] || "Nikmati promo spesial hari ini."}</p>
                                 </div>
                                 
-                                <!-- KOTAK WIFI (HANYA MUNCUL DI KOPI KENANGAN) -->
                                 ${state.selectedBrand === 'Kopi Kenangan' ? `
                                 <div class="premium-surface brand-border rounded-[1.75rem] px-6 py-5 flex items-center justify-between gap-4 bg-[#B43A34]/5 border-[#B43A34]/20">
                                     <div>
@@ -684,7 +691,6 @@
                                 </div>
                                 ` : ''}
                             </aside>
-
                         </div>
                         
                         <div class="mt-8 relative max-w-xl">
@@ -712,12 +718,13 @@
                     <div class="sticky top-[72px] sm:top-20 z-30 category-rail py-4 overflow-x-auto hide-scroll backdrop-blur-md bg-background/90">
                         <nav class="mx-auto max-w-7xl px-5 sm:px-8 flex gap-2 min-w-max">
                             ${categories.map((cat, index) => `<button onclick="document.getElementById('cat-${index}').scrollIntoView()" class="brand-category-pill px-4 sm:px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-semibold bg-transparent border border-border text-subtle">${cat}</button>`).join('')}
+                            ${packageProducts.length > 0 ? `<button onclick="document.getElementById('paket-khusus').scrollIntoView()" class="brand-category-pill px-4 sm:px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-bold bg-[#B43A34]/10 border border-[#B43A34]/30 text-[#B43A34]">Special Deals</button>` : ''}
                         </nav>
                     </div>
 
                     <div class="mx-auto max-w-7xl px-4 sm:px-8 py-9 sm:py-16 space-y-14 sm:space-y-24">
                         ${categories.map((cat, index) => {
-                            const catProducts = brandProducts.filter(p => p.category === cat);
+                            const catProducts = regularProducts.filter(p => p.category === cat);
                             if(catProducts.length === 0) return '';
                             return `
                                 <section id="cat-${index}" class="scroll-mt-36">
@@ -731,6 +738,21 @@
                                 </section>
                             `;
                         }).join('')}
+                        
+                        ${packageProducts.length > 0 ? `
+                            <section id="paket-khusus" class="scroll-mt-36 pt-4 sm:pt-8 border-t-2 border-dashed border-border/80">
+                                <div class="flex items-end justify-between gap-4 mb-6 sm:mb-10 mt-6">
+                                    <div>
+                                        <p class="text-[10px] uppercase tracking-[0.26em] text-[#B43A34] font-bold mb-3">Special Deals</p>
+                                        <h3 class="font-heading text-[2rem] sm:text-5xl font-semibold text-foreground tracking-[-0.06em] leading-none">Paket Bundling</h3>
+                                    </div>
+                                    <span class="text-xs uppercase tracking-[0.18em] text-subtle font-semibold">${packageProducts.length} Paket</span>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-5 sm:gap-y-8">
+                                    ${packageProducts.map(product => renderProductTile(product)).join('')}
+                                </div>
+                            </section>
+                        ` : ''}
                     </div>
                 </section>
             `;
@@ -1039,14 +1061,12 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Tambahkan variabel status toko ke dalam objek state global yang sudah ada
     if (typeof state !== 'undefined') {
         state.isStoreOpen = true;
         state.closeReason = "";
         state.closeTime = "";
     }
 
-    // Dengarkan perubahan dari Firebase secara real-time
     onValue(ref(db, 'store_status'), (snapshot) => {
         const data = snapshot.val();
         const storeData = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang ada kesibukan lain.", time: "" };
