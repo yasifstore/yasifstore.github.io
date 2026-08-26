@@ -402,7 +402,7 @@
             
             message += `*Pick Up Atas Nama:* ${finalName}\n`; 
             message += `*Lokasi Ambil:* ${pickupStore}\n`;
-            message += `*Waktu Ambil:* ${state.orderType === 'now' ? 'Sekarang' : `JAM ${state.scheduledTime}`}`;
+            message += `*Waktu Pesan:* ${state.orderType === 'now' ? 'Sekarang' : `JAM ${state.scheduledTime}`}`;
 
             localStorage.removeItem('yasif_cart');
             state.cart = [];
@@ -896,7 +896,7 @@
                                     `).join('')}
                                 </div>
                                 <div class="premium-surface p-5 rounded-[1.5rem] mt-6">
-                                    <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-4 flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Waktu Pengambilan</label>
+                                    <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-4 flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Waktu Pesan</label>
                                     <div class="flex gap-2 mb-4 rounded-full bg-background/70 border border-border p-1">
                                         <button onclick="state.orderType='now'; render()" class="flex-1 py-3 rounded-full text-sm font-semibold ${state.orderType === 'now' ? 'brand-button' : 'text-subtle'}">Sekarang</button>
                                         <button onclick="state.orderType='scheduled'; render()" class="flex-1 py-3 rounded-full text-sm font-semibold ${state.orderType === 'scheduled' ? 'brand-button' : 'text-subtle'}">Jadwalkan</button>
@@ -904,7 +904,7 @@
                                     ${state.orderType === 'scheduled' ? `
                                         <div>
                                             <input type="time" value="${state.scheduledTime}" oninput="state.scheduledTime = this.value" class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm font-semibold focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 text-foreground" />
-                                            <p class="text-[11px] text-subtle mt-2">Masukkan jam berapa pesanan ingin diambil.</p>
+                                            <p class="text-[11px] text-subtle mt-2">Masukkan jam berapa admin harus mulai mengorderkan pesanan ini.</p>
                                         </div>
                                     ` : ''}
                                 </div>
