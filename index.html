@@ -377,7 +377,7 @@
                 return;
             }
 
-            let message = `*Orderan Baru: ${orderBrand}*\n--------------------------------\n`;
+            let message = `Orderan Baru: ${orderBrand}\n--------------------------------\n`;
             
             state.cart.forEach(item => {
                 message += `• ${item.name} (${item.quantity}x)\n`;
@@ -398,11 +398,11 @@
                 message += `   harga: ${formatPrice(item.promoPrice * item.quantity)}\n`;
             });
             
-            message += `\n*Total: ${formatPrice(getTotalPrice())}*\n--------------------------------\n`;
+            message += `\nTotal: ${formatPrice(getTotalPrice())}\n--------------------------------\n`;
             
-            message += `*Pick Up Atas Nama:* ${finalName}\n`; 
-            message += `*Lokasi Ambil:* ${pickupStore}\n`;
-            message += `*Waktu Pesan:* ${state.orderType === 'now' ? 'Sekarang' : `JAM ${state.scheduledTime}`}`;
+            message += `Pick Up Atas Nama: ${finalName}\n`; 
+            message += `Lokasi Ambil: ${pickupStore}\n`;
+            message += `Waktu Pesan: ${state.orderType === 'now' ? 'Sekarang' : `JAM ${state.scheduledTime}`}`;
 
             localStorage.removeItem('yasif_cart');
             state.cart = [];
