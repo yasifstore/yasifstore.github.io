@@ -408,7 +408,7 @@
             state.cart = [];
             render();
 
-            const whatsappUrl = `https://wa.me/6287836345807?text=${encodeURIComponent(message)}`;
+            const whatsappUrl = `https://wa.me/6289678644962?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
             safeBack();
         }
@@ -514,7 +514,7 @@
                             ` : ''}
 
                             <div class="space-y-2.5">
-                                <a href="https://wa.me/6287836345807" class="block w-full py-3 border border-gray-300 text-gray-800 font-semibold text-xs rounded-full hover:bg-gray-50 transition-all shadow-2xs">
+                                <a href="https://wa.me/6289678644962" class="block w-full py-3 border border-gray-300 text-gray-800 font-semibold text-xs rounded-full hover:bg-gray-50 transition-all shadow-2xs">
                                     Hubungi Admin
                                 </a>
                                 
@@ -677,17 +677,16 @@
                                 ${state.selectedBrand === 'Kopi Kenangan' ? `
                                 <div class="premium-surface brand-border rounded-[1.75rem] px-6 py-5 flex items-center justify-between gap-4 bg-[#B43A34]/5 border-[#B43A34]/20">
                                     <div>
-                                        <p class="text-[10px] uppercase tracking-[0.24em] text-[#B43A34] font-bold mb-2">📶 Info Wi-Fi Hari Ini</p>
-                                        <div class="text-[11px] font-semibold text-subtle leading-tight mb-2">
-                                            Nama: <span class="text-foreground">Teman Kenangan</span><br>
-                                            Username: <span class="text-foreground">kopikenangan</span>
+                                        <p class="text-[13px] sm:text-sm uppercase tracking-[0.1em] text-[#B43A34] font-extrabold mb-3 leading-tight">📶 Wifi Teman Kenangan<br>Hari Ini</p>
+                                        <div class="text-xs font-semibold text-subtle leading-tight mb-1.5">
+                                            Username: <span class="text-foreground font-bold">kopikenangan</span>
                                         </div>
-                                        <div class="text-[13px] font-bold text-foreground">
+                                        <div class="text-[14px] font-bold text-foreground">
                                             <span class="text-subtle font-semibold text-[11px] mr-1">Password:</span>${wifiPassword}
                                         </div>
                                     </div>
                                     <button onclick="copyToClipboard('${wifiPassword}')" class="bg-[#B43A34] text-white rounded-[1rem] px-4 py-3 text-[10px] uppercase tracking-[0.1em] font-bold flex flex-col items-center justify-center gap-1.5 shrink-0 shadow-sm hover:bg-[#8A2A25] transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                         Salin
                                     </button>
                                 </div>
@@ -1005,7 +1004,7 @@
             
             render();
             
-            if (hash === '' || hash.startsWith('#brand-')) {
+            if (hash === '') {
                  window.scrollTo(0,0);
             }
         };
@@ -1013,7 +1012,6 @@
         window.addEventListener('hashchange', handleHashChange);
         handleHashChange(); 
     </script>
-    <!-- Script lainnya di atas ... -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
