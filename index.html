@@ -165,14 +165,51 @@
             }
         }
 
+        // Fungsi khusus pencarian cabang (Tanpa me-refresh seluruh halaman)
+        window.handleStoreSearch = function(query) {
+            state.storeSearchQuery = query;
+            const container = document.getElementById('store-list-container');
+            if (!container) return;
+            
+            const q = query.toLowerCase();
+            if (!q) {
+                container.innerHTML = `<div class="text-center py-12 text-subtle text-sm font-medium flex flex-col items-center gap-3"><span class="text-3xl">🏬</span>Ketik nama cabang atau alamat untuk mencari...</div>`;
+                return;
+            }
+
+            const displayStores = state.kkStores.filter(store => 
+                store.name.toLowerCase().includes(q) || 
+                (store.address && store.address.toLowerCase().includes(q))
+            ).slice(0, 50);
+
+            if (displayStores.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-subtle text-sm font-medium">Cabang tidak ditemukan. Coba kata kunci lain.</div>`;
+                return;
+            }
+
+            container.innerHTML = displayStores.map(store => `
+                <button onclick="selectKKStore(${store.id})" class="w-full text-left bg-white p-4 rounded-[1.25rem] border border-border/60 shadow-sm hover:border-[#B43A34]/40 transition-colors">
+                    <h4 class="font-semibold text-foreground text-sm line-clamp-1 mb-1">${store.name}</h4>
+                    <p class="text-xs text-subtle line-clamp-2 leading-relaxed">${store.address}</p>
+                </button>
+            `).join('');
+        };
+
         function renderPickupStoreField(inputIcon, inputLabel) {
+            // Cek apakah produk di keranjang adalah Kopi Kenangan
+            const isKK = (state.cart.length > 0 && state.cart[0].brand === 'Kopi Kenangan');
             return `
                 <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
                     <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-3 flex items-center gap-2">
                         ${inputIcon} ${inputLabel} <span class="text-[#9E3C3C]">*</span>
                     </label>
-                    <p class="mb-4 text-[11px] sm:text-xs leading-relaxed font-semibold text-subtle">Ketik nama cabang/lokasi pengambilan pesanan.</p>
-                    <input type="text" value="${escapeHtml(state.storeLocation)}" oninput="state.storeLocation = this.value" placeholder="Contoh: Cabang Grand Indonesia..." class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-medium placeholder:text-subtle/45" />
+                    <p class="mb-4 text-[11px] sm:text-xs leading-relaxed font-semibold text-subtle">
+                        ${isKK ? 'Cabang otomatis terkunci dari pilihanmu sebelumnya.' : 'Ketik nama cabang/lokasi pengambilan pesanan.'}
+                    </p>
+                    <input type="text" value="${escapeHtml(state.storeLocation)}" 
+                        ${isKK ? 'readonly' : 'oninput="state.storeLocation = this.value"'} 
+                        placeholder="Contoh: Cabang Grand Indonesia..." 
+                        class="w-full border border-border px-5 py-4 rounded-[1.25rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-medium placeholder:text-subtle/45 ${isKK ? 'bg-black/5 text-foreground/70 cursor-not-allowed border-black/10' : 'bg-surface'}" />
                 </div>
             `;
         }
@@ -307,7 +344,6 @@
                     return; 
                 }
 
-                // VALIDASI MENU PAKET VS MENU BIASA
                 const hasPackageInCart = state.cart.some(item => item.isPackage);
                 const isAddingPackage = state.activeProduct.isPackage;
 
@@ -503,14 +539,15 @@
         }
 
         function renderStoreSearchModal() {
-            const query = (state.storeSearchQuery || '').toLowerCase();
-            let displayStores = [];
+            let initialContent = `<div class="text-center py-12 text-subtle text-sm font-medium flex flex-col items-center gap-3"><span class="text-3xl">🏬</span>Ketik nama cabang atau alamat untuk mencari...</div>`;
             
-            if (!state.isLoadingStores) {
-                displayStores = state.kkStores.filter(store => 
-                    store.name.toLowerCase().includes(query) || 
-                    store.address.toLowerCase().includes(query)
-                ).slice(0, 50); // limit 50 biar performa gak ngelag
+            if (state.isLoadingStores) {
+                initialContent = `
+                    <div class="flex flex-col items-center justify-center py-12">
+                        <div class="w-8 h-8 border-4 border-[#B43A34]/20 border-t-[#B43A34] rounded-full animate-spin mb-4"></div>
+                        <p class="text-sm text-subtle font-medium animate-pulse">Menyiapkan data cabang...</p>
+                    </div>
+                `;
             }
 
             return `
@@ -531,28 +568,15 @@
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <svg class="w-4 h-4 text-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                 </div>
-                                <input type="text" placeholder="Cari nama cabang atau kota..." 
-                                    value="${state.storeSearchQuery}" 
-                                    oninput="state.storeSearchQuery = this.value; render()" 
+                                <input type="text" placeholder="Ketik nama cabang atau alamat..." 
+                                    oninput="handleStoreSearch(this.value)" 
                                     class="w-full bg-background border border-border rounded-full py-3.5 pl-11 pr-5 text-sm focus:outline-none focus:border-[#B43A34]/40 focus:ring-1 focus:ring-[#B43A34]/20 text-foreground"
                                 />
                             </div>
                         </div>
 
-                        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F7F5F0]">
-                            ${state.isLoadingStores ? `
-                                <div class="flex flex-col items-center justify-center py-12">
-                                    <div class="w-8 h-8 border-4 border-[#B43A34]/20 border-t-[#B43A34] rounded-full animate-spin mb-4"></div>
-                                    <p class="text-sm text-subtle font-medium animate-pulse">Menyiapkan data cabang...</p>
-                                </div>
-                            ` : displayStores.length === 0 ? `
-                                <div class="text-center py-10 text-subtle text-sm font-medium">Cabang tidak ditemukan.</div>
-                            ` : displayStores.map(store => `
-                                <button onclick="selectKKStore(${store.id})" class="w-full text-left bg-white p-4 rounded-[1.25rem] border border-border/60 shadow-sm hover:border-[#B43A34]/40 transition-colors">
-                                    <h4 class="font-semibold text-foreground text-sm line-clamp-1 mb-1">${store.name}</h4>
-                                    <p class="text-xs text-subtle line-clamp-2 leading-relaxed">${store.address}</p>
-                                </button>
-                            `).join('')}
+                        <div id="store-list-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F7F5F0]">
+                            ${initialContent}
                         </div>
                     </div>
                 </div>
@@ -615,7 +639,6 @@
                 return; 
             }
             const themeBrand = getThemeBrand();
-            const activeId = document.activeElement ? document.activeElement.id : null;
             
             const shouldShowFloatingCart = getTotalItems() > 0 && 
                                            !state.activeProduct && 
@@ -649,16 +672,6 @@
 
             const newNoteScrollEl = document.getElementById('note-scroll-container');
             if (newNoteScrollEl) newNoteScrollEl.scrollTop = noteScrollPos;
-
-            if (activeId) {
-                const el = document.getElementById(activeId);
-                if (el) {
-                    el.focus();
-                    const val = el.value;
-                    el.value = '';
-                    el.value = val;
-                }
-            }
         }
 
         function renderHeader() {
@@ -738,7 +751,6 @@
                 p.name.toLowerCase().includes(query)
             );
 
-            // Filter menu biasa dan paket
             const regularProducts = brandProducts.filter(p => !p.isPackage);
             const packageProducts = brandProducts.filter(p => p.isPackage);
             
