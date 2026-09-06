@@ -1,0 +1,2357 @@
+[
+  {
+    "id": 2542,
+    "name": "Apotik Roxy Depok",
+    "address": "Apotek Roxy Nusantara Depok (Container), Jalan Nusantara Raya, Beji, Kecamatan Beji, Kota Depok, Jawa Barat 16421"
+  },
+  {
+    "id": 3092,
+    "name": "23Paskal Bandung",
+    "address": "Jl. Pasir Kaliki No. 25-27, Kb. Jeruk, Kec. Andir, Kota Bandung, Jawa Barat 40241"
+  },
+  {
+    "id": 3055,
+    "name": "Adityawarman Surabaya",
+    "address": "Unit No.1 Jl. Adityawarman No.22-24 Darmo, Kec. Wonokromo, Surabaya, Jawa Timur 60242"
+  },
+  {
+    "id": 245,
+    "name": "Aeon Mall BSD",
+    "address": "AEON Mall, Lantai 1, Jl. BSD Raya Utama, Pagedangan, Tangerang, Banten, 15345"
+  },
+  {
+    "id": 3137,
+    "name": "AEON Mall Deltamas",
+    "address": "Unit FF1 - 091, Jl. Ganesha Boulevard, Kota Deltamas, Kec. Cikarang Pusat, Kab. Bekasi, Jawa Barat 17530"
+  },
+  {
+    "id": 240,
+    "name": "AEON Mall Jakarta Garden City",
+    "address": "Lantai 1, Jl. Jakarta Garden City, Cakung, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta, 13910"
+  },
+  {
+    "id": 635,
+    "name": "AEON Mall Sentul Bogor",
+    "address": "Aeon Mall Sentul City, Unit GF IC-G10, Jl. MH. Thamrin, Citaringgul, Kec. Babakan Madang, Bogor, Jawa Barat 16810"
+  },
+  {
+    "id": 3106,
+    "name": "Agung Podomoro Golf View Cimanggis",
+    "address": "Podomoro Golf View, Jl. Raya Bojong Nangka, Bojong Nangka, Kec. Tapos, Kota Depok, Jawa Barat 16963"
+  },
+  {
+    "id": 3645,
+    "name": "Agus Salim Bekasi",
+    "address": "Jl. KH. Agus Salim No. 3a, RT 007 / RW 007, Bekasi Jaya, Kec. Bekasi Timur, Kota Bekasi, Jawa Barat 17112"
+  },
+  {
+    "id": 3761,
+    "name": "AH Nasution Metro Lampung",
+    "address": "Jl. AH Nasution No.173, Yosodadi, Kec. Metro Tim., Kota Metro, Lampung 34111"
+  },
+  {
+    "id": 3793,
+    "name": "Ahmad Dahlan Yogyakarta",
+    "address": "Jl. KH. Ahmad Dahlan No.87, Notoprajan, Ngampilan, Kota Yogyakarta, Daerah Istimewa Yogyakarta 55262"
+  },
+  {
+    "id": 3453,
+    "name": "Ahmad Yani Banjarmasin",
+    "address": "Jl. Ahmad Yani Km.7,4 Pemurus Luar, Kec. Banjarmasin Timur, Kota Banjarmasin, Kalimantan Selatan 70654"
+  },
+  {
+    "id": 3788,
+    "name": "Ahmad Yani Semarang",
+    "address": "Jl. Ahmad Yani No.168, Karangkidul, Kec. Semarang Tengah, Kota Semarang, Jawa Tengah 50241"
+  },
+  {
+    "id": 2917,
+    "name": "Ahmad Yani Surabaya (Drive Thru)",
+    "address": "Jl. Ahmad Yani, Kec. Wonocolo, Surabaya, Jawa Timur 60238"
+  },
+  {
+    "id": 3412,
+    "name": "Airmadidi Minahasa Utara",
+    "address": "Sarongsong Satu, Airmadidi, North Minahasa Regency, North Sulawesi"
+  },
+  {
+    "id": 3226,
+    "name": "Alam Sutera (DT)",
+    "address": "Jl. Jalur Sutera No.Kav.22C-2 RT.002/RW.006, East Panunggangan, Pinang, Tangerang City, Banten 15143"
+  },
+  {
+    "id": 2618,
+    "name": "Alfamidi Adi Sucipto Solo",
+    "address": "Jl. Adi Sucipto, Blukukan Dua, Blulukan, Kec. Colomadu, Kabupaten Karanganyar, Jawa Tengah 57174"
+  },
+  {
+    "id": 2572,
+    "name": "Alfamidi Kebayoran Lama (Bondex)",
+    "address": "Jl. Raya Kby. Lama No.20, RT.2/RW.11, Grogol Sel., Kec. Kby. Lama, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12220"
+  },
+  {
+    "id": 2338,
+    "name": "Alfamidi Penggilingan",
+    "address": "Jl. Raya Penggilingan, RT.13/RW.7, Cakung, East Jakarta City, Jakarta 13940"
+  },
+  {
+    "id": 3139,
+    "name": "Alfamidi Radar Auri",
+    "address": "Jl. Radar Auri No.94 4, RT.4/RW.14, Cibubur, Kec. Ciracas, Kota Depok, Jawa Barat 16452"
+  },
+  {
+    "id": 2288,
+    "name": "Alfamidi Stasiun Pondok Ranji",
+    "address": "(Container), Jalan Kampung Utan No.354, RT.5/RW.2, Rengas, Kec. Ciputat Tim., Kota Tangerang Selatan, Banten 15412"
+  },
+  {
+    "id": 2599,
+    "name": "Alfamidi Sumur Batu (Container)",
+    "address": "Jl. Sumur Batu Raya No.2, RT.11/RW.2, Sumur Batu, Kemayoran, Central Jakarta City, Jakarta 10640"
+  },
+  {
+    "id": 2656,
+    "name": "Alfamidi Super Kaliurang KM 9",
+    "address": "Alfamidi Super Sinduharjo, Kaliurang St Blok A No.1, Gondangan, Sinduharjo, Ngaglik, Sleman Regency, Special Region of Yogyakarta 55581"
+  },
+  {
+    "id": 2605,
+    "name": "Alfamidi Wahid Hasyim Purwokerto (Bondex)",
+    "address": "H62V+G98, Windusara, Karangklesem, Kec. Purwokerto Sel., Kabupaten Banyumas, Jawa Tengah 53144"
+  },
+  {
+    "id": 3868,
+    "name": "Ambassador Dr. Satrio",
+    "address": "Jl. Prof. DR. Satrio No.39 11, RT.11/RW.4, Kuningan, Karet Kuningan, Kecamatan Setiabudi, Kota Jakarta Selatan"
+  },
+  {
+    "id": 3542,
+    "name": "Anjasmoro Semarang",
+    "address": "Jl. Anjasmoro Raya No. 44, Karangayu, Kec. Semarang Barat, Kota Semarang, Jawa Tengah 50149"
+  },
+  {
+    "id": 3516,
+    "name": "Anyer Cilegon",
+    "address": "Jl. Raya Anyer-Sirih No. 75 RT.001/005, Kec, Kec. Anyar, Kabupaten Serang, Banten 42166"
+  },
+  {
+    "id": 2865,
+    "name": "Apartement Pakubuwono Terrace",
+    "address": "(Downgrade Container), Jl. Ciledug Raya No. 99, RT. 2 / RW. 5, Cipulir, Kec. Kebayoran Lama, Jakarta Selatan 12230"
+  },
+  {
+    "id": 3361,
+    "name": "AR Hakim Tegal",
+    "address": "Jl. AR Hakim No 17, Mangkukusuman, Kec. Tegal Timur, Kota Tegal, Jawa Tengah 52123"
+  },
+  {
+    "id": 3547,
+    "name": "Arifin Ahmad Pekanbaru (DT)",
+    "address": "Jl. Arifin Ahmad Jl. Paus, Tengkerang Bar., Kec. Marpoyan Damai, Kota Pekanbaru, Riau 28282"
+  },
+  {
+    "id": 2703,
+    "name": "Armada Town Square Magelang",
+    "address": "Jl. Mayjen Bambang Soegeng No.1, Kedungdowo, Mertoyudan, Kec. Mertoyudan, Kabupaten Magelang, Jawa Tengah 56172"
+  },
+  {
+    "id": 3632,
+    "name": "Astonia Parkview Gresik",
+    "address": "Jl. Domas Indah Barat No.6, Talun, Domas, Kec. Menganti, Kabupaten Gresik, Jawa Timur 61174"
+  },
+  {
+    "id": 419,
+    "name": "Bandung Electronic Center",
+    "address": "Unit LU S-07, Jl. Purnawarman No.13-15, Babakan Ciamis, Kec. Sumur Bandung, Kota Bandung, Jawa Barat 40117"
+  },
+  {
+    "id": 3501,
+    "name": "Bangkalan Madura",
+    "address": "Jl Kh Nomer Jl. KH. Moh. Kholil No.54, Demangan Timur, Demangan, Kec. Bangkalan, Kabupaten Bangkalan, Jawa Timur 69115"
+  },
+  {
+    "id": 3792,
+    "name": "Banjaran Adiwerna",
+    "address": "Ahmad Yani Tegal, Jl. Jenderal Ahmad Yani No.36, Tembok Luwung, Kec. Adiwerna, Kabupaten Tegal, Jawa Tengah 52194"
+  },
+  {
+    "id": 2389,
+    "name": "Batam City Square",
+    "address": "Jl. Bunga Raya, Batu Selicin, Kec. Lubuk Baja, Kota Batam, Kepulauan Riau 29442"
+  },
+  {
+    "id": 3393,
+    "name": "Bayfront Mall Batam",
+    "address": "Harbourbay Downtown, Jl. Harbour Bay, Sungai Jodoh, Kec. Batu Ampar, Kota Batam, Kepulauan Riau 294533"
+  },
+  {
+    "id": 218,
+    "name": "Baywalk Mall Pluit",
+    "address": "Baywalk, Lantai 2, Jl. Pluit Karang Ayu 1, Penjaringan, Jakarta Utara, 14450"
+  },
+  {
+    "id": 4055,
+    "name": "Belopa Luwu",
+    "address": "Jl. Poros Palopo - Belopa, Kel. Tampumia Radda, Kec. Belopa, Kabupaten Luwu, Sulawesi Selatan 91994"
+  },
+  {
+    "id": 2782,
+    "name": "Beltway Office Park",
+    "address": "Jl. Ampera Raya, RW.2, Ragunan, Kec. Ps. Minggu, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12540"
+  },
+  {
+    "id": 564,
+    "name": "BG Junction",
+    "address": "Lobby Level - C42, C55, Jl. Bubutan No 1-7 Surabaya 60174"
+  },
+  {
+    "id": 3926,
+    "name": "Biak Jakarta Pusat",
+    "address": "Jl. Biak No.45, RT.1/RW.5, Cideng, Jakarta, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10150"
+  },
+  {
+    "id": 2358,
+    "name": "Big Mall Samarinda",
+    "address": "Lantai GF, Jl. Untung Suropati No.08, Karang Asam Ulu, Kec. Sungai Kunjang, Kota Samarinda, Kalimantan Timur 75243"
+  },
+  {
+    "id": 3391,
+    "name": "Bintan Center Tanjung Pinang",
+    "address": "Komp. Bintan Bestari Jl. D.I. Panjaitan No.28-29 Km 8, Air Raja, Kec. Tanjungpinang Tim., Kota Tanjung Pinang, Kepulauan Riau 29123"
+  },
+  {
+    "id": 354,
+    "name": "Bintaro Exchange",
+    "address": "Bintaro Jaya Exchange Mall, UG, Boulevard Bintaro Jaya Blok O-2 Bintaro Jaya Sektor VII, Perigi Lama, Pondok Aren, Tangerang, 15227"
+  },
+  {
+    "id": 402,
+    "name": "Bintaro Plaza",
+    "address": "Lantai 1, Jl. Raya Bintaro Utama Sektor 3A, Pondok Betung, Pondok Aren, Tangerang Selatan, Banten - 15221"
+  },
+  {
+    "id": 4066,
+    "name": "Bintaro Sektor 3 Tangerang Selatan",
+    "address": "Jl. Bintaro Utama 3A Bintaro, Kec. Pd. Aren, Kota Tangerang Selatan, Banten 15225"
+  },
+  {
+    "id": 3736,
+    "name": "Bintaro Sektor 9",
+    "address": "Jl. Bintaro Utama 9 Jl. Titihan Blok Ja 1 No.4, Pondok Pucung, Pondok Aren, South Tangerang City, Banten 15229"
+  },
+  {
+    "id": 3609,
+    "name": "Blok M Plaza (6th Floor)",
+    "address": "Jl. Bulungan No.76, RT.6/RW.6, Kramat Pela, Kec. Kby. Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12130"
+  },
+  {
+    "id": 3054,
+    "name": "Blok M Plaza (LG)",
+    "address": "Panglima Polim St No.76, RT.6/RW.6, Kramat Pela, Kebayoran Baru, South Jakarta City, Jakarta 12130"
+  },
+  {
+    "id": 382,
+    "name": "Bogor Great Mall",
+    "address": "Transmart Yasmin Bogor, Ground Floor, Jl. KH. Nur Abdul Rohman, Cibadak, Tanah Sereal, Bogor, Jawa Barat - 16166"
+  },
+  {
+    "id": 3414,
+    "name": "Bojongsari Sawangan",
+    "address": "Jl. Raya Bojongsari Kecamatan No.Kelurahan, RT.02/RW.04, Bojongsari Lama, Kec. Bojongsari, Kota Depok, Jawa Barat 16517"
+  },
+  {
+    "id": 3355,
+    "name": "Bondowoso Malang",
+    "address": "Jl. Bondowoso No.44, Gading Kasri, Kec. Klojen, Kota Malang, Jawa Timur 65115"
+  },
+  {
+    "id": 189,
+    "name": "Botani Square",
+    "address": "Mall, Eatery Lantai 2, Jl. Raya Pajajaran No.69-71,Bogor Tengah"
+  },
+  {
+    "id": 3844,
+    "name": "Botania 2",
+    "address": "Komplek Ruko Central Aladdin 1, Jl. Raja Alikenala No. 7-8 Blok B, Belian, Kec. Batam, Kota Batam, Kepulauan Riau 29432"
+  },
+  {
+    "id": 2749,
+    "name": "Botania Batam",
+    "address": "Komplek Repindo Industrial Estate Blok B1 No1&2"
+  },
+  {
+    "id": 3551,
+    "name": "Boulevard Golf Island English 1 PIK",
+    "address": "Boulevard Golf Island E1 PIK, English 1 PIK. Jl.Boulevard Ruko Golf Island Blok L no.65-66, Daerah Khusus Ibukota Jakarta 14460"
+  },
+  {
+    "id": 313,
+    "name": "BP BSD Delatinos",
+    "address": "Jl. Rawa Buntu RT 006 RW 001, Rawa Buntu, Serpong, Tangerang Selatan, Banten - 15318"
+  },
+  {
+    "id": 453,
+    "name": "BP Ciater Pamulang",
+    "address": "Jl. Ciater Raya Blok Rh No.17, RT.1/RW.8, Rawa Mekar Jaya, Serpong Sub-District, South Tangerang City, Banten 15310"
+  },
+  {
+    "id": 533,
+    "name": "BP Cikarang",
+    "address": "Sriwijaya, Jl. Sriwijaya No. 22, Lippo, Cikarang Selatan, Bekasi, Jawa Barat 17530"
+  },
+  {
+    "id": 3112,
+    "name": "BP Embong Malang (DT)",
+    "address": "Jl. Embong Malang, Kedungdoro, Kec. Tegalsari, Surabaya, Jawa Timur 60261"
+  },
+  {
+    "id": 338,
+    "name": "BP Jababeka Hollywood",
+    "address": "Jl. H.Usmar Ismail, Mekarmukti, Kec. Cikarang Utara, Bekasi, Jawa Barat 17530"
+  },
+  {
+    "id": 335,
+    "name": "BP Karawang Barat",
+    "address": "Jl. Interchange Karawang Barat, Margakarya, Telukjambe Barat, Karawang, Jawa Barat - 41361"
+  },
+  {
+    "id": 332,
+    "name": "BP Kertajaya Indah",
+    "address": "Jl. Raya Kertajaya Indah, Manyar Sabrangan, Kec. Mulyorejo, Surabaya, Jawa Timur - 60117"
+  },
+  {
+    "id": 312,
+    "name": "BP KHI Boulevard",
+    "address": "Jl. Harapan Indah Boulevard, RT.10/RW.8, Pusaka Rakyat, Tarumajaya, Bekasi, Jawa Barat - 17214"
+  },
+  {
+    "id": 3109,
+    "name": "BP Legok",
+    "address": "Jl. Raya Legok - Karawaci No.10, RT.1/RW.5, Klp. Dua, Kec. Klp. Dua, Kabupaten Tangerang, Banten 15810"
+  },
+  {
+    "id": 391,
+    "name": "BP Margorejo Surabaya",
+    "address": "BP Margorejo, Jl. Margorejo Indah No.237, Margorejo, Kec. Wonocolo, Kota SBY, Jawa Timur 60238"
+  },
+  {
+    "id": 637,
+    "name": "BP Meruya",
+    "address": "(Container), Jl. Meruya no.26 RT 001 Rw 005, Jakarta Barat"
+  },
+  {
+    "id": 377,
+    "name": "BP Metland",
+    "address": "Jl. STA 11, Green Lake City, Metland, Parung Jaya, Karang Tengah, Tangerang, Banten - 15159"
+  },
+  {
+    "id": 392,
+    "name": "BP Pemuda Surabaya",
+    "address": "BP Pemuda, Jl. Pemuda No 72 RT 001 RW 03 Embong Kaliasin, Genteng, Surabaya, 60271"
+  },
+  {
+    "id": 3085,
+    "name": "BP Raffless",
+    "address": "Jl. Alternatif Cibubur, RW.5, Harjamukti, Kec. Cimanggis, Kota Depok, Jawa Barat 16454"
+  },
+  {
+    "id": 3709,
+    "name": "Buaran Serpong",
+    "address": "Ruko Buaran Serpong, Jl. Raya Puspitek No. 25, Buaran, Kec. Serpong, Kota Tangerang Selatan, Banten 15310"
+  },
+  {
+    "id": 3743,
+    "name": "Bukit Serua Ciputat",
+    "address": "Jl. Raya Bukit Sarua No. 89, Serua, Kec. Ciputat, Kota Tangerang Selatan, Banten 15414"
+  },
+  {
+    "id": 3434,
+    "name": "Burangrang Bandung",
+    "address": "Jl. Burangrang No.1 Malabar, Kec. Lengkong, Kota Bandung, Jawa Barat 40262"
+  },
+  {
+    "id": 2278,
+    "name": "Cambridge City Square",
+    "address": "Cambridge City Store, Jl. Zainul Arifin dan S. Parman Medan, Lantai Ground (G)"
+  },
+  {
+    "id": 3084,
+    "name": "Ceger, Jakarta Timur",
+    "address": "Jl. Raya Ceger No.65 E, RT.:002/RW:002/RW.1, Ceger, Kec. Cipayung, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13840"
+  },
+  {
+    "id": 4124,
+    "name": "Cemara Angin Jakarta Utara",
+    "address": "Jl. Cemara Angin No.Blok AA/33, RT.4/RW.6, Rawabadak Utara, Kec. Koja, Jkt Utara, Daerah Khusus Ibukota Jakarta 14230"
+  },
+  {
+    "id": 3588,
+    "name": "Cemara Asri Boulevard",
+    "address": "Ruko Cemara Asri Boulevard, Jl Cemara Asri Boulevard C7-26 Sampali Per Cut Sei Tuan Deli Serdang"
+  },
+  {
+    "id": 172,
+    "name": "Central Grand Indonesia 2nd Floor",
+    "address": "(East Mall), Jl. M.H. Thamrin No.1, Kb. Melati, Kec. Menteng, Kota Jakarta Pusat"
+  },
+  {
+    "id": 244,
+    "name": "Central Park 1",
+    "address": "Central Park, Lower Ground Floor, Letjen S. Parman Street No.28, RT.12/RW.6, Tanjung Duren Selatan, Grogol petamburan, Jakarta Barat, 11470"
+  },
+  {
+    "id": 252,
+    "name": "Central Park 2",
+    "address": "NEO SOHO, Lt. GF, Letjen S. Parman Street No.Kav. 28, RT.3/RW.5, Grogol petamburan, Jakarta Barat, Jakarta, 11470"
+  },
+  {
+    "id": 585,
+    "name": "Centre Point Medan",
+    "address": "LG-Island-8, Jl Jawa No 8 Medan, Sumatera Utara 20231"
+  },
+  {
+    "id": 2343,
+    "name": "Chigo BP Delatinos",
+    "address": "BP BSD Delatinos, Jl. Rawa Buntu RT 006 RW 001, Rawa Buntu, Serpong, Tangerang, Banten - 15318"
+  },
+  {
+    "id": 2494,
+    "name": "Chigo Ruko Cempaka Putih",
+    "address": "Ruko Cempaka Putih, Jl. Cempaka Putih Raya No.20 C, RT.7/RW.8 Cempaka Putih., Kec. Cempaka Putih, Kota Jakarta Pusat, DKI Jakarta 10510"
+  },
+  {
+    "id": 2449,
+    "name": "Chigo Ruko OCBC Medan",
+    "address": "Ruko OCBC Medan, Jl. Ringroad Komplek OCBC No B72, Kel. Asam Kumbang, Kec. Medan Selayang, Mdan 20133"
+  },
+  {
+    "id": 2905,
+    "name": "Chigo x Flip Supermall Karawaci",
+    "address": "Supermall Karawaci, Lt.1 Unit FC-36, Jl. Boulevard Diponegoro, Bencongan, Kec. Kelapa Dua, Kabupaten Tangerang, Banten 15810"
+  },
+  {
+    "id": 2932,
+    "name": "Chigo x Flip Tangcity Mall",
+    "address": "Tangcity Mall, Unit L2 B0001-FC, Jl. Jenderal Sudirman, Cikokol, Kec. Tangerang, Kota Tangerang, Banten 15117"
+  },
+  {
+    "id": 3264,
+    "name": "Cibadak Sukabumi",
+    "address": "Ruko 23A, Jl. Siliwangi No.123, Cibadak, Kec. Cibadak, Kabupaten Sukabumi, Jawa Barat 43351"
+  },
+  {
+    "id": 2504,
+    "name": "Cibinong City Mall",
+    "address": "First Floor, IS 1st 11, Jl Tegar Beriman No 1, Cibinong, Bogor, Jawa Barat 16915"
+  },
+  {
+    "id": 3090,
+    "name": "Cibubur (Drive Thru)",
+    "address": "Jl. Alternatif Cibubur, RT.002/RW.009, Jatisampurna, Kec. Jatisampurna, Kota Bks, Jawa Barat 17435"
+  },
+  {
+    "id": 535,
+    "name": "Cihampelas Walk",
+    "address": "Jalan Cihampelas No. 160, Unit SG-10 & SG-12, Young Street Level, Kel. Cipaganti, Kec. Coblong, Bandung - 40131 (sebelah Mujigae dan Mixue)"
+  },
+  {
+    "id": 506,
+    "name": "Cik Ditiro Menteng",
+    "address": "Jl. Tengku Cik Ditiro 29A, Menteng, Jakarta Pusat,10310"
+  },
+  {
+    "id": 3611,
+    "name": "Cikajang",
+    "address": "Jl. Cikajang No.58, RT.13/RW.6, Petogogan, Kec. Kby. Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12170"
+  },
+  {
+    "id": 3316,
+    "name": "Cikarang Avenue",
+    "address": "Unit Building B, Jl MH. Thamrin, Cibatu, Cikarang Selatan, Kab.Bekasi, Jawa Barat 17530"
+  },
+  {
+    "id": 333,
+    "name": "Cilandak Town Square",
+    "address": "Lantai 1, Jl. TB Simatupang Kav. 17, RT.2/RW.1, Cilandak Barat, Cilandak, Jakarta Selatan - 12430"
+  },
+  {
+    "id": 2811,
+    "name": "Cilangkap",
+    "address": "Jl. Raya Cilangkap No.10, RT.2/RW.1, Cilangkap, Kec. Cipayung, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13870"
+  },
+  {
+    "id": 294,
+    "name": "Cilegon Centre Mall",
+    "address": "Lantai 1, Jl. Jend. Ahmad Yani, Sukmajaya, Kec. Jombang, Kota Cilegon, Banten 42416"
+  },
+  {
+    "id": 2776,
+    "name": "Cilendek Bogor",
+    "address": "Jl. Brigjen Saptadji Hadiprawira, Cilendek Barat, Bogor - Jawa Barat"
+  },
+  {
+    "id": 3279,
+    "name": "Cilincing Landak Jakarta Utara",
+    "address": "Jl. Sungai Landak No.15, RT.10/RW.8, Cilincing, Kec. Cilincing, Jkt Utara, Daerah Khusus Ibukota Jakarta 14120"
+  },
+  {
+    "id": 284,
+    "name": "Cinere Mall",
+    "address": "Mall Cinere, Lantai 1, Jl. Cinere Raya, Blok Haji Rosyid No. 38, Cinere, Depok, Jawa Barat - 16514"
+  },
+  {
+    "id": 3552,
+    "name": "Cinere Raya English 1 Cinere",
+    "address": "Ruko Cinere Raya E1 Cinere, English 1 Cinere. Jl. Cinere Raya No.28-29 Blok A, RT.2/RW.4, Cinere, Kec. Cinere, Kota Depok, Jawa Barat 16514"
+  },
+  {
+    "id": 2964,
+    "name": "Cipete Raya",
+    "address": "Jl. Cipete Raya, Cipete Selatan, Kec. Cilandak, Kota Jakarta Selatan, DKI Jakarta 12410"
+  },
+  {
+    "id": 295,
+    "name": "Ciputra World Surabaya",
+    "address": "LG, Jl. Mayjen Sungkono No. 89, Gunung Sari, Dukuhpakis, Surabaya, Jawa Timur - 60224"
+  },
+  {
+    "id": 3996,
+    "name": "Citra Garden Serpong English 1 Cisauk",
+    "address": "Citra Garden Serpong Ruko La Vallee Jl. Raya Cisauk Lapan No.29, Cisauk, Kec. Cisauk, Kabupaten Tangerang, Banten 15344"
+  },
+  {
+    "id": 3555,
+    "name": "Citra Grand Semarang",
+    "address": "Sambiroto, Semarang City, Central Java"
+  },
+  {
+    "id": 3280,
+    "name": "Citra Raya Unesa",
+    "address": "Tenant No. 4 Lab Kewirausahaan Unesa, Jalan Citra Raya Kelurahan Lidah Wetan, Kecamatan Lakarsantri, Surabaya, Jawa Timur"
+  },
+  {
+    "id": 331,
+    "name": "Citra Tower Kemayoran",
+    "address": "LG, Jl. Casa No.170, RT.13/RW.6, Kebon Kosong, Kemayoran, Jakarta Pusat, Jakarta, 10630"
+  },
+  {
+    "id": 2398,
+    "name": "Citraland Banjarmasin",
+    "address": "I Walk 1 No. 2, Citraland Banjarmasin, Jl. A. Yani Km.7,8 Pemurus Luar, Banjarmasin Timur, Banjarmasin, Kalimantan Selatan 70654"
+  },
+  {
+    "id": 3387,
+    "name": "Citraland Helvetia",
+    "address": "Jl. Pertempuran, Tj. Gusta, Kec. Sunggal, Kabupaten Deli Serdang, Sumatera Utara 20116"
+  },
+  {
+    "id": 498,
+    "name": "City Plaza Kotabumi",
+    "address": "GF, Jl. Raya Kutabumi, Kuta Baru, Kec. Ps. Kemis, Tangerang, Banten 15560"
+  },
+  {
+    "id": 207,
+    "name": "D'Mall Depok",
+    "address": "Dmall, Lantai Ground Floor, Jl. Margonda Raya Kav. 88, Kemiri Muka, Beji,"
+  },
+  {
+    "id": 4082,
+    "name": "Danau Semayang Tenggarong",
+    "address": "Jl. Danau Semayang, Melayu, Kec. Tenggarong, Kabupaten Kutai Kartanegara, Kalimantan Timur 75512"
+  },
+  {
+    "id": 631,
+    "name": "Dapur Kitchen Bekasi",
+    "address": "Jl. Perjuangan 3, Marga Mulya, Bekasi Utara, Kota Bekasi, Jawa Barat 17142"
+  },
+  {
+    "id": 640,
+    "name": "Dapur Kitchen Palmerah",
+    "address": "Palmerah"
+  },
+  {
+    "id": 381,
+    "name": "Deli Park",
+    "address": "Lower Mezzanine, Jalan Guru Patimpus Blok OPQ No.1, Kesawan, Kec. Medan Barat, Kota Medan, Sumatera Utara 20111"
+  },
+  {
+    "id": 3902,
+    "name": "Diponegoro Sidoarjo",
+    "address": "Jl. Diponegoro No.104, Lemah Putro, Lemahputro, Kec. Sidoarjo, Kabupaten Sidoarjo, Jawa Timur 61213"
+  },
+  {
+    "id": 3341,
+    "name": "Diponegoro Surabaya",
+    "address": "Diponegoro Darmo Surabaya, Jl. Diponegoro No.129A, RT.011/RW.01, Darmo, Kec. Wonokromo, Surabaya, Jawa Timur 60241"
+  },
+  {
+    "id": 3989,
+    "name": "Diponegoro Temanggung",
+    "address": "Jl. Diponegoro No. 27, Gendongan, Temanggung I, Temanggung Regency,Central Java"
+  },
+  {
+    "id": 340,
+    "name": "District 1 Meikarta",
+    "address": "Jl. Orange County Boulevard, Cibatu, Cikarang Sel, Bekasi, Jawa Barat 17530"
+  },
+  {
+    "id": 2916,
+    "name": "Djunjunan Pasteur Bandung (Drive Thru)",
+    "address": "Djunjunan Pasteur Bandung (DT), Jl. Dr. Djunjunan No.126 - 128, Pasteur, Kec. Sukajadi, Kota Bandung, Jawa Barat"
+  },
+  {
+    "id": 344,
+    "name": "DP Mall",
+    "address": "Lantai 1, Jl. Pemuda No.150, Sekayu, Kec. Semarang Tengah, Kota Semarang, Jawa Tengah 50132"
+  },
+  {
+    "id": 3950,
+    "name": "Dr Radjiman Surakarta",
+    "address": "Jl. Dr. Rajiman No.476, Bumi, Kec. Laweyan, Kota Surakarta, Jawa Tengah 57148"
+  },
+  {
+    "id": 3442,
+    "name": "Dramaga Bogor",
+    "address": "Jl. Raya Dramaga Km 7, RT.001 RW.003, Ciherang, Kec. Dramaga, Kabupaten Bogor, Jawa Barat 16680"
+  },
+  {
+    "id": 3295,
+    "name": "Drive Thru Pancing Medan",
+    "address": "Pancing Medan, Jl. Pancing No.184, Sidorejo Hilir, Kec. Medan Tembung, Kota Medan, Sumatera Utara 20371"
+  },
+  {
+    "id": 2386,
+    "name": "Duta Mall Banjarmasin",
+    "address": "Lantai GF, Jalan Ahmad Yani KM 2 (Simpang Ulin), Banjarmasin, Kalimantan Selatan 7023"
+  },
+  {
+    "id": 2378,
+    "name": "E WALK BALIKPAPAN",
+    "address": "Lantai GF Island B2 Unnamed Road, Gn. Bahagia, Kecamatan Balikpapan Selatan, Kota Balikpapan, Kalimantan Timur 76114"
+  },
+  {
+    "id": 3348,
+    "name": "Eastvara BSD",
+    "address": "Eastvara Mall, Jl. BSD Boulevard Utara, Cijantra, Kec. Pagedangan, Kabupaten Tangerang, Banten 15854"
+  },
+  {
+    "id": 270,
+    "name": "Emporium Pluit",
+    "address": "Lantai 4, FC-32 Jl. Pluit Putra Kencana, RT 23/RW 8, Penjaringan, Penjaringan, Jakarta Utara - 14440"
+  },
+  {
+    "id": 3762,
+    "name": "Enggano",
+    "address": "Jl. Enggano No. 28, RT.005/RW.07, Kec. Tanjung Priok, Jakarta Utara 14310"
+  },
+  {
+    "id": 3601,
+    "name": "English 1 Hayam Wuruk Bali",
+    "address": "Hayam Wuruk E1 Denpasar, English 1 Denpasar, Jl. Hayam Wuruk No.210 - 212, Sumerta Kelod, Kec. Denpasar Tim., Kota Denpasar, Bali 80235"
+  },
+  {
+    "id": 3056,
+    "name": "Epicentrum Walk",
+    "address": "Mediawalk Unit GF W137 & T137, Jl. Epicentrum Boulevard Barat, Karet Kuningan, Kec. Setiabudi, Jakarta Selatan, DKI Jakarta 12240"
+  },
+  {
+    "id": 3086,
+    "name": "Fairway Nine",
+    "address": "Jl. Bukit Darmo Boulevard No.9, Pradahkalikendal, Kec. Dukuhpakis, Surabaya, Jawa Timur"
+  },
+  {
+    "id": 3585,
+    "name": "Fajar Indah Solo",
+    "address": "Jl. Adisucipto, Jajar, Laweyan, Surakarta City, Central Java 57144"
+  },
+  {
+    "id": 2817,
+    "name": "Fakultas Kedokteran UPH",
+    "address": "Jl. Jenderal Sudirman No.20, Bencongan, Kec. Kelapa Dua, Kab. Tangerang, Banten 15810"
+  },
+  {
+    "id": 3002,
+    "name": "FMIPA UI",
+    "address": "Komplek Fakultas Mipa Universitas Indonesia, Jl. Prof. DR. Sudjono D. Pusponegoro, Pondok Cina, Kecamatan Beji, Kota Depok, Jawa Barat 16424"
+  },
+  {
+    "id": 202,
+    "name": "Food Centrum Sunter",
+    "address": "Food Centrum, Lantai 1, Ruko Puri Mutiara, Jl. Griya Utama Blok BA-BB-BC, Tj. Priok"
+  },
+  {
+    "id": 2881,
+    "name": "Food Court PIM 1 - Area 51",
+    "address": "Metro Pondok Indah Kav. IV, Pd. Pinang, Kec. Kby. Lama, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta"
+  },
+  {
+    "id": 2813,
+    "name": "Food Court PIM 3",
+    "address": "Foodcourt PIM 3, Jl. Kartika Utama No.1, Kebayoran Lama - Jakarta Selatan"
+  },
+  {
+    "id": 553,
+    "name": "Food Hub Cyber Tower 2",
+    "address": "GF, Jl. H. R. Rasuna Said No.13, RT.7/RW.2, Kuningan, Kuningan Tim., Kecamatan Setiabudi, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12950"
+  },
+  {
+    "id": 638,
+    "name": "FX Sudirman",
+    "address": "FX Mall Sudirman, The Common Unit FB #25,T25,OT25, Jl. Jend. Sudirman, RT.1/RW.3, Gelora, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10270"
+  },
+  {
+    "id": 3943,
+    "name": "Gaia Mall Pontianak",
+    "address": "Jl. Arteri Supadio, Sungai Raya, Kec. Sungai Raya, Kabupaten Kubu Raya, Kalimantan Barat 78121"
+  },
+  {
+    "id": 3379,
+    "name": "Gajah Mada Mediterania",
+    "address": "Jl. Ketentraman No.50B 1, RT.1/RW.5, Keagungan, Kec. Taman Sari, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11130"
+  },
+  {
+    "id": 3484,
+    "name": "Galuh Mas Karawang",
+    "address": "M7CW+F95, Jl. Arteri Galuh Mas, Sukaharja, Telukjambe Timur, Karawang, Jawa Barat 41361"
+  },
+  {
+    "id": 2797,
+    "name": "Gama Tower",
+    "address": "GAMA TOWER Jl. H. R. Rasuna Said No.2, Karet Kuningan, Kecamatan Setiabudi, Daerah Khusus Ibukota Jakarta 12940"
+  },
+  {
+    "id": 206,
+    "name": "Gandaria City (Island)",
+    "address": "Lower Ground Floor #IU-L03B. Jl. Arteri Pd. Indah, RT. 10 / RW. 6, Kebayoran Lama Utara, Kec. Kby. Lama, Jakarta Selatan 12240"
+  },
+  {
+    "id": 3603,
+    "name": "Gandaria Kramat Pela",
+    "address": "Jl. Gandaria 1 No. No.39, Rt.001/Rw.9 Kel. Kramat Pela, Kec. Kebayoran Baru Jakarta Selatan"
+  },
+  {
+    "id": 273,
+    "name": "Garuda Head Quarter",
+    "address": "Garuda HQ (Container) Relocation,Garuda City Center, RT.001/RW.010, Pajang, Kec. Benda, Kota Tangerang, Banten 15126"
+  },
+  {
+    "id": 3062,
+    "name": "Gatot Subroto Medan (Drive Thru)",
+    "address": "Jl. Gatot Subroto, Sei Sikambing D, Kec. Medan Petisah, Kota Medan, Sumatera Utara 20114"
+  },
+  {
+    "id": 349,
+    "name": "Gedung Aurum",
+    "address": "Container, Jl. Ampera Raya No.12, RT.8/RW.2, Cilandak Tim., Kec. Ps. Minggu, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12560"
+  },
+  {
+    "id": 474,
+    "name": "Gedung GKBI",
+    "address": "Suite G-01D, Jl. Jend Sudirman No. 28, Karet Tengsin, Tanah Abang, Jakarta Pusat, Indonesia 10210"
+  },
+  {
+    "id": 2585,
+    "name": "Gedung KAI Veteran",
+    "address": "Jl. Veteran No.4, Bendungan, Kec. Gajahmungkur, Kota Semarang, Jawa Tengah 50231, Indonesia"
+  },
+  {
+    "id": 3225,
+    "name": "Geluran (DT)",
+    "address": "Jl. Raya Geluran No.124b, Geluran, Kec. Taman, Kabupaten Sidoarjo, Jawa Timur 61257"
+  },
+  {
+    "id": 3364,
+    "name": "Godean Yogyakarta",
+    "address": "Jl. Godean No. 23B, Kembang, Ngestiharjo, Kec. Kasihan, Kab. Bantul, Daerah Istimewa Yogyakarta 55182"
+  },
+  {
+    "id": 3553,
+    "name": "Golden Road English 1 BSD",
+    "address": "Ruko Golden Road E1 BSD, English 1 BSD. Ruko Sektor VII B (Golden Road) Blok S No. 106-110 Jl. Pahlawan Seribu Tangerang, Lengkong Wetan, Serpong Sub-District, South Tangerang City, Banten 15322"
+  },
+  {
+    "id": 2717,
+    "name": "Grage Mall Cirebon",
+    "address": "Jl. Tentara Pelajar No.1, Kejaksan, Kec. Kejaksan, Kota Cirebon, Jawa Barat 45123 Lantai 1, Unit F1 RT 61-62"
+  },
+  {
+    "id": 176,
+    "name": "Graha CIMB Niaga",
+    "address": "Lantai Ground Floor, SCBD, Jl. Jend. Sudirman Kav. 58, Karet Semanggi"
+  },
+  {
+    "id": 3215,
+    "name": "Graha Emerald English 1 Gading Serpong",
+    "address": "EF Gading Serpong, Jl. Gading Serpong Boulevard Blk. M5 No.7, Pakulonan Bar., Kec. Klp. Dua, Kabupaten Tangerang, Banten 15810"
+  },
+  {
+    "id": 3252,
+    "name": "Graha Pena Surabaya (Relokasi)",
+    "address": "Graha Pena Surabaya, Jl. Ahmad Yani No. 88, Ketintang, Kec. Gayungan, Surabaya, Jawa Timur 60231"
+  },
+  {
+    "id": 3107,
+    "name": "Graha POS RE Martadinata",
+    "address": "Jl. Banda No.30, Citarum, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40115"
+  },
+  {
+    "id": 3234,
+    "name": "Graha Raya Pinang Tangerang (FCK)",
+    "address": "Graha Raya Pinang Tangerang, Jl. Graha Raya - Ciledug, Sudimara Pinang, Kec. Pinang, Kota Tangerang, Banten 15145"
+  },
+  {
+    "id": 2387,
+    "name": "Grand Batam Mall",
+    "address": "Jl. Pembangunan, Batu Selicin, Kec. Lubuk Baja, Kota Batam, Kepulauan Riau 29444"
+  },
+  {
+    "id": 2420,
+    "name": "Grand Batavia (Drive Thru)",
+    "address": "Grand Batavia (Container) (Drive Thru), Jl. Raya Cadas - Kukun No.88, Sindangsari, Kec. Ps. Kemis, Tangerang, Banten 15560"
+  },
+  {
+    "id": 368,
+    "name": "Grand Cakung Mall",
+    "address": "Ground Floor, Jl. Sri Sultan Hamengkubuwono IX KM.25, RW.1, Ujung Menteng, Kec. Cakung, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13960"
+  },
+  {
+    "id": 3607,
+    "name": "Grand Eastern Surabaya",
+    "address": "Keputih, Sukolilo, Surabaya, East Java 60111"
+  },
+  {
+    "id": 3244,
+    "name": "Grand Harvest Surabaya",
+    "address": "Surabaya, Balas Klumprik, Wiyung, Surabaya, East Java 60222"
+  },
+  {
+    "id": 598,
+    "name": "Grand Icon Caman",
+    "address": "Jl. Caman Raya No.1, RT.008/RW.001, Jatibening, Kec. Pondokgede, Kota Bks, Jawa Barat 17412"
+  },
+  {
+    "id": 3273,
+    "name": "Grand Residence City",
+    "address": "Jl. Grand Residence Boulevard No.456, Burangkeng, Kec. Setu, Kabupaten Bekasi, Jawa Barat 17320"
+  },
+  {
+    "id": 3158,
+    "name": "Grapari Telkomsel Mall Kelapa Gading 3",
+    "address": "MKG 3, RT.13/RW.18, East Kelapa Gading, Kelapa Gading, North Jakarta City, Jakarta 14240"
+  },
+  {
+    "id": 208,
+    "name": "Green Pramuka Square",
+    "address": "Lantai Ground Floor, Jl. Rawa Jaya No.49, Cemp. Putih, Kota Jakarta Pusat, 10570"
+  },
+  {
+    "id": 527,
+    "name": "Green Terrace Mall",
+    "address": "Lt GF Jl. Pintu Utama 1, Ceger, Kec. Cipayung, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13820"
+  },
+  {
+    "id": 3570,
+    "name": "Hos Cokroaminoto Ciledug",
+    "address": "QPF6+RHH, RT.001/RW.007, Sudimara Jaya, Ciledug, Tangerang City, Banten 15151"
+  },
+  {
+    "id": 482,
+    "name": "Hyfresh Bojongsari",
+    "address": "Hyfresh Bojong Sari, Jl. Raya Bojongsari No.43 G, Bojongsari Lama, Kec. Bojongsari, Kota Depok, Jawa Barat 16516"
+  },
+  {
+    "id": 3952,
+    "name": "Ibrahim Adjie Bandung",
+    "address": "Jl. Ibrahim Adjie No. 312, Kel. Binong, Kec. Batununggal, Kota Bandung, Jawa Barat 40275"
+  },
+  {
+    "id": 2882,
+    "name": "Intiland Tower",
+    "address": "Jl. Jenderal Sudirman No.Kav. 32, RW.2, Karet Tengsin, Tanah Abang, Jakarta Pusat, DKI Jakarta 10220"
+  },
+  {
+    "id": 454,
+    "name": "Irian Supermarket Marelan",
+    "address": "Jl. Marelan Raya Ps. II, Rengas Pulau, Kec. Medan Marelan, Kota Medan, Sumatera Utara 20255"
+  },
+  {
+    "id": 3714,
+    "name": "Jalan Panjang Kelapa Dua",
+    "address": "7, Jl. Panjang Arteri Klp. Dua Raya No.24B, RT.7/RW.5, Klp. Dua, Kec. Kb. Jeruk, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11550"
+  },
+  {
+    "id": 2986,
+    "name": "Jambi Prima Mall",
+    "address": "Lantai Dasar Unit 32, Jl. Jend. Sudirman No.90, Talang Jauh, Kec. Jelutung, Kota Jambi, Jambi 36133"
+  },
+  {
+    "id": 2736,
+    "name": "Jaticempaka Kota Bekasi",
+    "address": "Jl H Basyar Raya No 275B. Kecamatan Pondok Gede, RT.001/RW.007, Jaticempaka, Kec. Bekasi Bar., Kota Bks, Jawa Barat 17411"
+  },
+  {
+    "id": 576,
+    "name": "Jatinangor Town Square",
+    "address": "Jatinangor Square, Lt FF Extension, Jl. Raya Jatinangor No.150, Cikeruh, Kec. Jatinangor, Kabupaten Sumedang, Jawa Barat 45363"
+  },
+  {
+    "id": 361,
+    "name": "JB Tower",
+    "address": "Jakarta Box Tower, Basement Floor, Jl. Kebon Sirih No.48-50, RT.11/RW.2, Gambir, Jakarta Pusat, Jakarta, 10110"
+  },
+  {
+    "id": 3822,
+    "name": "Jemursari Surabaya",
+    "address": "Jl. Raya Jemursari No.56, Jemur Wonosari, Kec. Wonocolo, Surabaya, Jawa Timur 60237"
+  },
+  {
+    "id": 3573,
+    "name": "JKT Living Star",
+    "address": "Jl. Lap. Tembak Cibubur No.10, RT.4/RW.4, Pekayon, Kec. Ps. Rebo, Kota Jakarta Timur, Jakarta 13710"
+  },
+  {
+    "id": 3742,
+    "name": "Jl Kartini Pangkal Pinang",
+    "address": "Jl. Kartini No.2, Batin Tikal, Kec. Taman Sari, Kota Pangkal Pinang, Kepulauan Bangka Belitung 33684"
+  },
+  {
+    "id": 2344,
+    "name": "Jl. Majapahit No. 324 Semarang",
+    "address": "Jl. Majapahit No 324 F Semarang (Container)"
+  },
+  {
+    "id": 3968,
+    "name": "Jl. Raya Bogor Jakarta Timur (DT)",
+    "address": "Jalan Raya Bogor, RT. 2 / RW. 4, Kelurahan Pekayon, Kecamatan Pasar Rebo, RT 01/RW 01, Jakarta Timur, Daerah Khusus Ibukota Jakartarta 2 8, RT.1/RW.1, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13710"
+  },
+  {
+    "id": 310,
+    "name": "Jogja City Mall",
+    "address": "Yogya City Mall, Lantai 2, Jl. Magelang KM 6 No. 18, Sinduadi, Mlati, Sleman, Yogyakarta - 55284"
+  },
+  {
+    "id": 3554,
+    "name": "K Square Mall Batam",
+    "address": "Jl. Sudirman No.25-35, Sukajadi, Kec. Batam Kota, Kota Batam, Kepulauan Riau 29444"
+  },
+  {
+    "id": 3820,
+    "name": "Kabanjahe Karo",
+    "address": "Jl. Letnan Rata Perangin-Angin No.58, Padang MAS, Kec. Kabanjahe, Kabupaten Karo, Sumatera Utara 22111"
+  },
+  {
+    "id": 185,
+    "name": "Kalibata City",
+    "address": "Apartement Kalibata City, Lantai Ground Floor, Jl. Raya Kalibata No.1, RT.9/RW.4, Pancoran"
+  },
+  {
+    "id": 3181,
+    "name": "Kantor Pos Banjarmasin",
+    "address": "Jl. Lambung Mangkurat, Kertak Baru Ilir, Kec. Banjarmasin Tengah, Kota Banjarmasin, Kalimantan Selatan 70231"
+  },
+  {
+    "id": 3789,
+    "name": "Kapten Sudibyo Tegal",
+    "address": "Jl. Kapten Sudibyo No. 45, Pekauman, Kec. Tegal Barat, Kota Tegal, Jawa Tengah 52125"
+  },
+  {
+    "id": 3197,
+    "name": "Karawang Central Plaza",
+    "address": "Lobby Barat (LB 1) Jl. Galuh Mas Raya, Sukaharja, Telukjambe Timur, Karawang, Jawa Barat 41361"
+  },
+  {
+    "id": 3375,
+    "name": "Kartini Jepara",
+    "address": "Jl. Kartini No. 36, Kelurahan Panggang, Kecamatan Jepara, Kabupaten Jepara, Jawa Tengah 59411"
+  },
+  {
+    "id": 2421,
+    "name": "Kawasan Megamas Manado",
+    "address": "Jl. Laksda John Lie, Titiwungan Utara, Kec. Sario, Kota Manado, Sulawesi Utara"
+  },
+  {
+    "id": 3716,
+    "name": "Kebayoran Lama",
+    "address": "Jl. Raya Kby. Lama No. 86, Ruko No.1, RT.1/RW.11, Grogol Sel., Kec. Kebayoran Lama, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12220"
+  },
+  {
+    "id": 3797,
+    "name": "Kemang Bogor",
+    "address": "Jl. Raya Parung Bogor, Kemang, Kec. Kemang, Kabupaten Bogor, Jawa Barat 16310"
+  },
+  {
+    "id": 3874,
+    "name": "Kemang Timur",
+    "address": "Jl. Kemang Timur, Pejaten Bar., Ps. Minggu, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta"
+  },
+  {
+    "id": 2935,
+    "name": "Kemayoran (Drive Thru)",
+    "address": "Kemayoran (DT), Jl Garuda, RT. 15 / RW. 1, Gunung Sahari, Kemayoran, Jakarta Pusat 10610"
+  },
+  {
+    "id": 2346,
+    "name": "Kenangan Heritage",
+    "address": "Lantai GF - 109 Jl. Asia Afrika No.19, RW.3, Gelora, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10270"
+  },
+  {
+    "id": 3097,
+    "name": "Kenangan Signature Agora Mall",
+    "address": "Jl. M.H. Thamrin No. 10, Kb. Melati, Kecamatan Tanah Abang, Jakarta Pusat 10230"
+  },
+  {
+    "id": 3057,
+    "name": "Kenangan Signature Botani Square",
+    "address": "Botani Square Mall, Lantai G, Jl. Raya Pajajaran No.69-71,Bogor Tengah"
+  },
+  {
+    "id": 2914,
+    "name": "Kenangan Signature Emporium Mall Pluit",
+    "address": "Emporium Mall Pluit, West Lobby, Jl. Pluit Selatan Raya No.1, Penjaringan, Kec. Penjaringan, Jakarta Utara, Daerah Khusus Ibukota Jakarta 14440"
+  },
+  {
+    "id": 494,
+    "name": "Kenangan Signature Galaxy Mall 3",
+    "address": "Galaxy Mall 3, Lt Dasar No G-343B, Jl. Dr. Ir. H. Soekarno, Mulyorejo, Kec. Mulyorejo, Kota SBY, Jawa Timur 60115"
+  },
+  {
+    "id": 2928,
+    "name": "Kenangan Signature Gandaria City",
+    "address": "Gandaria City, Mainstreet Ground Floor #MG-10 & S-10. Jl. Arteri Pd. Indah, RT. 10 / RW. 6, Kebayoran Lama Utara, Kec. Kby. Lama, Jakarta Selatan 12240"
+  },
+  {
+    "id": 2929,
+    "name": "Kenangan Signature Mall of Indonesia",
+    "address": "Mall of Indonesia, Lobby 8, Jl. Boulevard Bar. Raya No.12, RT.18/RW.19, Kelapa Gading Barat, Kec. Kelapa Gading, Jakarta Utara, Daerah Khusus Ibukota Jakarta 14240"
+  },
+  {
+    "id": 2903,
+    "name": "Kenangan Signature One Satrio",
+    "address": "One Satrio, CBD, Jl. Mega Kuningan Jl. Prof. DR. Satrio No.1.3, RT.5/RW.2, Kuningan, Karet Kuningan, Kecamatan Setiabudi, Kota Jakarta Selatan,DKI Jakarta 12949"
+  },
+  {
+    "id": 3071,
+    "name": "Kenangan Signature Pakuwon Bekasi",
+    "address": "Jl. Raya Pekayon No.002, RT.001/RW.001, Pekayon Jaya, Kec. Bekasi Sel., Kota Bks, Jawa Barat 17530"
+  },
+  {
+    "id": 3255,
+    "name": "Kenangan Signature Pakuwon City Mall",
+    "address": "Pakuwon City Mall, GF, Jl. Raya Laguna KJW Putih Tambak No.2, Kejawaan Putih Tamba, Mulyorejo, Surabaya, Jawa Timur, 60112"
+  },
+  {
+    "id": 3003,
+    "name": "Kenangan Signature SMB",
+    "address": "Summarecon Mall Bandung Signature, Summarecon Mall Lantai Dasar Unit DGF 801 & DGF 801 O, Jl Boulevard Utama, Cisaranten Kidul, Gedebage, Kota Bandung, Jawa Barat 40295"
+  },
+  {
+    "id": 2962,
+    "name": "Kenangan Signature Sun Plaza",
+    "address": "Sun Plaza, Jl. KH. Zainul Arifin No.7, Madras Hulu, Kec. Medan Polonia, Kota Medan, Sumatera Utara 20152"
+  },
+  {
+    "id": 210,
+    "name": "Kenangan Signature The Breeze",
+    "address": "The Breeze BSD, The Breeze BSD City Unit L.26, Jl. BSD Green Office Park, Sampora, BSD, Kab. Tangerang, Banten 15345"
+  },
+  {
+    "id": 520,
+    "name": "Kenten Food Market",
+    "address": "GF, Jl. MP. Mangkunegara No.11-10, 8 Ilir, Kec. Ilir Tim. II, Kota Palembang, Sumatera Selatan 30961"
+  },
+  {
+    "id": 3288,
+    "name": "Keprabon Surakarta",
+    "address": "Jl. Teuku Umar No. 17, Keprabon, Kec. Banjarsari, Kota Surakarta, Jawa Tengah 57131"
+  },
+  {
+    "id": 3298,
+    "name": "KK Ruko Kaliurang KM5 Bawah",
+    "address": "Ruko Kaliurang Km 5 Yogyakarta, Jalan Kaliurang Km 5 No 36 Rt 013 Rw 05, Karang Wuni, Caturtunggal, Kec Depok, Kab. Sleman, Daerah Istimewa Yogyakarta 55284"
+  },
+  {
+    "id": 3756,
+    "name": "Kol. Sugiono Duren Sawit",
+    "address": "Jl. Kolonel Sugiono No.41 14, RT.14/RW.9, Pd. Bambu, Kec. Duren Sawit, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13440"
+  },
+  {
+    "id": 2887,
+    "name": "Kopi Kenangan Hanya Untukmu",
+    "address": "irian jaya"
+  },
+  {
+    "id": 3698,
+    "name": "Kopi KopKen Alfamidi H. Mansur Gondrong",
+    "address": "Alfamidi H. Mansur Gondrong, Pinang, Jl. H. Mansyur, RT.006/RW.004, Nerogtog, Banten 15148"
+  },
+  {
+    "id": 3461,
+    "name": "Kopindosat Kebagusan",
+    "address": "(DOCO), Jl. Kebagusan I No.4, RT.1/RW.2, Ps. Minggu, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12520"
+  },
+  {
+    "id": 3697,
+    "name": "KopKen Alfamid Subandi",
+    "address": "Alfamid Subandi RJ87+JC2, RT.001/RW.005, Pabuaran, Karawaci, Tangerang City, Banten 15114"
+  },
+  {
+    "id": 3409,
+    "name": "Kota Baru Jogja",
+    "address": "Bentara Budaya Yogyakarta, Jl. Suroto No.4, Kotabaru, Kec. Gondokusuman, Kota Yogyakarta, Daerah Istimewa Yogyakarta 55224"
+  },
+  {
+    "id": 164,
+    "name": "Kota Kasablanka",
+    "address": "Mall Kota Kasablaka (The Common Unit GF-FSG 07) Jl. Casablanca No.88, RT.2/RW.14, Menteng Dalam, Kec. Tebet, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12870"
+  },
+  {
+    "id": 4022,
+    "name": "Krian Sidoarjo",
+    "address": "Jl. Mayjen Bambang Yuwono, RT.2 RW8, Sidodadi, Kemangsen, Kec. Krian, Kabupaten Sidoarjo, Jawa Timur 61262"
+  },
+  {
+    "id": 3242,
+    "name": "Kualanamu Airport - Departure",
+    "address": "Jl. Bandara Kuala Namu, Ps. Enam Kuala Namu, Kec. Beringin, Kab. Deli Serdang, Sumatera Utara 20553"
+  },
+  {
+    "id": 3631,
+    "name": "Kukusan UI Depok",
+    "address": "Ruko Jl. K.H.M. Usman No. 29C, Kukusan, Depok, Jawa Barat"
+  },
+  {
+    "id": 3163,
+    "name": "Kupang Jaya Surabaya",
+    "address": "Jl. Kupang Jaya, Simomulyo, Kec. Sukomanunggal, Surabaya, Jawa Timur 60189"
+  },
+  {
+    "id": 3569,
+    "name": "Kusuma Kebumen",
+    "address": "Jl. Kusuma No.3, RW No.RT.5, Wonoyoso, Bumirejo, Kec. Kebumen, Kabupaten Kebumen, Jawa Tengah 54316"
+  },
+  {
+    "id": 3695,
+    "name": "Kyai Maja",
+    "address": "10, Jl. Kyai Maja No.29, RT.10/RW.7, Kramat Pela, Kec. Kby. Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12130"
+  },
+  {
+    "id": 282,
+    "name": "La Codefin Kemang",
+    "address": "GF, Jl. Kemang I No. 3-5, RT.11/RW.1, Bangka, Mampang Prapatan, Jakarta Selatan - 12780"
+  },
+  {
+    "id": 608,
+    "name": "LA Terrace",
+    "address": "Ground Floor & Upper Ground, unit B6, Gedung Blok B, Jl. Raya Lenteng Agung No.18, Srengseng Sawah, Kec. Jagakarsa, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12630"
+  },
+  {
+    "id": 653,
+    "name": "Lagoon Avenue Sungkono",
+    "address": "GF, Jl. Abdul Wahab Siamin Kav. 9-10, Dukuh Kupang, Dukuh Pakis, Surabaya, Jawa Timur - 60225."
+  },
+  {
+    "id": 3372,
+    "name": "Langsa Aceh",
+    "address": "FXC9+67X, Gampong Jawa, Langsa Kota, Langsa City, Aceh 24375"
+  },
+  {
+    "id": 3723,
+    "name": "Lebak Bulus 1",
+    "address": "Cilandak Barat, Jl. Lebak Bulus I No. 36b, RT.1/RW.2, Cilandak Barat, Kec. Cilandak, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12440"
+  },
+  {
+    "id": 3115,
+    "name": "Lenteng Agung (Drive Thru)",
+    "address": "Jl. Lenteng Agung (DT), Jl. Raya Lenteng Agung, RT.7/RW.2, Lenteng Agung, Kec. Jagakarsa, Kota Jakarta Selatan, Jakarta 12630"
+  },
+  {
+    "id": 3670,
+    "name": "Lepo Lepo Kendari",
+    "address": "Jl. Jenderal Ahmad Yani, Lepo-Lepo, Kec. Baruga, Kota Kendari, Sulawesi Tenggara"
+  },
+  {
+    "id": 3515,
+    "name": "Letjen Suprapto Cempaka Putih",
+    "address": "Jl. Letjen Suprapto No.8D, RT.2/RW.1, Cempaka Putih, Kec. Kemayoran, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10640"
+  },
+  {
+    "id": 3485,
+    "name": "Letjend Suprapto Subang",
+    "address": "Jl. Letjend Suprapto, Karanganyar, Kec. Subang, Kab. Subang, Jawa Barat 41211"
+  },
+  {
+    "id": 2880,
+    "name": "Level 21 Mall Bali",
+    "address": "Jl. Teuku Umar No.1, Dauh Puri Klod, Kec. Denpasar Bar., Kota Denpasar, Bali"
+  },
+  {
+    "id": 209,
+    "name": "Lippo Cikarang",
+    "address": "Lantai 1, Jl. MH. Thamrin, Cibatu, Cikarang Selatan, Jawa Barat, 17550"
+  },
+  {
+    "id": 3659,
+    "name": "Lippo Icon Cibubur",
+    "address": "Mall Cibubur Junction, Jl. Jambore No.8, RT.8/RW.7, Cibubur, Kec. Ciracas, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13720"
+  },
+  {
+    "id": 360,
+    "name": "Lippo Mall Kemang",
+    "address": "Lantai LG, Jl. Pangeran Antasari No. 33A, Kemang, Mampang Prapatan, Jakarta Selatan - 12150"
+  },
+  {
+    "id": 3399,
+    "name": "Lippo Mall Nusantara",
+    "address": "Kawasan Bisnis Granadha, Jl. Jend. Sudirman No.Kav. 50 Lt. LG (Alun-alun Nusantara), Karet Semanggi, Kecamatan Setiabudi, Kota Jakarta Selatan"
+  },
+  {
+    "id": 159,
+    "name": "Lippo Mall Puri",
+    "address": "Lantai Lower Ground Floor, Jl. Puri Indah Boulevard Blok U No. 1, Puri Indah, Jakarta Barat"
+  },
+  {
+    "id": 290,
+    "name": "Lippo Mall Puri 2",
+    "address": "Lippo Mall Puri @ The St. Moritz, GF, Jl. Puri Indah Boulevard Blok U No. 1, Kembangan Selatan, Kembangan, Jakarta Barat - 11610"
+  },
+  {
+    "id": 280,
+    "name": "Lippo Plaza Batu",
+    "address": "GF, Jl. Diponegoro No.1, Sisir, Kec. Batu, Kota Batu, Jawa Timur 65314"
+  },
+  {
+    "id": 363,
+    "name": "Lippo Plaza Jogja",
+    "address": "Ground Floor, Jl. Laksda Adisucipto No. 32-34, Demangan, Gondokusuman, Yogyakarta, DIY - 55221"
+  },
+  {
+    "id": 239,
+    "name": "Lippo Plaza KJI",
+    "address": "Lippo Plaza Kramat Jati, Ground Floor, Jl. Raya Bogor KM.19, RT.14/RW.6, Kramat Jati, Jakarta Timur, 13510"
+  },
+  {
+    "id": 346,
+    "name": "Living Plaza Bintaro",
+    "address": "Ground Floor, Jalan Bintaro Utama Raya Kav. 11 Blok B7 No. A1, Sektor CBD, Pondok Karya, Pondok Aren, Pondok Jaya, Kota Tangerang Selatan, Banten 15225"
+  },
+  {
+    "id": 646,
+    "name": "Living Plaza Cinere Depok",
+    "address": "Living Plaza Cinere, Ground Floor G-11/ G-11A, Jl. Cinere Raya No.20, Cinere, Kec. Cinere, Kota Depok, Jawa Barat 16514"
+  },
+  {
+    "id": 339,
+    "name": "Living Plaza Jababeka",
+    "address": "Living World Plaza Jababeka, Lantai GF, Mekarmukti, Cikarang Utara, Bekasi, Jawa Barat - 17530"
+  },
+  {
+    "id": 262,
+    "name": "Living World Alam Sutera",
+    "address": "GF, Jl. Alam Sutera Boulevard Kav. 2, Serpong Utara, Kota Tangerang Selatan, Banten, 15325"
+  },
+  {
+    "id": 3070,
+    "name": "Living World Grand Wisata",
+    "address": "Esplanade Ave, Lambangjaya, Tambun Selatan, Bekasi Regency, West Java 17510"
+  },
+  {
+    "id": 3058,
+    "name": "Living World Kota Wisata",
+    "address": "Kota wisata Bogor"
+  },
+  {
+    "id": 2427,
+    "name": "Living World Pekanbaru",
+    "address": "Lantai Ground Unit Island G- Unit 03, Jl. Soekarno - Hatta, Tengkerang Bar., Kec. Marpoyan Damai, Kota Pekanbaru"
+  },
+  {
+    "id": 3928,
+    "name": "Lodaya Bogor",
+    "address": "Jl. Lodaya, RT.04/RW.2, Babakan, Kecamatan Bogor Tengah, Kota Bogor, Jawa Barat 16128"
+  },
+  {
+    "id": 337,
+    "name": "Lokasari Square",
+    "address": "Ground Floor, Jl. Mangga Besar IX No.81, RT.6/RW.2, Tangki, Taman Sari, Jakarta Barat - 11170"
+  },
+  {
+    "id": 2835,
+    "name": "Lotte Mall Jakarta (LG)",
+    "address": "Lotte Shopping Avenue (Lower Ground), Jl. Prof. DR. Satrio Kav 3-5, Kuningan, Karet Kuningan, Kec. Setiabudi, Jakarta Selatan 12940"
+  },
+  {
+    "id": 215,
+    "name": "Lottemart Bintaro",
+    "address": "Lotte Mart Bintaro, Lantai Ground Floor, JL M.H. Thamrin CBD Area Kav. Blok B7 01-06, Tangerang Selatan, 15224"
+  },
+  {
+    "id": 3852,
+    "name": "Lumimuut Manado",
+    "address": "Jl. Lumimuut, Tikala Kumaraka, Kec. Wenang, Kota Manado, Sulawesi Utara"
+  },
+  {
+    "id": 3161,
+    "name": "M Kahfi",
+    "address": "Jl. Moh Kahfi 1 Rt 07/03, Tanah Baru, Kec. Beji, Kota Depok, Jawa Barat 16426"
+  },
+  {
+    "id": 636,
+    "name": "M Ten",
+    "address": "Menara Tendean Office, Ground Floor unit GF.9, Jl. Kapten Tendean No. 6, RT.1, RW.5, Kuningan Barat, Mampang Prapatan, Jakarta Selatan"
+  },
+  {
+    "id": 3919,
+    "name": "M Toha Bandung",
+    "address": "Jl. Moch. Toha No 292 Rt 05 Rw 03 Kel. Karasak, Kec. Astanaanyar, Kota Bandung, Jawa Barat 40243"
+  },
+  {
+    "id": 3489,
+    "name": "Malang Town Square Mall",
+    "address": "Malang Town Square, Jl. Veteran No.2, Penanggungan, Kec. Klojen, Kota Malang, Jawa Timur 65111"
+  },
+  {
+    "id": 197,
+    "name": "Mall @BASSURA CITY",
+    "address": "Mall @Basura, Lantai GF, Jl. Basuki Rahmat No.1A, Cipinang Besar Selatan, Kota Jakarta Timur, 13410"
+  },
+  {
+    "id": 186,
+    "name": "Mall Ambasador",
+    "address": "Lantai 4, Jl. Prof. DR. Satrio No.65,Setiabudi, Kota Jakarta Selatan"
+  },
+  {
+    "id": 438,
+    "name": "Mall Artha Gading",
+    "address": "Ground Floor, Jl. Artha Gading Selatan No. 1, Kelapa Gading, RT.18/RW.8, Kec. Kelapa Gading, Kota Jkt Utara, Daerah Khusus Ibukota Jakarta 14240"
+  },
+  {
+    "id": 539,
+    "name": "Mall Balekota Tangerang",
+    "address": "GC 03A, Jl. Jenderal Sudirman Km. 10, Buaran Indah, Tangerang, Banten 15119"
+  },
+  {
+    "id": 602,
+    "name": "Mall Cipinang Indah",
+    "address": "Mal Cipinang Indah, Lower Ground no.7, Jl. Raya Kalimalang No.kav. 88, RT.18/RW.3, Pd. Bambu, Kec. Duren Sawit, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13420"
+  },
+  {
+    "id": 555,
+    "name": "Mall Ciputra Cibubur",
+    "address": "Lt 1 FI-EA-01,02, Jl. Alternatif Cibubur No.Km, RT.005/RW.011, Jatikarya, Kec. Jatisampurna, Kota Bks, Jawa Barat 17435"
+  },
+  {
+    "id": 285,
+    "name": "Mall Ciputra Jakarta",
+    "address": "Citraland Mall, LG, Jl. S. Parman, Tanjung Duren Utara, Grogol Petamburan, Jakarta Barat - 11470"
+  },
+  {
+    "id": 2659,
+    "name": "Mall Ciputra Semarang",
+    "address": "Unit GF, EMT 17, Jl. Simpang Lima No.70, Pekunden, Kec. Semarang Tengah, Kota Semarang, Jawa Tengah 50134"
+  },
+  {
+    "id": 3683,
+    "name": "Mall Ekalokasari",
+    "address": "Jl. Siliwangi No.123, RT.02/RW.01, Sukasari, Kec. Bogor Tim., Kota Bogor, Jawa Barat 16142"
+  },
+  {
+    "id": 489,
+    "name": "Mall Graha Cijantung",
+    "address": "GF, Jl. Pendidikan I No. 1, RT.1/RW.4, Cijantung, Pasar Rebo, Jakarta Timur - 13770"
+  },
+  {
+    "id": 194,
+    "name": "Mall Kelapa Gading 3",
+    "address": "Lantai Ground Floor, Jl. Bulevar Kelapa Gading, Klp. Gading, Jakarta Utara, 14240"
+  },
+  {
+    "id": 424,
+    "name": "Mall of Serang",
+    "address": "Ground Floor, Jl. Lingkar Kemang, Kotabaru, Cipocok Jaya, Serang City, Banten 42112"
+  },
+  {
+    "id": 2359,
+    "name": "Mall SKA Pekanbaru",
+    "address": "Jl. Soekarno - Hatta No.114, Delima, Kec. Tampan, Kota Pekanbaru, Riau 28292, Lantai Dasar Unit 17A"
+  },
+  {
+    "id": 3537,
+    "name": "Mall Taman Anggrek Jakarta",
+    "address": "Mall Taman Anggrek, GF Floor, Letjen S. Parman St, RT.12/RW.1, South Tanjung Duren, Grogol petamburan, West Jakarta City, Jakarta 11470"
+  },
+  {
+    "id": 3083,
+    "name": "Mampang",
+    "address": "Jl. Mampang Prapatan Raya, Tegal Parang, Kec. Mampang Prapatan, Jakarta Selatan, DKI Jakarta 12790"
+  },
+  {
+    "id": 2393,
+    "name": "Manado Town Square",
+    "address": "2 Jl. Piere Tendean, Sulawesi Utara 95114"
+  },
+  {
+    "id": 432,
+    "name": "Mangga Dua Square",
+    "address": "Jl. Gn. Sahari No.1, RT.11/RW.6, Ancol, Kec. Pademangan, Kota Jkt Utara, Daerah Khusus Ibukota Jakarta 14420"
+  },
+  {
+    "id": 171,
+    "name": "Mangkuluhur City (HANA)",
+    "address": "Mangkuluhur City (Hana Bank) Jl. Jend. Gatot Subroto Kav. 1-3, Karet Semanggi,Kota Jakarta Selatan, 12930"
+  },
+  {
+    "id": 388,
+    "name": "Manhattan Time Square",
+    "address": "LG, Jl. Gatot Subroto No.217, Sei Sikambing B, Kec. Medan Sunggal, Kota Medan, Sumatera Utara 20123"
+  },
+  {
+    "id": 3497,
+    "name": "Manukan Wetan Surabaya",
+    "address": "(DOCO), Jl. Sikatan I No.49, Manukan Wetan, Kec. Tandes, Surabaya, Jawa Timur 60185"
+  },
+  {
+    "id": 2458,
+    "name": "Marchand Hype Station",
+    "address": "Ruko No. 08, Jl. Emerald Boulevard, Parigi, Kec. Pd. Aren, Kota Tangerang Selatan, Banten 15227"
+  },
+  {
+    "id": 2309,
+    "name": "Margo City Depok",
+    "address": "Margocity, LG-14, Jl. Margonda Raya No. 358, Kemiri Muka, Kecamatan Beji, Kota Depok, Jawa Barat 16423"
+  },
+  {
+    "id": 4002,
+    "name": "Margoyoso Jepara",
+    "address": "Jl. Raya Jepara - Kudus No.KM. 18, RT.02/RW.01, Rw. I, Kriyan, Kec. Kalinyamatan, Kabupaten Jepara, Jawa Tengah 59467"
+  },
+  {
+    "id": 3301,
+    "name": "Marktlane Sentul",
+    "address": "Upper Ground Floor (UG-07), Jl. Pakuan No.3, Sumur Batu, Kec. Babakan Madang, Kabupaten Bogor, Jawa Barat 16810"
+  },
+  {
+    "id": 178,
+    "name": "Mayapada Hospital",
+    "address": "Lantai Ground Floor, Jl. Lebak Bulus I kav. 29,Cilandak Barat, Jakarta Selatan, 12440"
+  },
+  {
+    "id": 385,
+    "name": "Medan Fair",
+    "address": "Lantai 1, Jl. Gatot Subroto No.30, Sekip, Kec. Medan Petisah, Kota Medan, Sumatera Utara 20113"
+  },
+  {
+    "id": 259,
+    "name": "Mega Bekasi Hypermall",
+    "address": "Lantai 3, Jl. Jend. Ahmad Yani No.1, Marga Jaya, Bekasi Selatan, Bekasi, Jawa Barat, 17141"
+  },
+  {
+    "id": 3439,
+    "name": "Mega Regency Bekasi",
+    "address": "Jl. Mega Raya No.5, Sukaragam, Serang Baru, Bekasi Regency, West Java 17330"
+  },
+  {
+    "id": 2385,
+    "name": "Megamall Batam",
+    "address": "Jl. Engku Putri No.1, Belian, Kec. Batam Kota, Kota Batam, Kepulauan Riau 29461"
+  },
+  {
+    "id": 3082,
+    "name": "Menara Imperium",
+    "address": "Jl. H. R. Rasuna Said Kav. 1, Guntur, Kecamatan Setiabudi, Jakarta Selatan 12980"
+  },
+  {
+    "id": 236,
+    "name": "Menara Jamsostek",
+    "address": "Gedung Parkir Menara Jamsostek, Lantai 1, Jl. Jendral Gatot Subroto No.Kav.38, Mampang Prapatan, Jakarta Selatan, 12710"
+  },
+  {
+    "id": 168,
+    "name": "Menara Karya",
+    "address": "Lantai Basement Unit.F Jl. H.R Rasuna Said, Kuningan Timur, Jakarta Selatan, 12950"
+  },
+  {
+    "id": 2505,
+    "name": "Menara Mandiri",
+    "address": "Jl. Jendral Sudirman No 5, Rw 3 Senayan, Kebayoran Baru, Jakarta 12190"
+  },
+  {
+    "id": 162,
+    "name": "Menara Standard Chartered",
+    "address": "Lantai Ground Floor, Jl. Prof. DR. Satrio No.164 Setiabudi Kota Jakarta Selatan"
+  },
+  {
+    "id": 3449,
+    "name": "Menoreh Semarang",
+    "address": "Jl. Menoreh Raya No. 67, Sampangan, Kec. Gajahmungkur, Semarang, Jawa Tengah 50232"
+  },
+  {
+    "id": 3618,
+    "name": "Merdeka Palembang",
+    "address": "Jl. Merdeka No. 345, Kel. Talang Semut, Kec. Bukit Kecil, Kota Palembang, Sumatera Selatan 30136"
+  },
+  {
+    "id": 3508,
+    "name": "MERR Rungkut Surabaya (DT)",
+    "address": "Jl. Dr. Ir. H. Soekarno No.483, Penjaringan Sari, Kec. Rungkut, Surabaya, Jawa Timur 60293"
+  },
+  {
+    "id": 3576,
+    "name": "Mertoyudan Kedungdowo Magelang",
+    "address": "Jl. Mayjend. Bambang Sugeng, Kedungdowo, Mertoyudan, Kec. Mertoyudan, Kab. Magelang, Jawa Tengah 56172"
+  },
+  {
+    "id": 399,
+    "name": "Metro Indah Mall",
+    "address": "Soekarno-Hatta St No.590, Sekejati, Buahbatu, Bandung City, West Java 40286"
+  },
+  {
+    "id": 2441,
+    "name": "Metro Lampung",
+    "address": "Jl. Ade Irma Suryani, Imopuro, Kec. Metro Pusat, Kota Metro, Lampung 34125"
+  },
+  {
+    "id": 592,
+    "name": "Metro Park Residence",
+    "address": "Jl. Pilar Mas Utama No.Kav. 28, Kedoya Sel., Kec. Kb. Jeruk, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11520"
+  },
+  {
+    "id": 621,
+    "name": "Metropolitan Cibubur",
+    "address": "Metland Cileungsi, Lantai Ground no.01B, Jl. Metro Raya, Perumahan Metland Transyogi, Cileungsi, kab. Bogor 16820"
+  },
+  {
+    "id": 3271,
+    "name": "Metropolitan City Pekanbaru",
+    "address": "Jl. HR. Soebrantas No.KM. 12.5, Simpang Baru, Kec. Tampan, Kota Pekanbaru, Riau 29211"
+  },
+  {
+    "id": 258,
+    "name": "Metropolitan Mall Bekasi",
+    "address": "Metropolitan Mall, Lantai 2, Jl. KH. Noer Ali, Pekayon Jaya, Bekasi Selatan, Kota Bekasi, Jawa Barat, 17148"
+  },
+  {
+    "id": 2989,
+    "name": "Millennium City",
+    "address": "Marketing Office Millenium City Jl. Raya Dago, Kabasiran, Kec. Parung Panjang, Kab. Bogor, Jawa Barat, 16360"
+  },
+  {
+    "id": 3120,
+    "name": "Multatuli Medan",
+    "address": "Jl. Multatuli 29-35, Hamdan, Kec. Medan Maimun, Kota Medan, Sumatera Utara 20212"
+  },
+  {
+    "id": 3463,
+    "name": "Mutiara Gading City Bekasi",
+    "address": "(DOCO), Jl. Mutiara Gading City Ruko Palazo R1 No.7, Babelan Kota, Kec. Tarumajaya, Kabupaten Bekasi, Jawa Barat"
+  },
+  {
+    "id": 588,
+    "name": "Naga Supermarket Hankam",
+    "address": "(Container), Jl. Raya Hankam, RT.008/RW.010, Jatirahayu, Kec. Pd. Melati, Kota Bks, Jawa Barat 17414 (Area Parkir mobil depan Solaria)"
+  },
+  {
+    "id": 632,
+    "name": "Naga Swalayan Ciracas",
+    "address": "Jl. Raya Bogor km26 No.6, RT.3/RW.7, kel.Ciracas, Kec. Ciracas, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13740"
+  },
+  {
+    "id": 3473,
+    "name": "Nani Wartabone Gorontalo",
+    "address": "Jl. Basuki Rahmat / Jl. Nani Wartabone, Heledulaa Selatan, Kota Timur, Kota Gorontalo, Gorontalo 96112"
+  },
+  {
+    "id": 3809,
+    "name": "Ngawi",
+    "address": "Jl. Teuku Umar No.24, Sidorejo, Ketanggi, Kec. Ngawi, Kabupaten Ngawi, Jawa Timur 63211, Indonesia"
+  },
+  {
+    "id": 407,
+    "name": "One Bell Park Cinere",
+    "address": "One Belpark, Jl. RS. Fatmawati Raya No.1, RW.1, Pd. Labu, Kec. Cilandak, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12450"
+  },
+  {
+    "id": 3980,
+    "name": "Onzo Harvest City",
+    "address": "J27H+H5Q, Kp Sawah Kav 76-78, Rt. 006 Rw. 03, Cikarageman, Setu, Bekasi Regency, West Java 17320"
+  },
+  {
+    "id": 497,
+    "name": "Opi Mall",
+    "address": "GF, Jl. Gubernur H. A Bastari, Sungai Kedukan, Kec. Rambutan, Kabupaten Banyu Asin, Sumatera Selatan 30257"
+  },
+  {
+    "id": 2414,
+    "name": "Pacific Mall Tegal",
+    "address": "Jl. Kapten Sudibyo, Pekauman, Kec. Tegal Bar., Kota Tegal, Jawa Tengah 52125"
+  },
+  {
+    "id": 205,
+    "name": "Pacific Place",
+    "address": "Lantai Lower Ground, Jl. Jend. Sudirman No.52-53, Kby. Baru, Kota Jakarta Selatan, 12190"
+  },
+  {
+    "id": 413,
+    "name": "Padang Merdeka Bintaro",
+    "address": "Ruko Kebayoran Square Business Park, Jalan Boulevard Bintaro Jaya, Parigi, Kec. Pd. Aren, Kota Tangerang Selatan, Banten 15227"
+  },
+  {
+    "id": 3851,
+    "name": "Padel Villa Sektor 4",
+    "address": "Jl. Pd. Betung Raya No.8, Karya, Kec. Pd. Aren, Kota Tangerang Selatan, Banten 15225"
+  },
+  {
+    "id": 3944,
+    "name": "Pagedangan Tangerang Selatan",
+    "address": "Jl. Raya Pagedangan No.3, Kadu Sirung, Kec. Pagedangan, Kabupaten Tangerang, Banten 15339"
+  },
+  {
+    "id": 3800,
+    "name": "Pahlawan Sidoarjo",
+    "address": "Jl. Pahlawan No.8, Kwadengan Barat, Lemahputro, Kec. Sidoarjo, Kabupaten Sidoarjo, Jawa Timur 61213"
+  },
+  {
+    "id": 3623,
+    "name": "Pajajaran Bandung",
+    "address": "Jl. Pajajaran No. 74, Pajajaran, Kec. Cicendo, Kota Bandung, Jawa Barat"
+  },
+  {
+    "id": 2706,
+    "name": "Pakelan Magelang (Container)",
+    "address": "Jl. Magelang Jl. Magelang - Salaman No.99, Kedungingas, Banyurojo, Kec. Mertoyudan, Kota Magelang, Jawa Tengah 56172"
+  },
+  {
+    "id": 309,
+    "name": "Pakuwon Jogja",
+    "address": "Pakuwon Mall, Lantai LG, Jl. Ringroad Utara, Sanggrahan, Kaliwaru Condong Catur, Depok, Sleman, Yogyakarta - 55281"
+  },
+  {
+    "id": 257,
+    "name": "Pakuwon Mall",
+    "address": "Second Floor, Jl. Mayjen Yono Suwoyo No.2, Babatan, Wiyung, Kota SBY, Jawa Timur 60216"
+  },
+  {
+    "id": 3072,
+    "name": "Pakuwon Mall Bekasi",
+    "address": "Jl. Raya Pekayon No.002, RT.001, Pekayon Jaya, Kec. Bekasi Sel., Kota Bks, Jawa Barat"
+  },
+  {
+    "id": 3984,
+    "name": "Pal 3 Banjarmasin",
+    "address": "Ruko Ahmad Yani Km 3,5 Banjarmasin, Jl. Ahmad Yani No. 147 C dan 147 D Rt 003 Rw 000, Kel. Kebun Bunga, Kec. Banjarmasin Timur, Kota Banjarmasin, Kalimantan Selatan 70235"
+  },
+  {
+    "id": 514,
+    "name": "Palembang Indah Mall",
+    "address": "UG, Jl. Letkol Iskandar No.18, 24 Ilir, Kec. Bukit Kecil, Kota Palembang, Sumatera Selatan 30134"
+  },
+  {
+    "id": 3437,
+    "name": "Palu Arena",
+    "address": "Sis Aljufri Palu, Jl. Sis Aljufri Kawasan Wisata Religi Siranindi, Palu, Sulawesi Tengah"
+  },
+  {
+    "id": 3500,
+    "name": "Pamekasan Madura",
+    "address": "Jl. Jokotole No.26, Rw. 03, Barurambat Kota, Kec. Pamekasan, Kabupaten Pamekasan, Jawa Timur 69317"
+  },
+  {
+    "id": 384,
+    "name": "Panakkukang Mall",
+    "address": "Lantai Dasar, Gedung B, Jl. Boulevard No.1, Masale, Kec. Panakkukang, Kota Makassar, Sulawesi Selatan 90231"
+  },
+  {
+    "id": 2391,
+    "name": "Panbil Mall Batam",
+    "address": "Panbil Mall Batam - Muka Kuning, Kec. Sei Beduk, Kota Batam, Kepulauan Riau 29433"
+  },
+  {
+    "id": 441,
+    "name": "Pancoran China Town",
+    "address": "Poin, Ground Floor, Jl. Pancoran, RT.9/RW.2, Glodok, Kec. Taman Sari, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11120"
+  },
+  {
+    "id": 3901,
+    "name": "Pancoran Mas Depok",
+    "address": "Jl. Raya Sawangan No.23c, Mampang, Kec. Pancoran Mas, Kota Depok, Jawa Barat 16433"
+  },
+  {
+    "id": 3320,
+    "name": "Paniki Manado",
+    "address": "Jl. A.A. Maramis, Paniki Dua, Kec. Mapanget, Kota Manado, Sulawesi Utara 95257"
+  },
+  {
+    "id": 341,
+    "name": "Paragon Mall Semarang",
+    "address": "Lantai 3, Jl. Pemuda No.118, Sekayu, Kec. Semarang Tengah, Kota Semarang, Jawa Tengah 50132"
+  },
+  {
+    "id": 364,
+    "name": "Paris Van Java",
+    "address": "Unit CL-A, Jl. Sukajadi No.131-139, Cipedes, Kec. Sukajadi, Kota Bandung, Jawa Barat 40162"
+  },
+  {
+    "id": 3746,
+    "name": "Park Serpong Legok",
+    "address": "Ruko The Hive @ Park Avenue, Jl. Park Avenue No. 25, Kec. Legok, Kab. Tangerang, Banten 15820"
+  },
+  {
+    "id": 343,
+    "name": "Pasar Atom  Mall",
+    "address": "Pasar Atom , Lantai 1 tahap 3 Jl.Bunguran No.45,Pabean Cantian,Surabaya, Jawa Timur - 60161"
+  },
+  {
+    "id": 2795,
+    "name": "Pasar Jaya Teluk Gong 2",
+    "address": "Jl. Teluk Gong Raya No.16, RT.10/RW.7, Pejagalan, Kec. Penjaringan, Kota Jakarta Utara, Daerah Khusus Ibukota Jakarta 14450"
+  },
+  {
+    "id": 2579,
+    "name": "Pasar Kenari (Bondex)",
+    "address": "RT.1/RW.3, Kenari, Kec. Senen, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10430"
+  },
+  {
+    "id": 3103,
+    "name": "Pasar Kota Pondok Gede",
+    "address": "Jl Raya Pondok Gede, Jatirahayu, Kec. Pondok Melati, Kota Bekasi, Jawa Barat 17415"
+  },
+  {
+    "id": 3410,
+    "name": "Pasar Lama Tangerang",
+    "address": "Jl. Kisamaun No.3, RT.003/RW.007, Sukasari, Kec. Tangerang, Kota Tangerang, Banten 15118"
+  },
+  {
+    "id": 3770,
+    "name": "Pasar Minggu Jakarta Selatan",
+    "address": "Jl. Raya Pasar Minggu No.26, RT.1/RW.3, Kelurahan Pejaten Barat, Kecamatan Pasar Minggu, Kota Jakarta Selatan, DKI Jakarta, Jakarta 12510"
+  },
+  {
+    "id": 3687,
+    "name": "Pasar Pagi Mangga Dua",
+    "address": "Pasar Pagi Mangga Dua Lt. Dasar L-003 Rt.011/005 Ancol, Kc. Pademangan, Jakarta Utara, DKI Jakarta 14430"
+  },
+  {
+    "id": 191,
+    "name": "Pasaraya Blok M",
+    "address": "Lantai Ground Floor, Jl. Iskandarsyah II, Kebayoran Baru, Jakarta Selatan, 12160"
+  },
+  {
+    "id": 3860,
+    "name": "Pejanggik Mataram",
+    "address": "C47F+789, West Cakranegara, Cakranegara, Mataram City, West Nusa Tenggara 83239"
+  },
+  {
+    "id": 3877,
+    "name": "Pelabuhan Ratu",
+    "address": "2G6W+RP9, Jl. Raya Cisolok - Pelabuhanratu, Palabuhanratu, Kec. Pelabuhanratu, Kabupaten Sukabumi, Jawa Barat 43364"
+  },
+  {
+    "id": 3711,
+    "name": "Pemuda Demak",
+    "address": "Jl. Pemuda No. 74 RT 001 / RW 006, Petengan Selatan, Kel. Bintoro, Kec. Demak, Kab. Demak, Jawa Tengah 59511"
+  },
+  {
+    "id": 3642,
+    "name": "Pemuda Jepara",
+    "address": "Jl Pemuda No 53, Potroyudan Kec Jepara Kab Jepara, Jawa Tengah 59412"
+  },
+  {
+    "id": 3432,
+    "name": "Pemuda Kota Magelang",
+    "address": "Jl. Pemuda No. 70, Kemirirejo, Kec. Magelang Tengah, Kota Magelang, Jawa Tengah 56122"
+  },
+  {
+    "id": 3791,
+    "name": "Pendidikan Mataram",
+    "address": "Jl. Pendidikan No.60, Dasan Agung Baru, Kec. Selaparang, Kota Mataram, Nusa Tenggara Bar. 83126"
+  },
+  {
+    "id": 3933,
+    "name": "Pengasinan Bekasi",
+    "address": "Jl. Raya Pengasinan, RT.004/RW.003, Pengasinan, Kec. Rawalumbu, bekasi timur, Jawa Barat 17115"
+  },
+  {
+    "id": 3878,
+    "name": "Perak Surabaya",
+    "address": "Jl. Perak Timur No.100, Perak Tim., Kec. Pabean Cantikan, Surabaya, Jawa Timur 60177"
+  },
+  {
+    "id": 4040,
+    "name": "Permata Cimanggis Depok",
+    "address": "Ruko Permata Cimanggis Emerald, Blok CC No.36, Cimpaeun, Kec. Tapos, Kota Depok, Jawa Barat 16459"
+  },
+  {
+    "id": 2473,
+    "name": "Pertamina 14.202.113 Tembung Medan",
+    "address": "SPBU 14.202.113 Tembung Medan (Container), JI. Tembung, Tembung, Kec. Medan Tembung, Kota Medan Sumatera Utara 20371"
+  },
+  {
+    "id": 2486,
+    "name": "Pertamina 14.203.1117 Semayang Medan",
+    "address": "SPBU 14.203.1117 Semayang Medan (Container), JI. Medan - Binjai, Medan Krio, Kee. Sunggal, Kabupaten Deli Serdang, Sumatera Utara 20228"
+  },
+  {
+    "id": 2481,
+    "name": "Pertamina 14.203.1156 Lubuk Pakam Medan",
+    "address": "SPBU 14.203.1156 Lubuk Pakam Medan (Container), JI. Imam Bonjol, Tj. Garbus Satu, Kec. Lubuk Pakam, Kabupaten Deli Serdang, Sumatera Utara, 20518"
+  },
+  {
+    "id": 2482,
+    "name": "Pertamina 14.203.116 Sunggal Medan",
+    "address": "SPBU 14.203.116 Sunggal Medan, Jl. Medan - Binjai No.Km. 12, Mulyorejo, Kec. Sunggal, Kabupaten Deli Serdang, Sumatera Utara 20351"
+  },
+  {
+    "id": 2547,
+    "name": "Pertamina 14.211.205 A. Yani Pematang Siantar",
+    "address": "SPBU 14.211.205 A. Yani Pematang Siantar, Jl. Ahmad Yani No.206, Asuhan, Kec. Siantar Tim., Kota Pematang Siantar, Sumatera Utara 21143, Indonesia"
+  },
+  {
+    "id": 2609,
+    "name": "Pertamina 14.251.583 Khatib Sulaeman Padang",
+    "address": "SPBU 14.251.583 Khatib Sulaeman Padang (Container), Jl. Khatib Sulaiman No.7, Ulak Karang Sel., Kec. Padang Utara, Kota Padang 60253"
+  },
+  {
+    "id": 2809,
+    "name": "Pertamina 142011144 Lau Chi",
+    "address": "SPBU Lau Chi 142011144, Jl. Jamin Ginting No.KM 14,5, Sidomulyo, Kec. Medan Tuntungan, Kota Medan, Sumatera Utara 20137"
+  },
+  {
+    "id": 2589,
+    "name": "Pertamina 34-11609 Joglo",
+    "address": "SPBU 34-11609 Joglo (Container), Jl. Joglo Raya No.77, RT.1/RW.8, Joglo, Kec. Kembangan, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11640"
+  },
+  {
+    "id": 2592,
+    "name": "Pertamina 34-11708 Duri Kosambi",
+    "address": "SPBU 34-11708 Duri Kosambi, Jl. Raya Duri Kosambi No.80, RT.1/RW.8, Duri Kosambi, Kecamatan Cengkareng, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11750"
+  },
+  {
+    "id": 2431,
+    "name": "Pertamina 34-11803 Daan Mogot",
+    "address": "SPBU 34-11803 Daan Mogot (Container), Jl. Daan Mogot KM. 18 No. 15 RT.11/RW.6, Kalideres, RT.11/RW.6, Kalideres, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11840"
+  },
+  {
+    "id": 2493,
+    "name": "Pertamina 34-16303 Jampang Parung",
+    "address": "SPBU 34-16303 Jampang Parung (Container), Jl. Raya Parung No.2 Rt3/RW5 Jampang Kec. Kemang Jampang Bogor Jawa Barat"
+  },
+  {
+    "id": 2413,
+    "name": "Pertamina 34-16920 Cilangkap",
+    "address": "SPBU 34-16920 Cilangkap, Jl.Raya Bogor No. 5 RT. 2 / RW. 13, Cilangkap, Tapos, Pabuaran, Depok, Jawa Barat 16916"
+  },
+  {
+    "id": 2296,
+    "name": "Pertamina 34.10206 Hanglekir",
+    "address": "SPBU Pertamina 34.10206 Hanglekir (Container), Jl. Hang Lekir I No.4, RT.1/RW.3, Gelora, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10270"
+  },
+  {
+    "id": 2454,
+    "name": "Pertamina 34.116.12 Meruya Utara",
+    "address": "SPBU Pertamina Meruya Utara 34.116.12, Jalan Kembang Kerep No. 56, RT 02 / RW 02 Meruya Utara Kembangan RT.2, RT.2/RW.2, Meruya Utara, Kec. Kembangan, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11620"
+  },
+  {
+    "id": 2513,
+    "name": "Pertamina 34.11711 Cendrawasih Cengkareng",
+    "address": "SPBU 34.11711 Cendrawasih Cengkareng (Container), Jl. Cendrawasih Raya No.99, RT.6/RW.6, Cengkareng Bar., Kecamatan Cengkareng, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11730"
+  },
+  {
+    "id": 2702,
+    "name": "Pertamina 34.14413 Kemayoran",
+    "address": "SPBU 34.14413 Kemayoran, VR6W+6WJ, Jl. Benyamin Suaeb, Pademangan Tim., Kec. Pademangan, Kota Jkt Utara, Daerah Khusus Ibukota Jakarta 14410"
+  },
+  {
+    "id": 2639,
+    "name": "Pertamina 34.15131 Duta Garden",
+    "address": "SPBU 34.15131 Duta Garden (Container), Jl. Husein Sastranegara No.25, RT.005/RW.10, Jurumudi, Benda, Kota Tangerang, Banten 15124"
+  },
+  {
+    "id": 2583,
+    "name": "Pertamina 34.17131 Rawalumbu",
+    "address": "SPBU Pertamina 34.17131 Rawalumbu (Container), Jl. Pramuka No.39, RT.004/RW.002, Sepanjang Jaya, Kec. Rawalumbu, Kota Bks, Jawa Barat 17114"
+  },
+  {
+    "id": 2303,
+    "name": "Pertamina 34.40236 Laswi",
+    "address": "SPBU Pertamina 34.40236 Laswi (Container),Jl.Laswi No 136,Samoja Kec.Batununggal,Kota Bandung Jawa Barat 40273"
+  },
+  {
+    "id": 2533,
+    "name": "Pertamina 34.40310 Cibiru",
+    "address": "SPBU 34.40310 Cibiru (Container), 3P8G+RCQ, Cibiru Wetan, Cileunyi, Bandung Regency, West Java 40625"
+  },
+  {
+    "id": 2544,
+    "name": "Pertamina 34.40314 Cicalengka",
+    "address": "SPBU 34.40314 Cicalengka (Container), Jl. Raya Cicalengka Timur No.424, Cicalengka Wetan, Kec. Cicalengka, Kabupaten Bandung, Jawa Barat 40395"
+  },
+  {
+    "id": 2582,
+    "name": "Pertamina 34.40316 Baleendah",
+    "address": "SPBU Pertamina 34.40316 Baleendah, Jl. Raya Banjaran, Andir, Kec. Baleendah, Kabupaten Bandung, Jawa Barat 40375"
+  },
+  {
+    "id": 2640,
+    "name": "Pertamina 34.40502 Kota Cimahi",
+    "address": "SPBU Pertamina 34.40502 Kota Cimahi, Jl. Jend. H. Amir Machmud No.294, Cibabat, Kec. Cimahi Utara, Kota Cimahi, Jawa Barat 40513"
+  },
+  {
+    "id": 2638,
+    "name": "Pertamina 34.41212 Rawa Badak Subang",
+    "address": "SPBU 34.41212 Rawa Badak Subang (Container), Jalan Raya Badak Subang, Karanganyar, Kec. Subang, Kabupaten Subang, Jawa Barat 41211"
+  },
+  {
+    "id": 2524,
+    "name": "Pertamina 34.413.28 Wadas Karawang",
+    "address": "SPBU 34.413.28 Wadas Karawang (Container), Jl. International Karawang Barat, Wadas, Kec. Telukjambe Timur, Karawang, Jawa Barat 41361"
+  },
+  {
+    "id": 2437,
+    "name": "Pertamina 34.46106 Rancabango",
+    "address": "SPBU Pertamina 34.46106 Rancabango (Container), Jl Insinyur Haji Juanda KM 3 Tasikmalaya 46134"
+  },
+  {
+    "id": 2434,
+    "name": "Pertamina 41.502.02 Kaliwiru",
+    "address": "SPBU Pertamina 41.502.02 Kaliwiru, Jl. Sisingamangaraja, Kaliwiru, Kec. Candisari, Kota Semarang, Jawa Tengah 50253"
+  },
+  {
+    "id": 2306,
+    "name": "Pertamina 44.501.19 Pamularsih",
+    "address": "SPBU Pertamina 44.501.19, Pamularsih (Container),Jl.Pamularsih raya No.50 Salamanmloyo kec.Semarang Baru,Kota Semarang Jawa Tengah 50149"
+  },
+  {
+    "id": 2657,
+    "name": "Pertamina 44.531.23 Karanglewas",
+    "address": "SPBU 44.531.23 Karanglewas (Container), Jl. Yos Sudarso No.141, Karanglewas Lor, Kec. Karanglewas, Kabupaten Banyumas, Jawa Tengah 53135"
+  },
+  {
+    "id": 2705,
+    "name": "Pertamina 44.564.04 Baledono Magelang",
+    "address": "SPBU 44.564.04 Baledono Magelang, Jl. Magelang No.Km 20, Jagang Lor, Salam, Kec. Salam, Kabupaten Magelang, Jawa Tengah 56484"
+  },
+  {
+    "id": 2730,
+    "name": "Pertamina 44.574.03 Jonggrangan Klaten",
+    "address": "SPBU 44.574.03 Jonggrangan Klaten (Container), Jl Raya Solo, Peraksangkal, Jonggrangan, Kec. Klaten Utara, Kabupaten Klaten, Jawa Tengah 57435"
+  },
+  {
+    "id": 2539,
+    "name": "Pertamina 54.60.115 Sutorejo",
+    "address": "SPBU 54.60.115 Sutorejo (Container), Jl. Kenjeran No.661, Dukuh Sutorejo, Kec. Mulyorejo, Kota SBY, Jawa Timur 60134"
+  },
+  {
+    "id": 2538,
+    "name": "Pertamina 54.601.42 Kenjeran Surabaya",
+    "address": "SPBU 54.601.42 Kenjeran Surabaya, Jl. Kenjeran No.118, Tambakrejo, Kec. Simokerto, Kota SBY, Jawa Timur 60142"
+  },
+  {
+    "id": 2447,
+    "name": "Pertamina 54.612.36 Jenggolo",
+    "address": "SPBU Pertamina 54.612.36 Jenggolo (Container), Jl. Jenggolo No.58 A, Pucang, Kec. Sidoarjo, Kabupaten Sidoarjo, Jawa Timur 61219SPBU Pertamina 54.612.36 Jenggolo"
+  },
+  {
+    "id": 2574,
+    "name": "Pertamina 54.612.55 Tropodo Sidoarjo",
+    "address": "SPBU Pertamina 54.612.55 Tropodo Sidoarjo, Jl. Raya Tropodo No.62, Tropodo Wetan, Tropodo, Kec. Waru, Kabupaten Sidoarjo, Jawa Timur 61256"
+  },
+  {
+    "id": 2521,
+    "name": "Pertamina 54.612.58 Waru",
+    "address": "SPBU Pertamina 54.612.58 Waru (Container), Jalan S Parman 4, Waru, Krajan Kulon, Waru, Kec. Waru, Kabupaten Sidoarjo, Jawa Timur 61256"
+  },
+  {
+    "id": 2522,
+    "name": "Pertamina 54.612.63 Juanda Sidoarjo",
+    "address": "SPBU Pertamina 54.612.63 Juanda Sidoarjo (Container), Jl. Raya Bandara Juanda No.46, Semawalang, Sawotratap, Kec. Gedangan, Kabupaten Sidoarjo, Jawa Timur 61254"
+  },
+  {
+    "id": 2416,
+    "name": "Pertamina 54.61208 Gedangan",
+    "address": "SPBU Pertamina 54.61208 Gedangan, Jl. Raya Gedangan 97-99, Desa Seruni Gedangan, Sidoarjo, Jawa Timur 61254"
+  },
+  {
+    "id": 2532,
+    "name": "Pertamina 54.61252 Gelam Sidoarjo",
+    "address": "SPBU Pertamina 54.61252 Gelam Sidoarjo, Jl. Raya Gelam No.46, Gelam, Kec. Candi, Kabupaten Sidoarjo, Jawa Timur 61271"
+  },
+  {
+    "id": 2666,
+    "name": "Pertamina 54.631.05 Panjaitan Madiun",
+    "address": "SPBU Pertamina 54.631.05 Panjaitan Madiun (Container), Jl. Di. Panjaitan, Pandean, Kec. Taman, Kota Madiun, Jawa Timur 63133"
+  },
+  {
+    "id": 2537,
+    "name": "Pertamina 54.651.63 Plaosan Blimbing",
+    "address": "SPBU Pertamina 54.651.63 Plaosan Blimbing (Container), Jl. Raden Panji Suroso, Purwodadi, Kec. Blimbing, Kota Malang, Jawa Timur 65126"
+  },
+  {
+    "id": 2627,
+    "name": "Pertamina 74.951.08 Sario Manado",
+    "address": "SPBU 74.951.08 Sario Manado, Jl. Bethesda, Sario Tumpaan, Kec. Sario, Kota Manado, Sulawesi Utara"
+  },
+  {
+    "id": 693,
+    "name": "Pertamina Alam Sutra",
+    "address": "SPBU Pertamina 34.153.19 Alam Sutera (Container), Pakualam, North Serpong, South Tangerang City, Banten 15320"
+  },
+  {
+    "id": 658,
+    "name": "Pertamina AR Hakim Medan",
+    "address": "SPBU Pertamina DODO AR Hakim No 118 Medan, SPBU AR Hakim Medan 14-202.14 Jalan A.R. Hakim No. 118 (Medan Area), Medan, Sumatera Utara, 20126"
+  },
+  {
+    "id": 2503,
+    "name": "Pertamina Benggala Yumaga Serang",
+    "address": "SPBU Benggala Yumaga Serang, Jl. Term. Khatib No.11, Cipare, Kec. Serang, Kota Serang, Banten 42117"
+  },
+  {
+    "id": 675,
+    "name": "Pertamina BSD",
+    "address": "SPBU Pertamina 31.153.02 BSD Pahlawan Seribu, Jl. Pahlawan Seribu Kav. Commercial BSD City"
+  },
+  {
+    "id": 2286,
+    "name": "Pertamina Bulak Kapal",
+    "address": "SPBU Pertamina 34-17119 Bulak Kapal ( Container ), Jl. HM Joyo Martono No.8 Bulak Kapal Bekasi"
+  },
+  {
+    "id": 2325,
+    "name": "Pertamina Cibitung Bekasi",
+    "address": "SPBU Pertamina 34.17548 Cibitung Bekasi (Container), Jalan Raya B. Bosih Selang, Wanasari, Kec. Cibitung, Bekasi, Jawa Barat 17520"
+  },
+  {
+    "id": 504,
+    "name": "Pertamina Cibogo",
+    "address": "SPBU Cibogo, Jalan Raya Puncak Cibogo, Cipayung Datar, Kec. Megamendung, Bogor, Jawa Barat 16770"
+  },
+  {
+    "id": 672,
+    "name": "Pertamina Cikaret Cibinong",
+    "address": "SPBU Pertamina 34.169.34 Cikaret Cibinong, Jl. Raya Cikaret No.53, RW.1, Harapan Jaya, Cibinong, Bogor, Jawa Barat 16914"
+  },
+  {
+    "id": 695,
+    "name": "Pertamina Cikupa",
+    "address": "SPBU Pertamina 34.157.12 Cikupa (Container), Sukadamai, Cikupa, Tangerang, Banten 15710"
+  },
+  {
+    "id": 697,
+    "name": "Pertamina Ciputat",
+    "address": "SPBU Pertamina 34.154.26 Ciputat (Container), Jl. RE Martadinata No.35, Cipayung, Kec. Ciputat, Kota Tangerang Selatan, Banten 15411"
+  },
+  {
+    "id": 694,
+    "name": "Pertamina Citra Raya Tangerang",
+    "address": "SPBU Pertamina 34.157.10 Citra Raya Tangerang (Container), Jl. Widara Raya No.2, Mekar Bakti, Kec. Panongan, Tangerang, Banten 15710"
+  },
+  {
+    "id": 2535,
+    "name": "Pertamina COCO 31.103.03 Cikini",
+    "address": "SPBU Pertamina COCO 31.103.03 Cikini, Jl. Cikini Raya No.113-115 10 4, RT.10/RW.4, Cikini, Kec. Menteng, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10340"
+  },
+  {
+    "id": 2650,
+    "name": "Pertamina COCO 31.151.02 Modernland",
+    "address": "SPBU COCO 31.151.02 Modernland (Container), Jl. Hartono Raya, RT.001/RW.006, Klp. Indah, Kec. Tangerang, Kota Tangerang, Banten 15117"
+  },
+  {
+    "id": 2531,
+    "name": "Pertamina COCO 41.552.01 Laksda Adisucipto Yogyakarta",
+    "address": "SPBU Pertamina COCO 41.552.01 Laksda Adisucipto Yogyakarta (Container), Jl. Laksda Adisucipto Km. 6, Caturtunggal, Kec. Sleman, Caturtunggal, Kecamatan Depok, Ngentak, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55282"
+  },
+  {
+    "id": 2517,
+    "name": "Pertamina COCO 51.601.65 Jemusari Surabaya",
+    "address": "SPBU Pertamina Coco 51.601.65 Jemusari Surabaya (Bondex), Jl. Raya Jemursari No.113-123, Jemur Wonosari, Kec. Wonocolo, Kota SBY, Jawa Timur 60237"
+  },
+  {
+    "id": 2735,
+    "name": "Pertamina COCO 61.751.01 Kesuma Bangsa Samarinda",
+    "address": "SPBU Pertamina COCO 61.751.01 Kesuma Bangsa Samarinda (Container), Jalan Kesuma Bangsa Bugis Samarinda Ulu, Bugis, Kec. Samarinda Kota, Kota Samarinda, Kalimantan Timur 75124"
+  },
+  {
+    "id": 2578,
+    "name": "Pertamina DODO 64.751.14 Jl.Urip Sumoharjo",
+    "address": "SPBU Pertamina DODO 64.751.14 Jl. Urip Sumoharjo, Jl. Urip Sumoharjo No.111, Sidomulyo, Kec. Samarinda Ilir, Kota Samarinda, Kalimantan Timur 75242"
+  },
+  {
+    "id": 652,
+    "name": "Pertamina DODO Cirendeu Raya",
+    "address": "SPBU DODO Pertamina Cirendeu Raya, 34.154.04, Jl. Raya Cirendeu No. 29 B, Cirendeu, Ciputat, Tangerang Selatan"
+  },
+  {
+    "id": 654,
+    "name": "Pertamina DODO Curug",
+    "address": "SPBU Pertamina DODO Curug, 34.158.02, Jl. Raya STPI Curug No.KM 05 No.80, Curug Wetan, Kec. Curug, Tangerang, Banten 15810"
+  },
+  {
+    "id": 2272,
+    "name": "Pertamina DODO Pertamina Batang Kuis Medan",
+    "address": "SPBU DODO BUNTU BEDIMBAR, Jl.Sultan Serdang Pasar 9 DSN IV.Desa Buntu Bedimbar"
+  },
+  {
+    "id": 2275,
+    "name": "Pertamina DODO Pertamina Gas Alam",
+    "address": "SPBU DODO Pertamina 34-16419 Gas Alam (Container), Jl. Raya Gas Alam RT.3/4 Depok Jawa Barat 16454"
+  },
+  {
+    "id": 2274,
+    "name": "Pertamina DODO Pertamina Pajajaran Bogor",
+    "address": "SPBU Pertamina Pertamina 34-16102 Pajajaran Bogor, Jl. Raya Pajajaran No.127 Rt.05/RW10 Bantarjati Kec Bogor Utara"
+  },
+  {
+    "id": 3321,
+    "name": "Pertamina Gas Station 54.651.75 Karanglo Malang",
+    "address": "SPBU 54.651.75, Jl. Raya Karanglo No.131, Karanglo, Banjararum, Kec. Singosari, Kabupaten Malang, Jawa Timur 65153"
+  },
+  {
+    "id": 2422,
+    "name": "Pertamina Gresik",
+    "address": "SPBU 54.61104 Gresik, Jl. Veteran No.2, Injen Timur, Gapurosukolilo Kec. Gresik, Kabupaten Gresik, Jawa Timur 61122"
+  },
+  {
+    "id": 462,
+    "name": "Pertamina H. Anif Cemara Asri",
+    "address": "Jl. H. Anif, Medan Estate, Kec. Percut Sei Tuan, Kota Medan, Sumatera Utara 20221"
+  },
+  {
+    "id": 678,
+    "name": "Pertamina Jababeka II",
+    "address": "SPBU Pertamina 31.175.03 Menjangan Jababeka II (Container), 31.175.03, Jl. Menjangan ROW 12 Perum. Jababeka Bekasi"
+  },
+  {
+    "id": 452,
+    "name": "Pertamina Jalan Panjang",
+    "address": "SPBU Jalan Panjang, Jl. Panjang No.45C, RT.1/RW.11, Kb. Jeruk, Kec. Kb. Jeruk, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11530"
+  },
+  {
+    "id": 2312,
+    "name": "Pertamina Jatake",
+    "address": "SPBU Pertamina 34-15109 Jatake (Bondex), Jl. Jend Gatot Subroto KM 5, Jati Uwung Rt.001/Rw. 004, Jatake, Tangerang, Kota Tangerang, Banten 15136"
+  },
+  {
+    "id": 2302,
+    "name": "Pertamina Jatiwaringin",
+    "address": "Spbu Pertamina 34.17128 Jatiwaringin, Jl. Raya Jatiwaringin no 234 Rt 003/ Rw. 006 Jatiwaringin Kecamatan Pondok Gede, Kota Bekasi Jawa Barat 17411"
+  },
+  {
+    "id": 2285,
+    "name": "Pertamina Juanda Depok",
+    "address": "SPBU Pertamina 34-16410 Juanda Depok (Container), Jl. Hj Ir Juanda Bakti Jaya Depok 16416"
+  },
+  {
+    "id": 681,
+    "name": "Pertamina Kampung Sawah / Bojong Gede",
+    "address": "SPBU Pertamina 34.161.23 Bojong Gede, Jl. Raya Bojong Gede, Bojonggede, Kec. Bojong Gede, Bogor, Jawa Barat 16922"
+  },
+  {
+    "id": 2397,
+    "name": "Pertamina Karang Asam",
+    "address": "SPBU Pertamina COCO 61.751.02 Slamet Riyadi Samarinda, Jalan Slamet Riyadi Karang Asam Ulu, Tlk. Lerong Ulu, Kec. Sungai Kunjang, Kota Samarinda, Kalimantan Timur 75243"
+  },
+  {
+    "id": 2287,
+    "name": "Pertamina Kartini",
+    "address": "SPBU Pertamina 34-16411 Kartini (Container), Jl. R.A Kartini No. 7, Pancoranmas, Depok, Jawa Barat, Indonesia 16431"
+  },
+  {
+    "id": 2277,
+    "name": "Pertamina Kedung Halang",
+    "address": "SPBU Pertamina 34-16715 Kedung Halang (Container), Jl. Raya Pemda No.1 Rt.01/RW.07 Kedung Halang Bogor"
+  },
+  {
+    "id": 2763,
+    "name": "Pertamina Laut Dendang",
+    "address": "SPBU Laut Dendang (Container), Jl. Perhubungan, Tembung, Kec. Percut Sei Tuan, Kabupaten Deli Serdang, Sumatera Utara 20371"
+  },
+  {
+    "id": 2279,
+    "name": "Pertamina Limo Raya",
+    "address": "SPBU Pertamina 34.165.12 Limo Raya (Container), Jl. Limo Raya No. 2, Limo, Kec. Limo,Kota Depok, Jawa barat"
+  },
+  {
+    "id": 2341,
+    "name": "Pertamina Marindal Medan",
+    "address": "SPBU Pertamina 14.201.127 Marindal Medan (Container), Jl. SM Raja Km. 6,6 No. 28 A Kel. Harjosari II, Kec. Medan Amplas"
+  },
+  {
+    "id": 645,
+    "name": "Pertamina Mayor Oking Cibinong",
+    "address": "SPBU Pertamina 31.169.01 Mayor Oking Cibinong (Container), Jl. Mayor Oking Km.2 Cibinong 16961"
+  },
+  {
+    "id": 689,
+    "name": "Pertamina MH Thamrin Serpong",
+    "address": "SPBU Pertamina 34.151.32 MH Thamrin Serpong (Container), Jl. MH. Thamrin, RT.001/RW.001, Panunggangan, Kec. Pinang, Kota Tangerang, Banten 15117"
+  },
+  {
+    "id": 685,
+    "name": "Pertamina Palmerah Utara",
+    "address": "SPBU Pertamina 34.114.05 Palmerah Utara (Container), Jl. Palmerah Utara No.56B, RT.3/RW.6, Palmerah, Kec. Palmerah, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11480"
+  },
+  {
+    "id": 2368,
+    "name": "Pertamina Panjang Jiwo",
+    "address": "SPBU Pertamina 54.60264 Panjang Jiwo Surabaya (Container), Jl. Panjang Jiwo No.54 Panjang Jiwo, Kecamatan Tenggilis Mejoyo Kota Surabaya Jawa Timur 60299"
+  },
+  {
+    "id": 696,
+    "name": "Pertamina Panjang Kelapa Dua",
+    "address": "SPBU Pertamina 34.115.08 Panjang Kelapa Dua (Container), Jl. Panjang Arteri Klp. Dua Raya No.18, RT.2/RW.2, Kb. Jeruk, Kec. Kb. Jeruk, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11530"
+  },
+  {
+    "id": 688,
+    "name": "Pertamina Pasar Kemis",
+    "address": "SPBU Pertamina 34.155.02 Pasar Kemis Bumi Indah, Jl. Raya Ps. Kemis No.48, Gelam Jaya, Kec. Ps. Kemis, Kota Tangerang, Banten 15560"
+  },
+  {
+    "id": 2600,
+    "name": "Pertamina Pasar Sapi Veteran Salatiga",
+    "address": "SPBU 44.507.06 Veteran Salatiga, Jl. Veteran No.135, Tegalrejo, Kec. Argomulyo, Kota Salatiga, Jawa Tengah 50733"
+  },
+  {
+    "id": 2305,
+    "name": "Pertamina Pengasinan",
+    "address": "SPBU Pertamina 34.17120 Pengasinan (Container) , Jl Pengasinan Raya RT 04/RW03 Kel. Pengasinan Kec. Rawa Lumbu Bekasi"
+  },
+  {
+    "id": 2407,
+    "name": "Pertamina Pondok Kacang",
+    "address": "SPBU Pertamina 34.15207 Pondok Kacang (Container), Jl. Raya Pondok Kacang, Parung Serab, Pondok Aren, Pd. Kacang Tim., Kec. Pd Aren, Kota Tangerang, Banten 15226"
+  },
+  {
+    "id": 2415,
+    "name": "Pertamina Puspitek",
+    "address": "SPBU 34. 153.12 Puspitek, Jl. Raya Taman Makam Pahlawan Seribu, Kademangan, Setu, Kademangan, Kec. Setu, Kota Tangerang Selatan, Banten 15314"
+  },
+  {
+    "id": 663,
+    "name": "Pertamina S. Parman",
+    "address": "SPBU Pertamina COCO S Parman, 31.114.01, Jl. S. Parman, Slipi, Jakarta Barat 11410"
+  },
+  {
+    "id": 2724,
+    "name": "Pertamina Samsat Jelutung",
+    "address": "SPBU 24.361.06 Samsat Gajah Mada Jambi (Container), Jl. Gajah Mada No.51, Jelutung, Kec. Jelutung, Kota Jambi, Jambi 36124"
+  },
+  {
+    "id": 2766,
+    "name": "Pertamina Sangiang Jaya",
+    "address": "SPBU Sangiang Jaya, Jl. Prabu Kian Santang No.34, RT.004/RW.004, Sangiang Jaya, Kec. Periuk, Kota Tangerang, Banten 15132"
+  },
+  {
+    "id": 690,
+    "name": "Pertamina Satu Maret Kalideres",
+    "address": "SPBU Pertamina 34.118.06 Satu Maret Taman Surya (Container), Jl. Satu Maret No.18, RT.9/RW.4, Pegadungan, Kec. Kalideres, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11830"
+  },
+  {
+    "id": 674,
+    "name": "Pertamina Sawangan Baru Depok",
+    "address": "SPBU Pertamina 34.165.11 Sawangan Baru Depok (Container), Jl. Raya Muchtar, Sawangan Baru, Kec. Sawangan, RT 03 RW 07 Sawangan, Kota Depok, Jawa Barat 16511"
+  },
+  {
+    "id": 2313,
+    "name": "Pertamina Selayang Utama",
+    "address": "SPBU Pertamina 14.201.1157 Selayang Utama (Container), Jl. Setia Budi No. 82, Tj Rejo, Medan Sunggal, Kota Medan, Sumatera Utara 20154"
+  },
+  {
+    "id": 671,
+    "name": "Pertamina Singapore Station Belawan",
+    "address": "SPBU Pertamina Singapore Station Belawan, Belawan II, Medan Kota Belawan, Medan City, North Sumatra"
+  },
+  {
+    "id": 659,
+    "name": "Pertamina Sisingamangaraja Medan",
+    "address": "SPBU Pertamina 14.202.126 Sisingamangaraja Medan, Jl. Sisingamangaraja No.45, Sitirejo II, Kec. Medan Amplas, Kota Medan, Sumatera Utara 20217"
+  },
+  {
+    "id": 2713,
+    "name": "Pertamina Tanjung Morawa",
+    "address": "SPBU Tanjung Morawa (Container), Jl. Tj. Morawa No. km 12, RW. 8, Ujung Serdang, Kec. Tj. Morawa, Kab. Deli Serdang, Sumatera Utara 20362"
+  },
+  {
+    "id": 2324,
+    "name": "Pertamina Teluk Jambe",
+    "address": "SPBU Pertamina 34.41323 Teluk Jambe (Container), Jl. Raya Teluk Jambe No. 5, Telukjambe, Kecamatan, Telukjambe Tim, kabupaten karawang, jawa barat 41361"
+  },
+  {
+    "id": 2289,
+    "name": "Pertamina Tigaraksa",
+    "address": "SPBU Pertamina 34-15704 Tigaraksa (Container), Jl. KH Syekh Nawawi Kadu Agung Kec.Tigaraksa 15720"
+  },
+  {
+    "id": 3206,
+    "name": "Pettarani Makassar",
+    "address": "Jl. A. P. Pettarani No.04, Mannuruki, Kec. Tamalate, Kota Makassar, Sulawesi Selatan 90221"
+  },
+  {
+    "id": 3177,
+    "name": "PHX Grogol",
+    "address": "Jl. Dr Susilo Raya No.342 RT.05/05 Grogol, Kec. Grogol Petamburan, Jakarta Barat, DKI Jakarta 11450"
+  },
+  {
+    "id": 2249,
+    "name": "PIM 2",
+    "address": "Pondok Indah Mall 2, Lantai 3, Food Court Unit FC 03, Jl. Metro Pondok Indah No.Kav. IV, Kebayoran Lama, Kota Jakarta Selatan, 12310"
+  },
+  {
+    "id": 2445,
+    "name": "Plaza Asia",
+    "address": "Jl. KHZ. Mustofa No.326, Tugujaya, Kec. Cihideung, Tasikmalaya, Jawa Barat 46126"
+  },
+  {
+    "id": 183,
+    "name": "Plaza Atrium",
+    "address": "Lantai Ground Floor, Jl. Senen Raya, Senen, Jakarta Pusat, 10410"
+  },
+  {
+    "id": 622,
+    "name": "Plaza Bintaro Satoe (Superindo)",
+    "address": "Unit Ground Floor, Jl. Bintaro Utama I No.5, RW.6, Bintaro, Kec. Pesanggrahan, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12330"
+  },
+  {
+    "id": 2475,
+    "name": "Plaza Bunsay (Drive Thru)",
+    "address": "Jl. Letjen Suprapto, Baru Ilir, Kec. Balikpapan Bar, Kota Balikpapan, Kalimantan Timur 76123"
+  },
+  {
+    "id": 256,
+    "name": "Plaza Indonesia",
+    "address": "Lantai LB, Jl. M.H. Thamrin No.Kav. 28-30, RT.9/RW.5, Gondangdia, Menteng, Jakarta Pusat, 10350"
+  },
+  {
+    "id": 2396,
+    "name": "Plaza Slipi Jaya",
+    "address": "Jl. Letjen S. Parman, RT.14/RW.1, Kemanggisan, Kec. Palmerah, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11480"
+  },
+  {
+    "id": 248,
+    "name": "Pluit Village",
+    "address": "GF Floor, Jl. Pluit Karang Ayu Barat, RT.15/RW.4, Pluit, Penjaringan, Jakarta Utara, 14450"
+  },
+  {
+    "id": 562,
+    "name": "Poins Square",
+    "address": "Jalan R.A.Kartini No.1 RW.7 RT.09, Lb. Bulus, Kec. Cilandak, Daerah Khusus Ibukota Jakarta 12440"
+  },
+  {
+    "id": 3178,
+    "name": "Pondok Pinang",
+    "address": "Jl. Ciputat Raya No 101, RT.1 / RW.4, Pondok Pinang, Kec. Kebayoran Lama, Jakarta Selatan 12240"
+  },
+  {
+    "id": 3679,
+    "name": "Pos Pengumben Jakarta Barat",
+    "address": "Komp. Perum BULOG, Jl. Raya Pos Pengumben Blok I-1, RT 011 / RW 6, Sukabumi Selatan, Kec. Kebon Jeruk, Jakarta Barat 11560"
+  },
+  {
+    "id": 3947,
+    "name": "Pucang Anom Surabaya",
+    "address": "PQ94+89P, Kertajaya, Gubeng, Surabaya, East Java 60282"
+  },
+  {
+    "id": 3787,
+    "name": "Puncak Bogor",
+    "address": "Jl. Raya Puncak - Cianjur No.551, Cisarua, Kec. Cisarua, Kabupaten Bogor, Jawa Barat 16750"
+  }
+]
