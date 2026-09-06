@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YASIF STORE - Promo Diskon</title>
+    <title>YASIF STORE - Kopi Kenangan</title>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-T3MCJ2C61G"></script>
     <script>
@@ -31,7 +31,7 @@
                         surface: '#FFFDF8',
                         foreground: '#191B18',
                         primary: '#1F2A24',
-                        accent: '#7A8F73',
+                        accent: '#B43A34',
                         border: '#E8E3DA',
                         subtle: '#77756D',
                     },
@@ -45,8 +45,8 @@
     <style>
         * { transition: none !important; animation: none !important; }
         *:hover, *:active, *:focus { transform: none !important; }
-        :root { --ys-bg: #F7F5F0; --ys-surface: #FFFDF8; --ys-ink: #191B18; --ys-muted: #77756D; --ys-line: #E8E3DA; --ys-accent: #7A8F73; }
-        .theme-scope { --brand-accent: #7A8F73; --brand-accent-dark: #1F2A24; --brand-accent-soft: rgba(122, 143, 115, 0.10); --brand-accent-softer: rgba(122, 143, 115, 0.055); --brand-accent-border: rgba(122, 143, 115, 0.22); --brand-accent-contrast: #FFFDF8; }
+        :root { --ys-bg: #F7F5F0; --ys-surface: #FFFDF8; --ys-ink: #191B18; --ys-muted: #77756D; --ys-line: #E8E3DA; --ys-accent: #B43A34; }
+        .theme-scope { --brand-accent: #B43A34; --brand-accent-dark: #4A1E1B; --brand-accent-soft: rgba(180, 58, 52, 0.105); --brand-accent-softer: rgba(180, 58, 52, 0.055); --brand-accent-border: rgba(180, 58, 52, 0.22); --brand-accent-contrast: #FFFDF8; }
         .brand-text { color: var(--brand-accent) !important; }
         .brand-border { border-color: var(--brand-accent-border) !important; }
         .brand-button { background: var(--brand-accent-dark) !important; color: var(--brand-accent-contrast) !important; border: 1px solid rgba(255,255,255,.14); }
@@ -81,10 +81,8 @@
 
     <div id="app"></div>
 
-    <script src="data.js"></script>
-
     <script>
-        // TARIK DATA JSON LANGSUNG DI SINI BIAR LEBIH AMAN
+        // TARIK DATA JSON
         window.outlets = [];
         window.products = [];
 
@@ -100,21 +98,67 @@
             .then(res => res.json())
             .then(data => {
                 const arr = Array.isArray(data) ? data : (data.data || []);
-                // Pastikan semua menu punya brand "Kopi Kenangan" agar tidak nge-blank
-                window.products = arr.map(item => ({ ...item, brand: item.brand || 'Kopi Kenangan' }));
+                window.products = arr.map((item, idx) => {
+                    // Cek jika data berbentuk Array of Arrays (format lama)
+                    if (Array.isArray(item)) {
+                        const cat = item[0] || 'Uncategorized';
+                        const name = item[1] || 'Tanpa Nama';
+                        const reg = item[2] ? Number(item[2]) : null;
+                        const lrg = item[3] ? Number(item[3]) : null;
+                        const img = item[4] || '';
+                        const promoReg = reg ? Math.floor((reg * 0.5) + 3500) : null;
+                        const promoLrg = lrg ? Math.floor((lrg * 0.5) + 3500) : null;
+                        
+                        let sizes = [];
+                        let sugars = null;
+                        let defaultSugar = null;
+
+                        if (cat !== "Makanan") {
+                            if (reg) sizes.push({ name: "Regular", promoPrice: promoReg, originalPrice: reg });
+                            if (lrg) sizes.push({ name: "Large", promoPrice: promoLrg, originalPrice: lrg });
+                            if (["Americano", "Latte", "Cappuccino"].includes(name)) {
+                                sugars = ["No Sugar", "Less Sugar", "Normal Sugar"];
+                                defaultSugar = "No Sugar";
+                            } else {
+                                sugars = ["Less Sugar", "Normal Sugar"];
+                                defaultSugar = "Normal Sugar";
+                            }
+                        }
+
+                        return {
+                            id: `kk-${idx}`,
+                            category: cat,
+                            name: name,
+                            originalPrice: cat === "Makanan" ? reg : (sizes.length > 0 ? sizes[0].originalPrice : 0),
+                            promoPrice: cat === "Makanan" ? promoReg : (sizes.length > 0 ? sizes[0].promoPrice : 0),
+                            brand: "Kopi Kenangan",
+                            image: img,
+                            isPackage: false,
+                            sizes: sizes,
+                            sugars: sugars,
+                            defaultSugar: defaultSugar
+                        };
+                    } else {
+                        // Jika data berbentuk Objek (JSON standar)
+                        return {
+                            ...item,
+                            brand: item.brand || 'Kopi Kenangan',
+                            name: item.name || item.nama || 'Tanpa Nama'
+                        };
+                    }
+                });
                 if (typeof render === 'function') render();
             })
             .catch(err => console.error('Gagal mengambil data Menu:', err));
 
         let savedCart = localStorage.getItem('yasif_cart');
         let parsedCart = savedCart ? JSON.parse(savedCart) : [];
-        parsedCart = parsedCart.filter(item => item.brand !== 'Fore Coffee');
 
         let state = {
             showDisclaimer: true,
             showKKDisclaimer: false,
             hasSeenKKPopup: false,
-            selectedBrand: null,
+            selectedBrand: 'Kopi Kenangan', 
             selectedOutlet: null, 
             cart: parsedCart,
             showCart: false,
@@ -138,8 +182,6 @@
             if (state.showCart || state.activeProduct || state.showTutorial) {
                 window.history.back();
             } else if (state.selectedOutlet) {
-                window.location.hash = 'brand-' + encodeURIComponent(state.selectedBrand);
-            } else if (state.selectedBrand) {
                 window.location.hash = '';
             }
         };
@@ -187,42 +229,30 @@
             `;
         }
 
-        const BRAND_THEMES = {
-            'Kopi Kenangan': { accent: '#B43A34', dark: '#4A1E1B', soft: 'rgba(180, 58, 52, 0.105)', softer: 'rgba(180, 58, 52, 0.055)', border: 'rgba(180, 58, 52, 0.22)', label: 'Best Seller' },
-            default: { accent: '#7A8F73', dark: '#1F2A24', soft: 'rgba(122, 143, 115, 0.10)', softer: 'rgba(122, 143, 115, 0.055)', border: 'rgba(122, 143, 115, 0.22)', label: 'yasif neutral' }
-        };
-
-        const getBrandTheme = (brand) => BRAND_THEMES[brand] || BRAND_THEMES.default;
-        const getThemeBrand = () => state.selectedBrand || (state.cart[0] ? state.cart[0].brand : null);
-        const getBrandThemeStyle = (brand) => { const t = getBrandTheme(brand); return `--brand-accent:${t.accent};--brand-accent-dark:${t.dark};--brand-accent-soft:${t.soft};--brand-accent-softer:${t.softer};--brand-accent-border:${t.border};--brand-accent-contrast:#FFFDF8;`; };
-
-        const BEST_SELLER_PRODUCTS = {
-            'Kopi Kenangan': [
-                { name: 'Kopi Kenangan Mantan' }, 
-                { name: 'Creamy Aren Latte' }
-            ]
-        };
+        const BEST_SELLER_PRODUCTS = [
+            { name: 'Kopi Kenangan Mantan' }, 
+            { name: 'Creamy Aren Latte' }
+        ];
         
         const normalizeText = (value) => String(value || '').toLowerCase().replace(/\s+/g, ' ').trim();
 
-        const getBestSellerProducts = (brand) => {
-            const targets = BEST_SELLER_PRODUCTS[brand] || [];
-            const selected = targets.map(target => window.products.find(p => {
+        const getBestSellerProducts = () => {
+            const selected = BEST_SELLER_PRODUCTS.map(target => window.products.find(p => {
                 const productName = normalizeText(p.name);
                 const targetName = normalizeText(target.name);
-                return (p.brand === brand && (p.id === target.id || productName === targetName || productName.startsWith(targetName)));
+                return productName === targetName || productName.startsWith(targetName);
             })).filter(Boolean);
 
-            const fallback = window.products.filter(p => p.brand === brand && !selected.some(s => s.id === p.id)).slice(0, Math.max(0, 2 - selected.length));
+            const fallback = window.products.filter(p => !selected.some(s => s.id === p.id)).slice(0, Math.max(0, 2 - selected.length));
             return [...selected, ...fallback].slice(0, 2);
         };
 
         const renderProductTile = (product, options = {}) => {
             const isFeatured = Boolean(options.featured);
-            const rankLabel = options.rank ? `Top ${String(options.rank).padStart(2, '0')}` : product.category;
+            const rankLabel = options.rank ? `Top ${String(options.rank).padStart(2, '0')}` : escapeHtml(product.category || '');
             const safeImage = product.image || 'https://placehold.co/600x750/F7F5F0/77756D?text=No+Image';
             const displayPromo = product.promoPrice || product.originalPrice;
-            const displayName = product.name;
+            const displayName = product.name || 'Tanpa Nama';
 
             const qtyInCart = state.cart.filter(i => i.id === product.id || i.id.startsWith(product.id + '-')).reduce((sum, item) => sum + (item.quantity || 0), 0);
             const cartBadgeHtml = qtyInCart > 0 ? `<div class="absolute top-2 right-2 z-20 bg-primary text-white text-[9px] font-bold px-2 py-1 rounded-full shadow-md">🛒 ${qtyInCart}x</div>` : '';
@@ -233,7 +263,7 @@
                         <div class="grid grid-cols-[96px_1fr] sm:grid-cols-[150px_1fr] gap-3 sm:gap-5 items-center">
                             <div class="featured-product-frame aspect-square rounded-[1.2rem] sm:rounded-[1.75rem] overflow-hidden relative p-2.5 sm:p-4">
                                 ${cartBadgeHtml}
-                                <img src="${safeImage}" alt="${escapeHtml(product.name)}" class="w-full h-full object-contain" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/600x600/F7F5F0/77756D?text=No+Image'"/>
+                                <img src="${safeImage}" alt="${escapeHtml(displayName)}" class="w-full h-full object-contain" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/600x600/F7F5F0/77756D?text=No+Image'"/>
                             </div>
                             <div class="min-w-0 pr-0 sm:pr-1">
                                 <div class="flex items-center justify-between gap-2 mb-1.5">
@@ -241,7 +271,7 @@
                                     <span class="product-badge shrink-0 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 text-[8px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.18em] font-bold">${rankLabel}</span>
                                 </div>
                                 <h4 class="font-heading font-semibold text-[17px] sm:text-2xl text-foreground leading-[1.02] tracking-[-0.052em] line-clamp-2">${escapeHtml(displayName)}</h4>
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-subtle line-clamp-1">${escapeHtml(product.category)}</p>
+                                <p class="mt-1.5 text-[11px] sm:text-xs text-subtle line-clamp-1">${escapeHtml(product.category || '')}</p>
                                 <div class="mt-3 flex items-end justify-between gap-2">
                                     <div class="flex flex-col gap-0.5 min-w-0">
                                         <span class="text-[10px] sm:text-[11px] text-subtle line-through decoration-foreground/30">${formatPrice(product.originalPrice)}</span>
@@ -263,15 +293,15 @@
                     <div class="p-2 sm:p-3 pb-0 shrink-0">
                         <div class="modern-product-frame aspect-square rounded-[1.15rem] sm:rounded-[1.55rem] overflow-hidden relative p-2.5 sm:p-4">
                             ${cartBadgeHtml}
-                            <img src="${safeImage}" alt="${escapeHtml(product.name)}" class="w-full h-full object-contain" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/600x750/F7F5F0/77756D?text=No+Image'"/>
-                            <div class="absolute top-2 left-2 z-10 product-badge rounded-full px-2 py-0.5 text-[8px] sm:text-[9px] uppercase tracking-[0.11em] sm:tracking-[0.14em] font-bold max-w-[calc(100%-1rem)] truncate">${escapeHtml(product.category)}</div>
+                            <img src="${safeImage}" alt="${escapeHtml(displayName)}" class="w-full h-full object-contain" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/600x750/F7F5F0/77756D?text=No+Image'"/>
+                            <div class="absolute top-2 left-2 z-10 product-badge rounded-full px-2 py-0.5 text-[8px] sm:text-[9px] uppercase tracking-[0.11em] sm:tracking-[0.14em] font-bold max-w-[calc(100%-1rem)] truncate">${escapeHtml(product.category || '')}</div>
                             <div class="absolute right-2 bottom-2 z-10 quick-plus w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 5v14m7-7H5"></path></svg>
                             </div>
                         </div>
                     </div>
                     <div class="p-3 sm:p-4 flex flex-col flex-1">
-                        <h4 class="font-heading font-semibold text-[15px] sm:text-lg text-foreground leading-tight tracking-[-0.04em] line-clamp-2">${escapeHtml(product.name)}</h4>
+                        <h4 class="font-heading font-semibold text-[15px] sm:text-lg text-foreground leading-tight tracking-[-0.04em] line-clamp-2">${escapeHtml(displayName)}</h4>
                         <div class="mt-auto pt-2 sm:pt-2.5 flex flex-col gap-0.5">
                             <span class="text-[10px] sm:text-[11px] text-subtle line-through decoration-foreground/30">${formatPrice(product.originalPrice)}</span>
                             <span class="text-[18px] sm:text-lg font-bold text-foreground tracking-[-0.04em]">${formatPrice(displayPromo)}</span>
@@ -287,13 +317,6 @@
             if (!state.activeProduct) return;
             
             if (state.cart.length > 0) {
-                const currentBrand = state.cart[0].brand; 
-                const newBrand = state.activeProduct.brand; 
-                if (currentBrand !== newBrand) {
-                    showToast(`Keranjang berisi ${currentBrand}.<br>Checkout atau Hapus dulu ya!`, 'error');
-                    return; 
-                }
-
                 const hasPackageInCart = state.cart.some(item => item.isPackage);
                 const isAddingPackage = state.activeProduct.isPackage;
 
@@ -372,10 +395,9 @@
                 if (!finalName) { showToast('Isi atas nama pengambilan dulu!', 'error'); return; }
             }
 
-            const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
             const hasPackageInCart = state.cart.some(item => item.isPackage);
 
-            if (orderBrand === 'Kopi Kenangan' && !hasPackageInCart && getTotalItems() < 2) {
+            if (!hasPackageInCart && getTotalItems() < 2) {
                 showToast('Minimal pembelian menu biasa Kopi Kenangan adalah 2 item.', 'error');
                 return;
             }
@@ -384,7 +406,7 @@
                 return;
             }
 
-            let message = `Orderan Baru: ${orderBrand}\n--------------------------------\n`;
+            let message = `Orderan Baru: Kopi Kenangan\n--------------------------------\n`;
             
             state.cart.forEach(item => {
                 message += `• ${item.name} (${item.quantity}x)\n`;
@@ -425,8 +447,7 @@
             const toastContainer = document.createElement('div');
             toastContainer.id = 'active-toast';
             toastContainer.className = 'fixed inset-0 z-[100] flex items-center justify-center px-6 pointer-events-none'; 
-            const theme = getBrandTheme(state.activeProduct?.brand || state.selectedBrand || (state.cart[0] ? state.cart[0].brand : null));
-            const bg = type === 'error' ? '#2B1717' : theme.dark;
+            const bg = type === 'error' ? '#2B1717' : '#4A1E1B';
             const toastContent = document.createElement('div');
             toastContent.className = `text-white px-6 py-5 rounded-[1.75rem] shadow-float flex flex-col items-center justify-center gap-3 text-center w-full max-w-[320px] pointer-events-auto border border-white/10`;
             toastContent.style.background = bg;
@@ -541,7 +562,7 @@
                 `;
                 return; 
             }
-            const themeBrand = getThemeBrand();
+            
             const activeId = document.activeElement ? document.activeElement.id : null;
             
             const shouldShowFloatingCart = getTotalItems() > 0 && 
@@ -552,11 +573,10 @@
                                            !state.showKKDisclaimer;
             
             app.innerHTML = `
-                <div class="theme-scope" style="${getBrandThemeStyle(themeBrand)}">
+                <div class="theme-scope" style="--brand-accent:#B43A34;--brand-accent-dark:#4A1E1B;--brand-accent-soft:rgba(180, 58, 52, 0.105);--brand-accent-softer:rgba(180, 58, 52, 0.055);--brand-accent-border:rgba(180, 58, 52, 0.22);--brand-accent-contrast:#FFFDF8;">
                     ${renderHeader()}
                     <main class="min-h-screen">
-                        ${!state.selectedBrand ? renderBrandSelection() : 
-                          (!state.selectedOutlet ? renderOutletSelection() : renderMenu())}
+                        ${!state.selectedOutlet ? renderOutletSelection() : renderMenu()}
                     </main>
                     ${shouldShowFloatingCart ? renderFloatingCart() : ''}
                     ${state.showCart ? renderCartModal() : ''}
@@ -577,6 +597,7 @@
                 const el = document.getElementById(activeId);
                 if (el) {
                     el.focus();
+                    // Cegah posisi kursor keyboard lompat
                     const val = el.value;
                     el.value = '';
                     el.value = val;
@@ -589,7 +610,7 @@
                 <header id="site-header" class="fixed top-0 w-full z-40 glass">
                     <div class="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between gap-4">
                         <div class="flex-1 flex justify-start">
-                            ${state.selectedBrand ? `<button onclick="window.safeBack()" class="group inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 19l-7-7 7-7"></path></svg>Back</button>` : `<span class="hidden sm:block text-[10px] uppercase tracking-[0.22em] text-subtle">Promo Curated</span>`}
+                            ${state.selectedOutlet ? `<button onclick="window.safeBack()" class="group inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 19l-7-7 7-7"></path></svg>Back</button>` : `<span class="hidden sm:block text-[10px] uppercase tracking-[0.22em] text-subtle">Promo Curated</span>`}
                         </div>
                         <button onclick="window.location.hash = ''" class="font-heading text-[15px] sm:text-base font-semibold text-foreground tracking-[0.28em] uppercase">YASIF STORE</button>
                         <div class="flex-1 flex justify-end items-center gap-4">
@@ -600,64 +621,12 @@
             `;
         }
 
-        function renderBrandSelection() {
-            return `
-                <section class="mx-auto max-w-7xl px-5 sm:px-8 pt-12 sm:pt-20 pb-28">
-                    <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-14 lg:gap-20 items-end min-h-[calc(100vh-12rem)]">
-                        <div class="max-w-3xl">
-                            <p class="text-[11px] uppercase tracking-[0.32em] brand-text font-semibold mb-8">Coffee promo directory</p>
-                            <h2 class="font-heading text-[clamp(3.2rem,9vw,8.6rem)] leading-[0.86] tracking-[-0.075em] text-foreground font-semibold mb-8">Mau Order<br>Apa Hari Ini?</h2>
-                            <p class="max-w-xl text-base sm:text-lg leading-relaxed text-subtle tracking-[-0.02em]">Pilih brand favoritmu. Harga tertera sudah termasuk diskon dan biaya admin.</p>
-                        </div>
-                        <div class="w-full">
-                            <div class="border-y border-border divide-y divide-border">
-                                ${renderBrandCard('Kopi Kenangan', '01')}
-                            </div>
-                            <div class="mt-8 grid grid-cols-2 gap-3">
-                                <a href="https://chat.whatsapp.com/Bk73XNM1R3D5p8ZdMlna1W" target="_blank" class="premium-surface group rounded-[1.5rem] px-5 py-5 flex flex-col gap-5 bg-white/70">
-                                    <div class="flex items-center justify-between"><span class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold">Community</span><span class="text-lg">💬</span></div>
-                                    <div><h3 class="font-heading text-lg font-semibold text-foreground tracking-[-0.03em]">Grup WhatsApp</h3><p class="text-xs text-subtle mt-1">Update promo terbaru</p></div>
-                                </a>
-                                <button onclick="window.location.hash = 'tutorial'" class="premium-surface group rounded-[1.5rem] px-5 py-5 flex flex-col gap-5 text-left bg-white/70">
-                                    <div class="flex items-center justify-between"><span class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold">Ordering</span><span class="text-lg">⌁</span></div>
-                                    <div><h3 class="font-heading text-lg font-semibold text-foreground tracking-[-0.03em]">Cara Order</h3><p class="text-xs text-subtle mt-1">Panduan checkout</p></div>
-                                </button>
-                            </div>
-                            <footer class="mt-12 flex items-center justify-between text-[10px] uppercase tracking-[0.24em] text-subtle/70 font-semibold"><span>Designed by Yasif Store</span><span>2026</span></footer>
-                        </div>
-                    </div>
-                </section>
-            `;
-        }
-
-        function renderBrandCard(name, icon) {
-            const brandMeta = {
-                'Kopi Kenangan': { label: 'Signature Indonesian coffee menu', accent: 'bg-[#B43A34]' }
-            }[name];
-            return `
-                <button onclick="window.location.hash = 'brand-${encodeURIComponent(name)}'" style="${getBrandThemeStyle(name)}" class="brand-option group relative w-full py-8 sm:py-10 px-2 sm:px-4 flex items-center justify-between text-left overflow-hidden">
-                    <span class="absolute left-0 top-7 bottom-7 w-[3px] rounded-full" style="background: var(--brand-accent)"></span>
-                    <div class="flex items-baseline gap-6 sm:gap-9 min-w-0 pl-4">
-                        <span class="text-[11px] sm:text-xs uppercase tracking-[0.32em] font-semibold shrink-0" style="color: var(--brand-accent)">${icon}</span>
-                        <div class="min-w-0">
-                            <h3 class="font-heading text-3xl sm:text-5xl font-semibold text-foreground tracking-[-0.065em] leading-none opacity-90">${name}</h3>
-                            <p class="mt-3 text-sm text-subtle tracking-[-0.02em]">${brandMeta.label}</p>
-                        </div>
-                    </div>
-                    <div class="ml-6 flex items-center gap-4 shrink-0">
-                        <span class="hidden sm:block w-2 h-2 rounded-full ${brandMeta.accent} opacity-70"></span>
-                        <span class="brand-arrow w-10 h-10 rounded-full border flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M9 5l7 7-7 7"></path></svg></span>
-                    </div>
-                </button>
-            `;
-        }
-
         function renderOutletSelection() {
             const query = (state.outletSearchQuery || '').toLowerCase();
             
             const outlets = (window.outlets || []).filter(o => {
-                const nama = (o.name || o.nama || o.outlet || o).toLowerCase();
-                const alamat = (o.address || o.alamat || '').toLowerCase();
+                const nama = (o.name || o.nama || o.outlet || o || '').toString().toLowerCase();
+                const alamat = (o.address || o.alamat || '').toString().toLowerCase();
                 return nama.includes(query) || alamat.includes(query);
             });
 
@@ -665,14 +634,13 @@
                 <section class="mx-auto max-w-7xl px-5 sm:px-8 pt-12 sm:pt-20 pb-28">
                     <div class="mb-8">
                         <p class="text-[11px] uppercase tracking-[0.32em] brand-text font-semibold mb-4">Langkah 1</p>
-                        <h2 class="font-heading text-4xl sm:text-5xl font-semibold text-foreground tracking-[-0.05em]">Pilih Outlet<br>${state.selectedBrand}</h2>
+                        <h2 class="font-heading text-4xl sm:text-5xl font-semibold text-foreground tracking-[-0.05em]">Pilih Outlet<br>Kopi Kenangan</h2>
                     </div>
                     
                     <div class="mb-8 relative">
                         <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                             <svg class="w-5 h-5 text-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <!-- ID DITAMBAHKAN AGAR KEYBOARD TIDAK TERTUTUP SAAT NGETIK -->
                         <input type="text" id="outletSearchInput" placeholder="Cari nama cabang atau nama jalan..." 
                             value="${escapeHtml(state.outletSearchQuery)}" 
                             oninput="state.outletSearchQuery = this.value; render()" 
@@ -682,7 +650,7 @@
 
                     <div class="grid gap-4 sm:gap-5">
                         ${outlets.length > 0 ? outlets.map(outlet => {
-                            const name = outlet.name || outlet.nama || outlet.outlet || outlet;
+                            const name = outlet.name || outlet.nama || outlet.outlet || outlet || 'Tanpa Nama';
                             const address = outlet.address || outlet.alamat || 'Alamat detail belum tersedia';
                             const hashVal = 'outlet-' + encodeURIComponent(name).replace(/'/g, "%27");
                             
@@ -704,22 +672,21 @@
         }
 
         function renderMenu() {
-            const query = state.searchQuery.toLowerCase();
-            const brandProducts = window.products.filter(p => 
-                p.brand === state.selectedBrand && 
-                p.name.toLowerCase().includes(query)
-            );
+            const query = (state.searchQuery || '').toLowerCase();
+            
+            // Produk difilter dengan lebih aman
+            const brandProducts = window.products.filter(p => {
+                const n = p.name || '';
+                return n.toLowerCase().includes(query);
+            });
 
             const regularProducts = brandProducts.filter(p => !p.isPackage);
             const packageProducts = brandProducts.filter(p => p.isPackage);
             
-            const bestSellerProducts = state.searchQuery === '' ? getBestSellerProducts(state.selectedBrand).filter(p => !p.isPackage) : [];
-            const categories = [...new Set(regularProducts.map(p => p.category))];
+            const bestSellerProducts = state.searchQuery === '' ? getBestSellerProducts().filter(p => !p.isPackage) : [];
+            const categories = [...new Set(regularProducts.map(p => p.category || 'Uncategorized'))];
             
-            const notes = {
-                "Kopi Kenangan": "Harga sudah final, termasuk diskon dan biaya admin. Pilih ukuran Large atau Regular (jika tersedia) di masing-masing produk."
-            };
-
+            const notes = "Harga sudah final, termasuk diskon dan biaya admin. Pilih ukuran Large atau Regular (jika tersedia) di masing-masing produk.";
             const todayDate = new Date().getDate(); 
             const wifiPassword = KK_WIFI_PASSWORDS[todayDate] || "Password belum diupdate";
 
@@ -729,25 +696,24 @@
                         <div class="brand-hero-shell grid lg:grid-cols-[1fr_380px] gap-10 lg:gap-20 items-end border-b border-border pb-10 sm:pb-14 rounded-[2rem]">
                             <div>
                                 <p class="text-[11px] uppercase tracking-[0.32em] brand-text font-semibold mb-5">----- YASIF STORE -----</p>
-                                <h2 class="font-heading text-[clamp(2.5rem,6vw,6rem)] leading-[0.88] tracking-[-0.075em] font-semibold text-foreground">${state.selectedBrand}</h2>
+                                <h2 class="font-heading text-[clamp(2.5rem,6vw,6rem)] leading-[0.88] tracking-[-0.075em] font-semibold text-foreground">Kopi Kenangan</h2>
                                 <div class="mt-4 flex flex-col items-start gap-2">
                                     <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-subtle bg-surface px-3 py-1.5 rounded-[0.8rem] border border-border flex items-center gap-1.5">
-                                       📍 ${state.selectedOutlet}
+                                       📍 ${escapeHtml(state.selectedOutlet)}
                                     </span>
                                 </div>
                                 <div class="mt-5 inline-flex items-center gap-3 rounded-full brand-button-soft px-4 py-2">
                                     <span class="w-2 h-2 rounded-full" style="background: var(--brand-accent)"></span>
-                                    <span class="text-[10px] uppercase tracking-[0.18em] font-semibold">${getBrandTheme(state.selectedBrand).label}</span>
+                                    <span class="text-[10px] uppercase tracking-[0.18em] font-semibold">Best Seller</span>
                                 </div>
                             </div>
                             
                             <aside class="flex flex-col gap-4">
                                 <div class="premium-surface brand-border rounded-[1.75rem] px-6 py-6">
                                     <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-3">Order Note</p>
-                                    <p class="text-sm leading-relaxed text-subtle tracking-[-0.01em]">${notes[state.selectedBrand] || "Nikmati promo spesial hari ini."}</p>
+                                    <p class="text-sm leading-relaxed text-subtle tracking-[-0.01em]">${notes}</p>
                                 </div>
                                 
-                                ${state.selectedBrand === 'Kopi Kenangan' ? `
                                 <div class="premium-surface brand-border rounded-[1.75rem] px-6 py-5 flex items-center justify-between gap-4 bg-[#B43A34]/5 border-[#B43A34]/20">
                                     <div>
                                         <p class="text-[13px] sm:text-sm uppercase tracking-[0.1em] text-[#B43A34] font-extrabold mb-3 leading-tight">📶 Wifi Teman Kenangan<br>Hari Ini</p>
@@ -763,7 +729,6 @@
                                         Salin
                                     </button>
                                 </div>
-                                ` : ''}
                             </aside>
                         </div>
                         
@@ -772,7 +737,7 @@
                                 <svg class="w-5 h-5 text-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
                             <input type="text" id="searchInput" placeholder="Cari menu favoritmu di sini..." 
-                                value="${state.searchQuery}" 
+                                value="${escapeHtml(state.searchQuery)}" 
                                 oninput="state.searchQuery = this.value; render()" 
                                 class="w-full bg-surface border border-border rounded-full py-4 pl-12 pr-5 text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 text-foreground font-medium placeholder:text-subtle/50 shadow-sm"
                             />
@@ -791,7 +756,7 @@
 
                     <div class="sticky top-[72px] sm:top-20 z-30 category-rail py-4 overflow-x-auto hide-scroll backdrop-blur-md bg-background/90">
                         <nav class="mx-auto max-w-7xl px-5 sm:px-8 flex gap-2 min-w-max">
-                            ${categories.map((cat, index) => `<button onclick="document.getElementById('cat-${index}').scrollIntoView()" class="brand-category-pill px-4 sm:px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-semibold bg-transparent border border-border text-subtle">${cat}</button>`).join('')}
+                            ${categories.map((cat, index) => `<button onclick="document.getElementById('cat-${index}').scrollIntoView()" class="brand-category-pill px-4 sm:px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-semibold bg-transparent border border-border text-subtle">${escapeHtml(cat)}</button>`).join('')}
                             ${packageProducts.length > 0 ? `<button onclick="document.getElementById('paket-khusus').scrollIntoView()" class="brand-category-pill px-4 sm:px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-bold bg-[#B43A34]/10 border border-[#B43A34]/30 text-[#B43A34]">Special Deals</button>` : ''}
                         </nav>
                     </div>
@@ -803,7 +768,7 @@
                             return `
                                 <section id="cat-${index}" class="scroll-mt-36">
                                     <div class="flex items-end justify-between gap-4 mb-6 sm:mb-10">
-                                        <div><p class="text-[10px] uppercase tracking-[0.26em] brand-text font-semibold mb-3">Collection ${String(index + 1).padStart(2, '0')}</p><h3 class="font-heading text-[2rem] sm:text-5xl font-semibold text-foreground tracking-[-0.06em] leading-none">${cat}</h3></div>
+                                        <div><p class="text-[10px] uppercase tracking-[0.26em] brand-text font-semibold mb-3">Collection ${String(index + 1).padStart(2, '0')}</p><h3 class="font-heading text-[2rem] sm:text-5xl font-semibold text-foreground tracking-[-0.06em] leading-none">${escapeHtml(cat)}</h3></div>
                                         <span class="text-xs uppercase tracking-[0.18em] text-subtle font-semibold">${catProducts.length} items</span>
                                     </div>
                                     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-3 sm:gap-x-6 lg:gap-x-8 gap-y-5 sm:gap-y-8">
@@ -854,9 +819,9 @@
 
                         <div id="note-scroll-container" class="px-6 sm:px-8 pb-6 flex-1 overflow-y-auto">
                             <div class="border-b border-border pb-6 mb-6">
-                                <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-3">${p.category}</p>
+                                <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-3">${escapeHtml(p.category)}</p>
                                 <div class="flex justify-between items-start gap-5">
-                                    <h3 class="text-3xl sm:text-4xl font-heading font-semibold text-foreground tracking-[-0.06em] leading-[0.95]">${p.name}</h3>
+                                    <h3 class="text-3xl sm:text-4xl font-heading font-semibold text-foreground tracking-[-0.06em] leading-[0.95]">${escapeHtml(p.name)}</h3>
                                     <div class="text-right shrink-0 pt-1">
                                         <span class="block text-xl font-semibold text-foreground tracking-[-0.04em]">${formatPrice(displayPrice)}</span>
                                         <span class="block text-[10px] uppercase tracking-[0.18em] text-subtle mt-1">Final</span>
@@ -943,12 +908,12 @@
                                         <div class="flex gap-4 p-3 sm:p-4 bg-surface/70 rounded-[1.5rem] border brand-border relative group">
                                             <div class="w-20 h-20 rounded-[1.1rem] product-frame overflow-hidden shrink-0"><img src="${item.image}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://placehold.co/200x200/F7F5F0/77756D?text=No+Image'"></div>
                                             <div class="flex-1 pr-9 min-w-0">
-                                                <h4 class="font-heading font-semibold text-foreground text-base tracking-[-0.03em] line-clamp-2">${item.name}</h4>
+                                                <h4 class="font-heading font-semibold text-foreground text-base tracking-[-0.03em] line-clamp-2">${escapeHtml(item.name)}</h4>
                                                 ${item.size || item.sugar || item.note ? `
                                                     <div class="text-[11px] text-subtle mt-1.5 flex flex-col gap-0.5">
                                                         ${item.size ? `<span>Ukuran: <strong class="font-semibold">${item.size}</strong></span>` : ''}
                                                         ${item.sugar ? `<span>Gula: <strong class="font-semibold">${item.sugar}</strong></span>` : ''}
-                                                        ${item.note ? `<span class="italic text-foreground mt-0.5">Catatan: ${item.note}</span>` : ''}
+                                                        ${item.note ? `<span class="italic text-foreground mt-0.5">Catatan: ${escapeHtml(item.note)}</span>` : ''}
                                                     </div>
                                                 ` : ''}
                                                 <div class="flex justify-between items-end mt-3">
@@ -983,7 +948,7 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Lokasi Pengambilan
                                     </label>
                                     <div class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm font-bold text-foreground">
-                                        ${state.selectedOutlet || 'Belum dipilih'}
+                                        ${escapeHtml(state.selectedOutlet) || 'Belum dipilih'}
                                     </div>
                                 </div>
                             `}
@@ -1051,7 +1016,7 @@
                     state.activeProduct = product;
                     
                     if (!state.selectedBrand) {
-                        state.selectedBrand = product.brand;
+                        state.selectedBrand = product.brand || 'Kopi Kenangan';
                     }
                 } else {
                     safeBack();
