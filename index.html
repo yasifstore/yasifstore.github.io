@@ -93,10 +93,10 @@
             showKKDisclaimer: false,
             hasSeenKKPopup: false,
             selectedBrand: null,
+            selectedOutlet: null, 
             cart: parsedCart,
             showCart: false,
             showTutorial: false,
-            storeLocation: '',
             activeProduct: null, 
             tempNote: '',
             tempQty: 1,
@@ -112,10 +112,12 @@
         function saveCart() { localStorage.setItem('yasif_cart', JSON.stringify(state.cart)); }
 
         window.safeBack = function() {
-            if (window.history.length > 1) {
+            if (state.showCart || state.activeProduct || state.showTutorial) {
                 window.history.back();
-            } else {
-                window.location.hash = state.selectedBrand ? 'brand-' + encodeURIComponent(state.selectedBrand) : '';
+            } else if (state.selectedOutlet) {
+                window.location.hash = 'brand-' + encodeURIComponent(state.selectedBrand);
+            } else if (state.selectedBrand) {
+                window.location.hash = '';
             }
         };
 
@@ -142,18 +144,6 @@
                 showToast('Gagal menyalin password', 'error');
             });
         };
-
-        function renderPickupStoreField(inputIcon, inputLabel) {
-            return `
-                <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
-                    <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-3 flex items-center gap-2">
-                        ${inputIcon} ${inputLabel} <span class="text-[#9E3C3C]">*</span>
-                    </label>
-                    <p class="mb-4 text-[11px] sm:text-xs leading-relaxed font-semibold text-subtle">Ketik nama cabang/lokasi pengambilan pesanan.</p>
-                    <input type="text" value="${escapeHtml(state.storeLocation)}" oninput="state.storeLocation = this.value" placeholder="Contoh: Cabang Grand Indonesia..." class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-medium placeholder:text-subtle/45" />
-                </div>
-            `;
-        }
 
         function renderPickupNameField() {
             return `
@@ -285,7 +275,6 @@
                     return; 
                 }
 
-                // VALIDASI MENU PAKET VS MENU BIASA
                 const hasPackageInCart = state.cart.some(item => item.isPackage);
                 const isAddingPackage = state.activeProduct.isPackage;
 
@@ -355,8 +344,8 @@
         }
 
         function handleWhatsAppOrder() {
-            const pickupStore = (state.storeLocation || '').trim();
-            if (!pickupStore) { showToast('Isi lokasi pengambilan dulu!', 'error'); return; }
+            const pickupStore = state.selectedOutlet || '';
+            if (!pickupStore) { showToast('Pilih outlet terlebih dahulu di halaman utama!', 'error'); return; }
 
             let finalName = 'Yasif';
             if (state.pickupNameType === 'custom') {
@@ -365,7 +354,6 @@
             }
 
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
-
             const hasPackageInCart = state.cart.some(item => item.isPackage);
 
             if (orderBrand === 'Kopi Kenangan' && !hasPackageInCart && getTotalItems() < 2) {
@@ -393,7 +381,6 @@
                 }
                 
                 if (details.length > 0) message += `   ${details.join('  ')}\n`; 
-                
                 if (item.note && item.note.trim() !== '') message += `   note: ${item.note}\n`;
                 message += `   harga: ${formatPrice(item.promoPrice * item.quantity)}\n`;
             });
@@ -549,7 +536,8 @@
                 <div class="theme-scope" style="${getBrandThemeStyle(themeBrand)}">
                     ${renderHeader()}
                     <main class="min-h-screen">
-                        ${!state.selectedBrand ? renderBrandSelection() : renderMenu()}
+                        ${!state.selectedBrand ? renderBrandSelection() : 
+                          (!state.selectedOutlet ? renderOutletSelection() : renderMenu())}
                     </main>
                     ${shouldShowFloatingCart ? renderFloatingCart() : ''}
                     ${state.showCart ? renderCartModal() : ''}
@@ -582,7 +570,7 @@
                 <header id="site-header" class="fixed top-0 w-full z-40 glass">
                     <div class="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between gap-4">
                         <div class="flex-1 flex justify-start">
-                            ${state.selectedBrand ? `<button onclick="window.location.hash = ''" class="group inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 19l-7-7 7-7"></path></svg>Back</button>` : `<span class="hidden sm:block text-[10px] uppercase tracking-[0.22em] text-subtle">Promo Curated</span>`}
+                            ${state.selectedBrand ? `<button onclick="window.safeBack()" class="group inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 19l-7-7 7-7"></path></svg>Back</button>` : `<span class="hidden sm:block text-[10px] uppercase tracking-[0.22em] text-subtle">Promo Curated</span>`}
                         </div>
                         <button onclick="window.location.hash = ''" class="font-heading text-[15px] sm:text-base font-semibold text-foreground tracking-[0.28em] uppercase">YASIF STORE</button>
                         <div class="flex-1 flex justify-end items-center gap-4">
@@ -647,6 +635,26 @@
             `;
         }
 
+        function renderOutletSelection() {
+            const outlets = window.outlets || [];
+            return `
+                <section class="mx-auto max-w-7xl px-5 sm:px-8 pt-12 sm:pt-20 pb-28">
+                    <div class="mb-10">
+                        <p class="text-[11px] uppercase tracking-[0.32em] brand-text font-semibold mb-4">Langkah 1</p>
+                        <h2 class="font-heading text-4xl sm:text-5xl font-semibold text-foreground tracking-[-0.05em]">Pilih Outlet<br>${state.selectedBrand}</h2>
+                    </div>
+                    <div class="grid gap-3 sm:gap-4">
+                        ${outlets.length > 0 ? outlets.map(outlet => `
+                            <button onclick="window.location.hash = 'outlet-${encodeURIComponent(outlet)}'" class="premium-surface p-5 rounded-[1.25rem] border border-border text-left hover:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all flex items-center justify-between group">
+                                <span class="font-semibold text-foreground text-sm group-hover:text-primary transition-colors">${outlet}</span>
+                                <svg class="w-5 h-5 text-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        `).join('') : '<p class="text-sm text-subtle bg-surface p-5 rounded-2xl border border-border">Memuat data outlet atau data tidak tersedia...</p>'}
+                    </div>
+                </section>
+            `;
+        }
+
         function renderMenu() {
             const query = state.searchQuery.toLowerCase();
             const brandProducts = window.products.filter(p => 
@@ -654,7 +662,6 @@
                 p.name.toLowerCase().includes(query)
             );
 
-            // Filter menu biasa dan paket
             const regularProducts = brandProducts.filter(p => !p.isPackage);
             const packageProducts = brandProducts.filter(p => p.isPackage);
             
@@ -675,8 +682,13 @@
                         <div class="brand-hero-shell grid lg:grid-cols-[1fr_380px] gap-10 lg:gap-20 items-end border-b border-border pb-10 sm:pb-14 rounded-[2rem]">
                             <div>
                                 <p class="text-[11px] uppercase tracking-[0.32em] brand-text font-semibold mb-5">----- YASIF STORE -----</p>
-                                <h2 class="font-heading text-[clamp(3rem,7vw,7rem)] leading-[0.88] tracking-[-0.075em] font-semibold text-foreground">${state.selectedBrand}</h2>
-                                <div class="mt-6 inline-flex items-center gap-3 rounded-full brand-button-soft px-4 py-2">
+                                <h2 class="font-heading text-[clamp(2.5rem,6vw,6rem)] leading-[0.88] tracking-[-0.075em] font-semibold text-foreground">${state.selectedBrand}</h2>
+                                <div class="mt-4 flex flex-col items-start gap-2">
+                                    <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-subtle bg-surface px-3 py-1.5 rounded-[0.8rem] border border-border flex items-center gap-1.5">
+                                       📍 ${state.selectedOutlet}
+                                    </span>
+                                </div>
+                                <div class="mt-5 inline-flex items-center gap-3 rounded-full brand-button-soft px-4 py-2">
                                     <span class="w-2 h-2 rounded-full" style="background: var(--brand-accent)"></span>
                                     <span class="text-[10px] uppercase tracking-[0.18em] font-semibold">${getBrandTheme(state.selectedBrand).label}</span>
                                 </div>
@@ -862,9 +874,6 @@
         }
 
         function renderCartModal() {
-            const inputLabel = 'Lokasi Cabang Pengambilan';
-            const inputIcon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>';
-
             return `
                 <div class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-5">
                     <div class="absolute inset-0 diffused-backdrop" onclick="safeBack()"></div>
@@ -922,7 +931,14 @@
                                     ` : ''}
                                 </div>
                                 ${renderPickupNameField()}
-                                ${renderPickupStoreField(inputIcon, inputLabel)}
+                                <div class="premium-surface p-5 rounded-[1.5rem] mt-3">
+                                    <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-3 flex items-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Lokasi Pengambilan
+                                    </label>
+                                    <div class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm font-bold text-foreground">
+                                        ${state.selectedOutlet || 'Belum dipilih'}
+                                    </div>
+                                </div>
                             `}
                         </div>
                         ${state.cart.length > 0 ? `
@@ -1001,9 +1017,15 @@
             else if (hash === '#tutorial') {
                 state.showTutorial = true;
             } 
+            else if (hash.startsWith('#outlet-')) {
+                const outlet = decodeURIComponent(hash.replace('#outlet-', ''));
+                state.selectedOutlet = outlet;
+                state.searchQuery = '';
+            }
             else if (hash.startsWith('#brand-')) {
                 const brand = decodeURIComponent(hash.replace('#brand-', ''));
                 state.selectedBrand = brand;
+                state.selectedOutlet = null; 
                 state.searchQuery = ''; 
                 
                 if (brand === 'Kopi Kenangan' && !state.hasSeenKKPopup) {
@@ -1013,6 +1035,7 @@
             } 
             else {
                 state.selectedBrand = null;
+                state.selectedOutlet = null;
                 state.searchQuery = '';
             }
             
