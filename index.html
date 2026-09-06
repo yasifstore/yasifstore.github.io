@@ -81,11 +81,11 @@
 
     <div id="app"></div>
 
-    <script>
-        // TARIK DATA JSON
-        window.outlets = [];
-        window.products = [];
+    <script src="data.js"></script>
 
+    <script>
+        // TARIK DATA OUTLET DARI JSON
+        window.outlets = [];
         fetch('https://www.bintanggstore.web.id/outlet.json')
             .then(res => res.json())
             .then(data => {
@@ -93,63 +93,6 @@
                 if (typeof render === 'function') render();
             })
             .catch(err => console.error('Gagal mengambil data Outlet:', err));
-
-        fetch('https://www.bintanggstore.web.id/menu.json')
-            .then(res => res.json())
-            .then(data => {
-                const arr = Array.isArray(data) ? data : (data.data || []);
-                window.products = arr.map((item, idx) => {
-                    // Cek jika data berbentuk Array of Arrays (format lama)
-                    if (Array.isArray(item)) {
-                        const cat = item[0] || 'Uncategorized';
-                        const name = item[1] || 'Tanpa Nama';
-                        const reg = item[2] ? Number(item[2]) : null;
-                        const lrg = item[3] ? Number(item[3]) : null;
-                        const img = item[4] || '';
-                        const promoReg = reg ? Math.floor((reg * 0.5) + 3500) : null;
-                        const promoLrg = lrg ? Math.floor((lrg * 0.5) + 3500) : null;
-                        
-                        let sizes = [];
-                        let sugars = null;
-                        let defaultSugar = null;
-
-                        if (cat !== "Makanan") {
-                            if (reg) sizes.push({ name: "Regular", promoPrice: promoReg, originalPrice: reg });
-                            if (lrg) sizes.push({ name: "Large", promoPrice: promoLrg, originalPrice: lrg });
-                            if (["Americano", "Latte", "Cappuccino"].includes(name)) {
-                                sugars = ["No Sugar", "Less Sugar", "Normal Sugar"];
-                                defaultSugar = "No Sugar";
-                            } else {
-                                sugars = ["Less Sugar", "Normal Sugar"];
-                                defaultSugar = "Normal Sugar";
-                            }
-                        }
-
-                        return {
-                            id: `kk-${idx}`,
-                            category: cat,
-                            name: name,
-                            originalPrice: cat === "Makanan" ? reg : (sizes.length > 0 ? sizes[0].originalPrice : 0),
-                            promoPrice: cat === "Makanan" ? promoReg : (sizes.length > 0 ? sizes[0].promoPrice : 0),
-                            brand: "Kopi Kenangan",
-                            image: img,
-                            isPackage: false,
-                            sizes: sizes,
-                            sugars: sugars,
-                            defaultSugar: defaultSugar
-                        };
-                    } else {
-                        // Jika data berbentuk Objek (JSON standar)
-                        return {
-                            ...item,
-                            brand: item.brand || 'Kopi Kenangan',
-                            name: item.name || item.nama || 'Tanpa Nama'
-                        };
-                    }
-                });
-                if (typeof render === 'function') render();
-            })
-            .catch(err => console.error('Gagal mengambil data Menu:', err));
 
         let savedCart = localStorage.getItem('yasif_cart');
         let parsedCart = savedCart ? JSON.parse(savedCart) : [];
@@ -395,6 +338,7 @@
                 if (!finalName) { showToast('Isi atas nama pengambilan dulu!', 'error'); return; }
             }
 
+            const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Kopi Kenangan';
             const hasPackageInCart = state.cart.some(item => item.isPackage);
 
             if (!hasPackageInCart && getTotalItems() < 2) {
@@ -406,7 +350,7 @@
                 return;
             }
 
-            let message = `Orderan Baru: Kopi Kenangan\n--------------------------------\n`;
+            let message = `Orderan Baru: ${orderBrand}\n--------------------------------\n`;
             
             state.cart.forEach(item => {
                 message += `• ${item.name} (${item.quantity}x)\n`;
@@ -597,7 +541,6 @@
                 const el = document.getElementById(activeId);
                 if (el) {
                     el.focus();
-                    // Cegah posisi kursor keyboard lompat
                     const val = el.value;
                     el.value = '';
                     el.value = val;
@@ -614,6 +557,9 @@
                         </div>
                         <button onclick="window.location.hash = ''" class="font-heading text-[15px] sm:text-base font-semibold text-foreground tracking-[0.28em] uppercase">YASIF STORE</button>
                         <div class="flex-1 flex justify-end items-center gap-4">
+                            <button onclick="window.location.hash = 'tutorial'" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle hover:text-primary transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </button>
                         </div>
                     </div>
                 </header>
@@ -674,7 +620,6 @@
         function renderMenu() {
             const query = (state.searchQuery || '').toLowerCase();
             
-            // Produk difilter dengan lebih aman
             const brandProducts = window.products.filter(p => {
                 const n = p.name || '';
                 return n.toLowerCase().includes(query);
@@ -964,37 +909,6 @@
             `;
         }
 
-        function renderTutorialModal() {
-            const steps = [
-                { icon: "01", title: "Pilih Menu", desc: "Pilih menu favoritmu, lalu masukkan ke keranjang. Harga sudah final termasuk biaya admin." },
-                { icon: "02", title: "Checkout WA", desc: "Isi lokasi store pengambilan, kemudian kirim list pesanan ke WhatsApp Admin." },
-                { icon: "03", title: "Pembayaran", desc: "Lakukan pembayaran sesuai instruksi Admin di WhatsApp." },
-                { icon: "04", title: "Ambil Pesanan", desc: "Datang ke store dan tunjukkan bukti pemesanan dari Admin. Selesai." }
-            ];
-            return `
-                <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div class="absolute inset-0 diffused-backdrop" onclick="safeBack()"></div>
-                    <div class="luxury-panel w-full max-w-[440px] rounded-[2rem] z-10 overflow-hidden flex flex-col max-h-[86vh]">
-                        <div class="px-7 py-7 border-b border-border/70 bg-surface/70 flex justify-between items-start">
-                            <div><p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-2">Guide</p><h3 class="font-heading font-semibold text-3xl text-foreground tracking-[-0.055em]">Cara Pemesanan</h3></div>
-                            <button onclick="safeBack()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle">✕</button>
-                        </div>
-                        <div class="p-7 overflow-y-auto space-y-7">
-                            ${steps.map((step, idx) => `
-                                <div class="flex gap-5">
-                                    <div class="flex flex-col items-center"><div class="w-10 h-10 rounded-full brand-button flex items-center justify-center text-[10px] tracking-[0.14em] font-semibold shrink-0">${step.icon}</div>${idx !== steps.length - 1 ? `<div class="w-px h-full bg-border my-3"></div>` : ''}</div>
-                                    <div class="pb-2"><h4 class="font-heading font-semibold text-foreground text-lg tracking-[-0.035em] mb-1">${step.title}</h4><p class="text-sm text-subtle leading-relaxed">${step.desc}</p></div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="p-5 bg-surface/80 border-t border-border/70">
-                            <button onclick="safeBack()" class="w-full py-4 brand-button rounded-full font-semibold">Mengerti, Yuk Pesan</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
         window.handleHashChange = function() {
             const hash = window.location.hash;
             const prevProduct = state.activeProduct;
@@ -1014,10 +928,6 @@
                         state.tempSugar = product.defaultSugar || null;
                     }
                     state.activeProduct = product;
-                    
-                    if (!state.selectedBrand) {
-                        state.selectedBrand = product.brand || 'Kopi Kenangan';
-                    }
                 } else {
                     safeBack();
                     return; 
@@ -1033,21 +943,12 @@
                 const outlet = decodeURIComponent(hash.replace('#outlet-', ''));
                 state.selectedOutlet = outlet;
                 state.searchQuery = '';
-            }
-            else if (hash.startsWith('#brand-')) {
-                const brand = decodeURIComponent(hash.replace('#brand-', ''));
-                state.selectedBrand = brand;
-                state.selectedOutlet = null; 
-                state.searchQuery = ''; 
-                state.outletSearchQuery = '';
-                
-                if (brand === 'Kopi Kenangan' && !state.hasSeenKKPopup) {
+                if (!state.hasSeenKKPopup) {
                     state.showKKDisclaimer = true;
                     state.hasSeenKKPopup = true;
                 }
-            } 
+            }
             else {
-                state.selectedBrand = null;
                 state.selectedOutlet = null;
                 state.searchQuery = '';
                 state.outletSearchQuery = '';
