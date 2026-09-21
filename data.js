@@ -9,6 +9,9 @@ const rawKK = [
     ["A SIP OF SUNSHINE Series", "Korean Banana Latte", 23000, 31000, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/7d187951-6b63-4211-bf39-80061ef4d43f_05de3344-307d-41b5-8408-e35125781e95.png?auto=format"],
     ["A SIP OF SUNSHINE Series", "Banana Americano", 19000, 27000, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/a82e993d-0ebb-48d7-ab76-06fc85e2a1b1_4b4df068-dbe8-4943-b3e0-3ccd970eb69a.png?auto=format"],
     ["A SIP OF SUNSHINE Series", "Banana Choco", 24000, 32000, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/ecd706f5-cd63-4082-9121-7ccb9a9c34d3_2b9756b6-19d3-4811-aabe-114fbb5d2fe2.png?auto=format"],
+    ["A SIP OF SUNSHINE Series", "Bananachoco Soft Baked Cookie", 18000, null, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/7d39bb8b-19ec-4d8c-aa6c-e7942b916b74_e71c8ac9-3078-4a9c-aaf2-e741a3da6a29.png?auto=format"],
+    ["A SIP OF SUNSHINE Series", "Oatmeal Raisin Soft Baked Cookie", 18000, null, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/0919f58b-6e46-4091-917e-850f39461d4e_b92639bf-dd7d-4e4a-a1fd-46f4d940075a.png?auto=format"],
+    ["A SIP OF SUNSHINE Series", "Sweet Honey Soft Baked Cookie", 17000, null, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/b11d7349-c66c-491c-85b6-145593d20427_10a2ce53-442a-4408-ad47-bd6fd5df22c7.png?auto=format"],
     ["Coffee","Americano",17000,22000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193130067701/detail/a67cc828_bfab17b25c46ffa.webp"],
     ["Coffee","Avocado Coffee",28000,38000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250703074725012544/detail/4ceae86b_c9778ae7145062a.webp"],
     ["Coffee","Blueberry Americano",19000,26000,"https://huawei-food-cms.grab.com/compressed_webp/items/url-b450ad17/photo/907f271ead5b2acd.webp"],
@@ -26,7 +29,7 @@ const rawKK = [
     ["Coffee","Dua Shot OG Aren",25000,32000,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/30dca2fe-f397-4f16-b7a9-1b2001d192b9_6bd9ab79-c96e-4a49-853a-15ce6eb1d08c.png?auto=format"],
     ["Coffee","Hazelnut Latte",26000,34000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193125023318/detail/f2220ce9_a2140e6cbaf588b.webp"],
     ["Coffee","Kopi Kenangan Mantan",19000,25000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250812051422019174/detail/5b10a373_2aec27ffffdc9e8.webp"],
-    ["Coffee","Kopi Kenangan Mantan Frappe",30000,34000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250701082014010059/detail/9c56be81_1e18627861ae747.webp"],
+    ["Coffee","Kopi Kenangan Mantan Frappe",27000,34000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250701082014010059/detail/9c56be81_1e18627861ae747.webp"],
     ["Coffee","Kopi Susu Black Aren",21000,30000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193125060247/detail/0ff58d8c_63797561bee87b9.webp"],
     ["Coffee","Latte",22000,29000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193132012856/detail/4a8f13ae_00ff4874930fcd7.webp"],
     ["Coffee","Matcha Espresso",26000,35000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193127069282/detail/c7fbb5f5_127f022392f087e.webp"],
@@ -63,9 +66,6 @@ const rawKK = [
     ["Non-Coffee","Susu Grass Jelly",24000,32000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193149060970/detail/0c699bd8_168caaa10f5f95c.webp"],
     ["Non-Coffee","Thai Tea Loaded",null,27000,"https://food-cms.grab.com/compressed_webp/items/IDITE20260504023427054203/detail/5f77bd44_731b4ee712854b3.webp"],
     ["Non-Coffee","Vanilla Kenangan Frappe",25000,32000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250701082014035176/detail/f4c784b7_8915c14d7b17582.webp"],
-    ["Makanan", "Bananachoco Soft Baked Cookie", 18000, null, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/7d39bb8b-19ec-4d8c-aa6c-e7942b916b74_e71c8ac9-3078-4a9c-aaf2-e741a3da6a29.png?auto=format"],
-    ["Makanan", "Oatmeal Raisin Soft Baked Cookie", 18000, null, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/0919f58b-6e46-4091-917e-850f39461d4e_b92639bf-dd7d-4e4a-a1fd-46f4d940075a.png?auto=format"],
-    ["Makanan", "Sweet Honey Soft Baked Cookie", 17000, null, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/b11d7349-c66c-491c-85b6-145593d20427_10a2ce53-442a-4408-ad47-bd6fd5df22c7.png?auto=format"],
     ["Makanan","Adam Ayam Toast",19000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/5401f48a-01c5-4981-88aa-f3c1724e75e2_fb8f8b0c-b019-3c84-87a5-753cb136b32f.png?auto=format"],
     ["Makanan","Aren Apple Pie",17000,null,"https://huawei-food-cms.grab.com/compressed_webp/items/url-9216826f/photo/ba454472b5208f2d.webp"],
     ["Makanan","Bambang Choco Cheese Toast",17000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/66499e2e-b9c8-42f4-a32e-296fc8639792_9bcefd8c-c6d2-0bf3-cd8b-d58b53b7c107.png?auto=format"],
@@ -117,7 +117,7 @@ const generatedKKProducts = rawKK.map((item, idx) => {
     let sugars = null;
     let defaultSugar = null;
     
-    const isMakanan = category === "Makanan" || name.includes("Bagel");
+    const isMakanan = category === "Makanan" || name.includes("Bagel") || name.includes("Soft");
     
     if (!isMakanan) {
         if (regPrice) sizes.push({ name: "Regular", promoPrice: promoReg, originalPrice: regPrice });
