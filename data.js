@@ -1,4 +1,11 @@
 const rawKK = [
+    ["New! Purple Cloud Series", "Taro Milk", 19000, 26000, "https://huawei-food-cms.grab.com/compressed_webp/items/IDITE20260920180754023277/photo/647e9992b61141ebb43de133bc56883a_1789927674874643305.webp"],
+    ["New! Purple Cloud Series", "Taro Cloud Milk Tea", 19000, 26000, "https://huawei-food-cms.grab.com/compressed_webp/items/IDITE20260920180754031890/photo/7184937c9b8f4259bddc0be50cbef1c3_1789927674970992687.webp"],
+    ["New! Purple Cloud Series", "Taro Cloud Latte", 22000, 29000, "https://huawei-food-cms.grab.com/compressed_webp/items/IDITE20260920180755017639/photo/dcc3312a11f344a58bc613f118aba0c1_1789927675058487238.webp"],
+    ["New! Purple Cloud Series", "Taro Cloud Matcha", 22000, 29000, "https://huawei-food-cms.grab.com/compressed_webp/items/IDITE20260920180755023032/photo/bc6769f94a174b5682e3d486ded69ec5_1789927675142991260.webp"],
+    ["New! Purple Cloud Series", "Triple Cheese Bagel", 18000, null, "https://huawei-food-cms.grab.com/compressed_webp/items/IDITE20260920180755041715/photo/42c9580a14394075a2151c5b6de3bb87_1789927675333325696.webp"],
+    ["New! Purple Cloud Series", "Beef & Cheese Jalapeño Bagel", 20000, null, "https://huawei-food-cms.grab.com/compressed_webp/items/IDITE20260920180755039489/photo/92f0475155424dab9fd828c576cbf654_1789927675231176738.webp"],
+    ["New! Purple Cloud Series", "Double Choco Bagel", 18000, null, "https://huawei-food-cms.grab.com/compressed_webp/items/IDITE20260920180755051126/photo/0a296ff2b5b64ba9ab0295a2e162d6bd_1789927675406069828.webp"],
     ["A SIP OF SUNSHINE Series", "Korean Banana Latte", 23000, 31000, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/7d187951-6b63-4211-bf39-80061ef4d43f_05de3344-307d-41b5-8408-e35125781e95.png?auto=format"],
     ["A SIP OF SUNSHINE Series", "Banana Americano", 19000, 27000, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/a82e993d-0ebb-48d7-ab76-06fc85e2a1b1_4b4df068-dbe8-4943-b3e0-3ccd970eb69a.png?auto=format"],
     ["A SIP OF SUNSHINE Series", "Banana Choco", 24000, 32000, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/ecd706f5-cd63-4082-9121-7ccb9a9c34d3_2b9756b6-19d3-4811-aabe-114fbb5d2fe2.png?auto=format"],
@@ -29,9 +36,6 @@ const rawKK = [
     ["Coffee","Oatside Latte",25000,32000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193109060320/detail/ced81934_3fd8d7f1e3af821.webp"],
     ["Coffee","Pistachio Aren Latte",19000,26000,"https://food-cms.grab.com/compressed_webp/items/IDITE20251123181919056205/detail/924b3315_c4b1b6cce555736.webp"],
     ["Coffee","Spanish Latte",19000,27000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250812051421018408/detail/4983790e_326fedae12ba368.webp"],
-    ["Coffee","Toffee Nut Aren Latte",21000,28000,"https://food-cms.grab.com/compressed_webp/items/IDITE20251123135412014443/detail/8d36bd27_660f8c0a63880f8.webp"],
-    ["Coffee","Toffee Nut Late",19000,26000,"https://food-cms.grab.com/compressed_webp/items/IDITE20251123181917021062/detail/bd57be8d_ab0cbd37907d628.webp"],
-    ["Coffee","Toffee Nut Oat Latte",22000,29000,"https://food-cms.grab.com/compressed_webp/items/IDITE20251123135412029037/detail/b5c7d7ee_9bb39c2260fdaec.webp"],
     ["Coffee","Vanilla Latte",26000,34000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193130027096/detail/e6f61022_eda82d03ffa2627.webp"],
     ["Non-Coffee","Avocado Caramel",28000,38000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193147016654/detail/559de687_d0ce7a477821c37.webp"],
     ["Non-Coffee","Avocado Milk",24000,34000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193148086543/detail/fd59074d_5395c2fe71dbaa7.webp"],
@@ -58,7 +62,6 @@ const rawKK = [
     ["Non-Coffee","Raspberry Hibiscus",20000,27000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193149052378/detail/7ba226ae_3d05dece9480be2.webp"],
     ["Non-Coffee","Susu Grass Jelly",24000,32000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193149060970/detail/0c699bd8_168caaa10f5f95c.webp"],
     ["Non-Coffee","Thai Tea Loaded",null,27000,"https://food-cms.grab.com/compressed_webp/items/IDITE20260504023427054203/detail/5f77bd44_731b4ee712854b3.webp"],
-    ["Non-Coffee","Toffe Nut Choco Macchiato",22000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/1ef5180c-efe9-429d-b255-ce63277548a6_ec742ff0-d8d7-6f86-f84b-daabc4ee543c.png?auto=format"],
     ["Non-Coffee","Vanilla Kenangan Frappe",25000,32000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250701082014035176/detail/f4c784b7_8915c14d7b17582.webp"],
     ["Makanan", "Bananachoco Soft Baked Cookie", 18000, null, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/7d39bb8b-19ec-4d8c-aa6c-e7942b916b74_e71c8ac9-3078-4a9c-aaf2-e741a3da6a29.png?auto=format"],
     ["Makanan", "Oatmeal Raisin Soft Baked Cookie", 18000, null, "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/0919f58b-6e46-4091-917e-850f39461d4e_b92639bf-dd7d-4e4a-a1fd-46f4d940075a.png?auto=format"],
@@ -70,7 +73,6 @@ const rawKK = [
     ["Makanan","Butter Croissant",15000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/db92aac9-45b6-4d34-8c80-8376eaaf873c_9d55c3c9-52d8-ba1d-93f0-d3463fccf78c.png?auto=format"],
     ["Makanan","Canele Aren",15000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/b839edd5-c9f8-44d3-97e8-b60cdddf1f2c_951c3451-e0e3-46d2-9f8a-c2cfd1700147.png?auto=format"],
     ["Makanan","Canele Original",13000,null,"https://food-cms.grab.com/compressed_webp/items/IDITE20251211192434026758/detail/f3748a41_319e31bd7ec6b3f.webp"],
-    ["Makanan","Canele Toffee Nut Crumble",15000,null,"https://food-cms.grab.com/compressed_webp/items/IDITE20251211192433012142/detail/94793536_6425ab37b5ac942.webp"],
     ["Makanan","Choco Chip Cookies",14000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/26fda6fc-f6aa-4fc0-b6e6-304be6c3c38a_e4d2e3fc-27e8-c6b3-8746-363e0e135588.png?auto=format"],
     ["Makanan","Choco Muffin",15000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/48b6dfe9-6642-4f01-a2db-5fe5443c9944_b7bb083c-dc42-4221-b368-d262394e63cb.png?auto=format"],
     ["Makanan","Chocolate Choux Puff",12000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/4e97635e-d433-42db-a9b5-7aaba05ab108_eb464661-b1cc-4bc8-a729-6cb15151ffc0.png?auto=format"],
@@ -115,7 +117,9 @@ const generatedKKProducts = rawKK.map((item, idx) => {
     let sugars = null;
     let defaultSugar = null;
     
-    if (category !== "Makanan") {
+    const isMakanan = category === "Makanan" || name.includes("Bagel");
+    
+    if (!isMakanan) {
         if (regPrice) sizes.push({ name: "Regular", promoPrice: promoReg, originalPrice: regPrice });
         if (lrgPrice) sizes.push({ name: "Large", promoPrice: promoLrg, originalPrice: lrgPrice });
         
@@ -132,8 +136,8 @@ const generatedKKProducts = rawKK.map((item, idx) => {
         id: `kk-${idx}`, 
         category, 
         name,
-        originalPrice: category === "Makanan" ? regPrice : (sizes.length > 0 ? sizes[0].originalPrice : 0),
-        promoPrice: category === "Makanan" ? promoReg : (sizes.length > 0 ? sizes[0].promoPrice : 0),
+        originalPrice: isMakanan ? regPrice : (sizes.length > 0 ? sizes[0].originalPrice : 0),
+        promoPrice: isMakanan ? promoReg : (sizes.length > 0 ? sizes[0].promoPrice : 0),
         brand: "Kopi Kenangan",
         image: image,
         isPackage: false,
@@ -142,82 +146,6 @@ const generatedKKProducts = rawKK.map((item, idx) => {
         defaultSugar
     };
 });
-
-// Penambahan menu Paket dari gambar yang dikirimkan
-const paketKopiKenangan = [
-    {
-        id: "kk-paket-1",
-        category: "Paket Bundling",
-        name: "2 Pcs Butterscotch Aren Latte + 2 Pcs Roti Susu",
-        originalPrice: 60000,
-        promoPrice: 35000,
-        brand: "Kopi Kenangan",
-        image: "https://i.imgur.com/vBPYtMI.png", 
-        isPackage: true,
-        sizes: [],
-        sugars: []
-    },
-    {
-        id: "kk-paket-2",
-        category: "Paket Bundling",
-        name: "3 Pcs Kopi Kenangan Mantan",
-        originalPrice: 57000,
-        promoPrice: 37000,
-        brand: "Kopi Kenangan",
-        image: "https://i.imgur.com/7AJXMkW.png", 
-        isPackage: true,
-        sizes: [],
-        sugars: []
-    },
-    {
-        id: "kk-paket-3",
-        category: "Paket Bundling",
-        name: "2 Pcs Large Kopi Kenangan Mantan",
-        originalPrice: 50000,
-        promoPrice: 30000,
-        brand: "Kopi Kenangan",
-        image: "https://i.imgur.com/0zJE2ca.png", 
-        isPackage: true,
-        sizes: [],
-        sugars: []
-    },
-    {
-        id: "kk-paket-4",
-        category: "Paket Bundling",
-        name: "2 Pcs Matcha Latte",
-        originalPrice: 50000,
-        promoPrice: 30000,
-        brand: "Kopi Kenangan",
-        image: "https://i.imgur.com/KgdUnd5.png", 
-        isPackage: true,
-        sizes: [],
-        sugars: []
-    },
-    {
-        id: "kk-paket-5",
-        category: "Paket Bundling",
-        name: "Hazelnut Dutch Choco + Adam Ayam Toast + Roti Coklat Klasik",
-        originalPrice: 56000,
-        promoPrice: 36500,
-        brand: "Kopi Kenangan",
-        image: "https://i.imgur.com/h5LkRPs.png", 
-        isPackage: true,
-        sizes: [],
-        sugars: []
-    },
-    {
-        id: "kk-paket-6",
-        category: "Paket Bundling",
-        name: "2 Pcs Butterscotch Kenangan Frappe",
-        originalPrice: 60000,
-        promoPrice: 35000,
-        brand: "Kopi Kenangan",
-        image: "https://i.imgur.com/k7Yv795.png", 
-        isPackage: true,
-        sizes: [],
-        sugars: []
-    }
-];
 
 window.products = [
     { id: "901", category: "Coffee", name: "Matcha Caramel Coffee Mousse", originalPrice: 26000, promoPrice: 16000, brand: "Tomoro Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/f4d1db53-13b7-4a0d-a9f6-ca6742859419_116R_XfVNh51pkIzKrd1cLqYGdtemHsOC.jpeg?auto=format" },
@@ -264,4 +192,4 @@ window.products = [
     { id: "138", category: "Non-Coffee", name: "Pink Pop Lemonade", originalPrice: 14000, promoPrice: 10000, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230116155019015218/detail/36076b86_3a72d99a8b4.webp" },
     { id: "139", category: "Non-Coffee", name: "Pink Pop Lemon Tea", originalPrice: 17000, promoPrice: 11500, brand: "Tomoro Coffee", image: "https://food-cms.grab.com/compressed_webp/items/IDITE20230116155019049154/detail/85cf8914_28542950b08.webp" },
     { id: "142", category: "Non-Coffee", name: "Chocolate Frappe", originalPrice: 24000, promoPrice: 15000, brand: "Tomoro Coffee", image: "https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/bce80055-6bf6-493f-9c94-15a8342e0cc9_menu-item-image_1715226267850.jpg?auto=format" }
-].concat(generatedKKProducts).concat(paketKopiKenangan);
+].concat(generatedKKProducts);
