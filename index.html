@@ -127,15 +127,21 @@
 
         const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price || 0);
         const getTotalItems = () => state.cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
-        const getTotalPrice = () => state.cart.reduce((sum, item) => sum + ((item.promoPrice || 0) * (item.quantity || 0)), 0);
+        const getTotalPrice = () => {
+            let sum = state.cart.reduce((s, item) => s + ((item.promoPrice || 0) * (item.quantity || 0)), 0);
+            if (state.cart.length > 0 && state.cart[0].brand === 'Kopi Kenangan' && getTotalItems() === 1) {
+                sum += 1500;
+            }
+            return sum;
+        };
         const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
         
         const KK_WIFI_PASSWORDS = {
             1: "TemanKenangan#01", 2: "SelaluSeru@02", 3: "WorkFromKenangan+03", 4: "SahabatSetia=4",
             5: "PaduanPas!05", 6: "AndalanMantan#06", 7: "NyantaiNgopi@07", 8: "KenanganNyaman+08",
             9: "SepenuhHati=09", 10: "AsliAsik!10", 11: "KopiKenanganMantan#11", 12: "CafeMaltLatte@12",
-            13: "SparksAmericano+13", 14: "KenanganFrappe=14", 15: "SusuGrassJelly!15", 16: "KopiPenyelamat#16",
-            17: "RasaKangen@17", 18: "CoklatKlasik+18", 19: "SaudiSpicy=19", 20: "ChiMateNikmat!20",
+            13: "SparksAmericano+13", 14: "KenanganFrappe=14", 15: "SusuGrassJelly!15", 16: "AdamAyam#16",
+            17: "FriendChip@17", 18: "CoklatKlasik+18", 19: "SaudiSpicy=19", 20: "ChiMateNikmat!20",
             21: "ColorpopBubble#21", 22: "TwinsTumbler@22", 23: "CuteCapybara+23", 24: "BaliKintamani=24",
             25: "JuwaraBeans!25", 26: "SelfRewardDulu#26", 27: "WorkLifeNgopi@27", 28: "SetegukEspresso+28",
             29: "JajanKenangan=29", 30: "SehidupSehati!30", 31: "KopiFavoritmu#31"
@@ -155,7 +161,6 @@
                 state.selectedKKStore = store;
                 state.showStoreSearch = false;
                 
-                // Otomatis update lokasi pengambilan di keranjang ke store yang dipilih
                 state.storeLocation = store.name; 
                 
                 if (!state.hasSeenKKPopup) {
@@ -166,7 +171,6 @@
             }
         }
 
-        // Fungsi khusus pencarian cabang (Tanpa me-refresh seluruh halaman)
         window.handleStoreSearch = function(query) {
             state.storeSearchQuery = query;
             const container = document.getElementById('store-list-container');
@@ -343,18 +347,6 @@
                     showToast(`Keranjang berisi ${currentBrand}.<br>Checkout atau Hapus dulu ya!`, 'error');
                     return; 
                 }
-
-                const hasPackageInCart = state.cart.some(item => item.isPackage);
-                const isAddingPackage = state.activeProduct.isPackage;
-
-                if (hasPackageInCart && !isAddingPackage) {
-                    showToast('Keranjang berisi Menu Paket.<br>Tidak bisa digabung dengan menu biasa!', 'error');
-                    return;
-                }
-                if (!hasPackageInCart && isAddingPackage) {
-                    showToast('Menu Paket tidak bisa digabung.<br>Checkout menu biasa dulu ya!', 'error');
-                    return;
-                }
             }
 
             let finalPrice = state.activeProduct.promoPrice;
@@ -424,12 +416,6 @@
 
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
 
-            const hasPackageInCart = state.cart.some(item => item.isPackage);
-
-            if (orderBrand === 'Kopi Kenangan' && !hasPackageInCart && getTotalItems() < 2) {
-                showToast('Minimal pembelian menu biasa Kopi Kenangan adalah 2 item.', 'error');
-                return;
-            }
             if (state.orderType === 'scheduled' && !state.scheduledTime) {
                 showToast('Jam pengambilan belum diisi!', 'error');
                 return;
@@ -455,9 +441,16 @@
                 if (item.note && item.note.trim() !== '') message += `   note: ${item.note}\n`;
                 message += `   harga: ${formatPrice(item.promoPrice * item.quantity)}\n`;
             });
+
+            let isSingleItemKK = orderBrand === 'Kopi Kenangan' && getTotalItems() === 1;
+            if (isSingleItemKK) {
+                message += `• Biaya Pembelian 1 Item\n`;
+                message += `   harga: Rp 1.500\n`;
+            }
             
             message += `\nTotal: ${formatPrice(getTotalPrice())}\n--------------------------------\n`;
             
+           
             message += `Pick Up Atas Nama: ${finalName}\n`; 
             message += `Lokasi Ambil: ${pickupStore}\n`;
             message += `Waktu Pesan: ${state.orderType === 'now' ? 'Sekarang' : `JAM ${state.scheduledTime}`}`;
@@ -584,6 +577,13 @@
         }
 
         function render() {
+            let focusedElementId = document.activeElement ? document.activeElement.id : null;
+            let cursorStart = null, cursorEnd = null;
+            if (focusedElementId && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+                cursorStart = document.activeElement.selectionStart;
+                cursorEnd = document.activeElement.selectionEnd;
+            }
+
             let cartScrollPos = 0;
             const cartScrollEl = document.getElementById('cart-scroll-container');
             if (cartScrollEl) cartScrollPos = cartScrollEl.scrollTop;
@@ -595,7 +595,6 @@
             const app = document.getElementById('app');
             const hour = new Date().getHours();
             
-            // Logika auto-close yang baru (Berdasarkan state.autoClose dari Firebase)
             const isNightClosed = state.autoClose && (hour >= 1 && hour < 9);
             const isClosed = isNightClosed || (typeof state !== 'undefined' && !state.isStoreOpen);
 
@@ -674,6 +673,14 @@
 
             const newNoteScrollEl = document.getElementById('note-scroll-container');
             if (newNoteScrollEl) newNoteScrollEl.scrollTop = noteScrollPos;
+
+            if (focusedElementId) {
+                const el = document.getElementById(focusedElementId);
+                if (el) {
+                    el.focus();
+                    try { el.setSelectionRange(cursorStart, cursorEnd); } catch(e){}
+                }
+            }
         }
 
         function renderHeader() {
@@ -754,9 +761,8 @@
             );
 
             const regularProducts = brandProducts.filter(p => !p.isPackage);
-            const packageProducts = brandProducts.filter(p => p.isPackage);
             
-            const bestSellerProducts = state.searchQuery === '' ? getBestSellerProducts(state.selectedBrand).filter(p => !p.isPackage) : [];
+            const bestSellerProducts = (state.searchQuery === '' && state.selectedBrand !== 'Kopi Kenangan') ? getBestSellerProducts(state.selectedBrand).filter(p => !p.isPackage) : [];
             const categories = [...new Set(regularProducts.map(p => p.category))];
             
             const notes = {
@@ -846,7 +852,6 @@
                     <div class="sticky top-[72px] sm:top-20 z-30 category-rail py-4 overflow-x-auto hide-scroll backdrop-blur-md bg-background/90">
                         <nav class="mx-auto max-w-7xl px-5 sm:px-8 flex gap-2 min-w-max">
                             ${categories.map((cat, index) => `<button onclick="document.getElementById('cat-${index}').scrollIntoView()" class="brand-category-pill px-4 sm:px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-semibold bg-transparent border border-border text-subtle">${cat}</button>`).join('')}
-                            ${packageProducts.length > 0 ? `<button onclick="document.getElementById('paket-khusus').scrollIntoView()" class="brand-category-pill px-4 sm:px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-bold bg-[#B43A34]/10 border border-[#B43A34]/30 text-[#B43A34]">Special Deals</button>` : ''}
                         </nav>
                     </div>
 
@@ -866,21 +871,6 @@
                                 </section>
                             `;
                         }).join('')}
-                        
-                        ${packageProducts.length > 0 ? `
-                            <section id="paket-khusus" class="scroll-mt-36 pt-4 sm:pt-8 border-t-2 border-dashed border-border/80">
-                                <div class="flex items-end justify-between gap-4 mb-6 sm:mb-10 mt-6">
-                                    <div>
-                                        <p class="text-[10px] uppercase tracking-[0.26em] text-[#B43A34] font-bold mb-3">Special Deals</p>
-                                        <h3 class="font-heading text-[2rem] sm:text-5xl font-semibold text-foreground tracking-[-0.06em] leading-none">Paket Bundling</h3>
-                                    </div>
-                                    <span class="text-xs uppercase tracking-[0.18em] text-subtle font-semibold">${packageProducts.length} Paket</span>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-5 sm:gap-y-8">
-                                    ${packageProducts.map(product => renderProductTile(product)).join('')}
-                                </div>
-                            </section>
-                        ` : ''}
                     </div>
                 </section>
             `;
@@ -995,6 +985,16 @@
                                     <p class="text-subtle font-medium">Keranjang masih kosong.</p>
                                 </div>
                             ` : `
+                                ${getTotalItems() === 1 && state.cart[0].brand === 'Kopi Kenangan' ? `
+                                    <div class="mb-4 bg-amber-50 border border-amber-200 p-4 rounded-[1.25rem] flex items-start gap-3">
+                                        <span class="text-xl">⚠️</span>
+                                        <div>
+                                            <h4 class="font-bold text-amber-900 text-sm mb-1">Peringatan Pembelian</h4>
+                                            <p class="text-[11px] text-amber-800 leading-relaxed">Pembelian minimal 2 item. Apabila hanya membeli 1 item makanan/minuman, dikenakan biaya tambahan sebesar Rp 1.500.</p>
+                                        </div>
+                                    </div>
+                                ` : ''}
+
                                 <div class="space-y-3">
                                     ${state.cart.map(item => `
                                         <div class="flex gap-4 p-3 sm:p-4 bg-surface/70 rounded-[1.5rem] border brand-border relative group">
@@ -1020,6 +1020,13 @@
                                             <button onclick="removeFromCart('${item.cartItemId}')" class="absolute top-4 right-4 text-subtle/45 p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                                         </div>
                                     `).join('')}
+
+                                    ${getTotalItems() === 1 && state.cart[0].brand === 'Kopi Kenangan' ? `
+                                        <div class="flex justify-between items-center p-4 bg-[#B43A34]/10 rounded-[1.5rem] border border-[#B43A34]/20 mt-3">
+                                            <h4 class="font-semibold text-[#B43A34] text-sm">Biaya Pembelian 1 Item</h4>
+                                            <p class="text-sm font-bold text-[#B43A34]">+ Rp 1.500</p>
+                                        </div>
+                                    ` : ''}
                                 </div>
                                 <div class="premium-surface p-5 rounded-[1.5rem] mt-6">
                                     <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-4 flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Waktu Pesan</label>
@@ -1034,8 +1041,7 @@
                                         </div>
                                     ` : ''}
                                 </div>
-                                ${renderPickupNameField()}
-                                ${renderPickupStoreField(inputIcon, inputLabel)}
+                                ${renderPickupNameField()}${renderPickupStoreField(inputIcon, inputLabel)}
                             `}
                         </div>
                         ${state.cart.length > 0 ? `
@@ -1120,11 +1126,9 @@
                 state.searchQuery = ''; 
                 
                 if (brand === 'Kopi Kenangan') {
-                    // Cek apakah store sudah dipilih
                     if (!state.selectedKKStore) {
                         state.showStoreSearch = true;
                         
-                        // Kalau array store masih kosong, load pakai FETCH API dari stores.json
                         if (state.kkStores.length === 0) {
                             state.isLoadingStores = true;
                             fetch('stores.json')
@@ -1154,7 +1158,7 @@
             else {
                 state.selectedBrand = null;
                 state.searchQuery = '';
-                state.showStoreSearch = false; // Reset pencarian store kalau balik home
+                state.showStoreSearch = false;
             }
             
             render();
@@ -1200,7 +1204,6 @@
                 state.isStoreOpen = storeData.isOpen;
                 state.closeReason = storeData.reason;
                 state.closeTime = storeData.time;
-                // autoClose default true kalau undefined di database
                 state.autoClose = storeData.autoClose !== false; 
                 if (typeof render === 'function') render();
             }
