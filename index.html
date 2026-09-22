@@ -82,6 +82,7 @@
     <div id="app"></div>
 
     <script src="data.js"></script>
+<script src="data-premium.js"></script>
 
     <script>
         let savedCart = localStorage.getItem('yasif_cart');
@@ -142,7 +143,7 @@
             9: "SepenuhHati=09", 10: "AsliAsik!10", 11: "KopiKenanganMantan#11", 12: "CafeMaltLatte@12",
             13: "SparksAmericano+13", 14: "KenanganFrappe=14", 15: "SusuGrassJelly!15", 16: "AdamAyam#16",
             17: "FriendChip@17", 18: "CoklatKlasik+18", 19: "SaudiSpicy=19", 20: "ChiMateNikmat!20",
-            21: "KenanganManis#21", 22: "TwinsTumbler@22", 23: "CuteCapybara+23", 24: "BaliKintamani=24",
+            21: "KenanganManis#21", 22: "KopiTemanCurhat@22", 23: "CuteCapybara+23", 24: "BaliKintamani=24",
             25: "JuwaraBeans!25", 26: "SelfRewardDulu#26", 27: "WorkLifeNgopi@27", 28: "SetegukEspresso+28",
             29: "JajanKenangan=29", 30: "SehidupSehati!30", 31: "KopiFavoritmu#31"
         };
@@ -158,17 +159,42 @@
         function selectKKStore(storeId) {
             const store = state.kkStores.find(s => s.id === storeId);
             if (store) {
-                state.selectedKKStore = store;
-                state.showStoreSearch = false;
-                
-                state.storeLocation = store.name; 
-                
-                if (!state.hasSeenKKPopup) {
-                    state.showKKDisclaimer = true;
-                    state.hasSeenKKPopup = true;
+                if (state.selectedKKStore && state.selectedKKStore.id !== storeId && state.cart.length > 0) {
+                    state.pendingStoreId = storeId;
+                    state.showStoreChangeConfirm = true;
+                    render();
+                    return;
                 }
-                render(); 
+                executeStoreChange(store);
             }
+        }
+
+        function executeStoreChange(store) {
+            state.selectedKKStore = store;
+            state.showStoreSearch = false;
+            state.storeLocation = store.name; 
+            if (!state.hasSeenKKPopup) {
+                state.showKKDisclaimer = true;
+                state.hasSeenKKPopup = true;
+            }
+            render(); 
+        }
+
+        function confirmStoreChange() {
+            state.cart = [];
+            saveCart();
+            state.showStoreChangeConfirm = false;
+            const store = state.kkStores.find(s => s.id === state.pendingStoreId);
+            if (store) {
+                executeStoreChange(store);
+            }
+            showToast('Keranjang dikosongkan untuk menyesuaikan harga.', 'error');
+        }
+
+        function cancelStoreChange() {
+            state.showStoreChangeConfirm = false;
+            state.pendingStoreId = null;
+            render();
         }
 
         window.handleStoreSearch = function(query) {
@@ -275,7 +301,15 @@
             const isFeatured = Boolean(options.featured);
             const rankLabel = options.rank ? `Top ${String(options.rank).padStart(2, '0')}` : product.category;
             const safeImage = product.image || 'https://placehold.co/600x750/F7F5F0/77756D?text=No+Image';
-            const displayPromo = product.promoPrice || product.originalPrice;
+            let displayOriginal = product.originalPrice;
+let displayPromo = product.promoPrice || product.originalPrice;
+if (typeof window.getPremiumData === 'function') {
+    let pData = window.getPremiumData(product, state.selectedKKStore?.id, state.selectedBrand);
+    if (pData && (pData.reg || pData.lrg)) {
+        displayOriginal = pData.reg || pData.lrg;
+        displayPromo = Math.floor((displayOriginal * 0.5) + 3500);
+    }
+}
             const displayName = product.name;
 
             const qtyInCart = state.cart.filter(i => i.id === product.id || i.id.startsWith(product.id + '-')).reduce((sum, item) => sum + (item.quantity || 0), 0);
@@ -298,7 +332,7 @@
                                 <p class="mt-1.5 text-[11px] sm:text-xs text-subtle line-clamp-1">${product.category}</p>
                                 <div class="mt-3 flex items-end justify-between gap-2">
                                     <div class="flex flex-col gap-0.5 min-w-0">
-                                        <span class="text-[10px] sm:text-[11px] text-subtle line-through decoration-foreground/30">${formatPrice(product.originalPrice)}</span>
+                                        <span class="text-[10px] sm:text-[11px] text-subtle line-through decoration-foreground/30">${formatPrice(displayOriginal)}</span>
                                         <span class="text-[17px] sm:text-xl font-bold text-foreground tracking-[-0.045em]">${formatPrice(displayPromo)}</span>
                                     </div>
                                     <span class="add-pill shrink-0 rounded-full px-3 sm:px-4 py-2 sm:py-2.5 text-[9px] sm:text-[11px] uppercase tracking-[0.12em] sm:tracking-[0.14em] font-bold inline-flex items-center gap-1.5 sm:gap-2">
@@ -327,7 +361,7 @@
                     <div class="p-3 sm:p-4 flex flex-col flex-1">
                         <h4 class="font-heading font-semibold text-[15px] sm:text-lg text-foreground leading-tight tracking-[-0.04em] line-clamp-2">${product.name}</h4>
                         <div class="mt-auto pt-2 sm:pt-2.5 flex flex-col gap-0.5">
-                            <span class="text-[10px] sm:text-[11px] text-subtle line-through decoration-foreground/30">${formatPrice(product.originalPrice)}</span>
+                            <span class="text-[10px] sm:text-[11px] text-subtle line-through decoration-foreground/30">${formatPrice(displayOriginal)}</span>
                             <span class="text-[18px] sm:text-lg font-bold text-foreground tracking-[-0.04em]">${formatPrice(displayPromo)}</span>
                         </div>
                     </div>
@@ -359,6 +393,13 @@
                 const selectedSize = state.activeProduct.sizes.find(s => s.name === state.tempSize);
                 if (selectedSize && selectedSize.promoPrice) finalPrice = selectedSize.promoPrice;
             }
+            if (typeof window.getPremiumData === 'function') {
+    let pData = window.getPremiumData(state.activeProduct, state.selectedKKStore?.id, state.selectedBrand);
+    if (pData) {
+        let basePremium = (state.tempSize === 'Large' && pData.lrg) ? pData.lrg : (pData.reg || pData.lrg);
+        if (basePremium) finalPrice = Math.floor((basePremium * 0.5) + 3500);
+    }
+}
 
             const baseId = state.activeProduct.id;
             const uniqueId = `${baseId}${finalSize ? '-'+finalSize : ''}${finalSugar ? '-'+finalSugar : ''}`;
@@ -455,8 +496,8 @@
             message += `Lokasi Ambil: ${pickupStore}\n`;
             message += `Waktu Pesan: ${state.orderType === 'now' ? 'Sekarang' : `JAM ${state.scheduledTime}`}`;
 
-            localStorage.removeItem('yasif_cart');
-            state.cart = [];
+            // localStorage.removeItem('yasif_cart');
+            // state.cart = [];
             render();
 
             const whatsappUrl = `https://wa.me/6289678644962?text=${encodeURIComponent(message)}`;
@@ -525,6 +566,29 @@
                             <button onclick="state.showKKDisclaimer=false; render()" class="w-full py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">
                                 Mengerti
                             </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStoreChangeConfirmModal() {
+            return `
+                <div class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                    <div class="absolute inset-0 diffused-backdrop" onclick="cancelStoreChange()"></div>
+                    <div class="luxury-panel w-full max-w-[400px] rounded-[2rem] z-10 overflow-hidden flex flex-col relative">
+                        <div class="px-6 py-7 text-center">
+                            <div class="w-16 h-16 bg-[#B43A34]/10 text-[#B43A34] rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            </div>
+                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">Ganti Cabang?</h3>
+                            <p class="text-sm text-subtle leading-relaxed mb-6">
+                                Mengganti cabang akan <strong class="text-foreground">mengosongkan keranjangmu</strong> saat ini karena harga menu bisa berbeda. Lanjut ganti cabang?
+                            </p>
+                            <div class="flex gap-3">
+                                <button onclick="cancelStoreChange()" class="flex-1 py-3.5 bg-surface border border-border text-foreground rounded-full font-semibold text-sm tracking-[-0.01em]">Batal</button>
+                                <button onclick="confirmStoreChange()" class="flex-1 py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">Ya, Ganti</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -665,6 +729,7 @@
                     ${state.showTutorial ? renderTutorialModal() : ''} 
                     ${state.showDisclaimer ? renderDisclaimerModal() : ''}
                     ${state.showKKDisclaimer ? renderKKDisclaimerModal() : ''}
+                    ${state.showStoreChangeConfirm ? renderStoreChangeConfirmModal() : ''}
                 </div>
             `;
 
@@ -884,6 +949,13 @@
                 const selectedSize = p.sizes.find(s => s.name === state.tempSize);
                 if (selectedSize && selectedSize.promoPrice) displayPrice = selectedSize.promoPrice;
             }
+            if (typeof window.getPremiumData === 'function') {
+    let pData = window.getPremiumData(p, state.selectedKKStore?.id, state.selectedBrand);
+    if (pData) {
+        let basePremium = (state.tempSize === 'Large' && pData.lrg) ? pData.lrg : (pData.reg || pData.lrg);
+        if (basePremium) displayPrice = Math.floor((basePremium * 0.5) + 3500);
+    }
+}
 
             return `
                 <div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5">
@@ -1139,6 +1211,13 @@
                                         name: s.name.trim(),
                                         address: s.address
                                     }));
+                                    
+                                    state.kkStores.unshift({
+                                        id: 99999,
+                                        name: "⚠️ STORE HARGA KHUSUS (hanya untuk store tertentu)",
+                                        address: "Pilih lokasi ini Apabila Store Yang Di Pilih Beda Harga."
+                                    });
+                                    
                                     state.isLoadingStores = false;
                                     render();
                                 })
