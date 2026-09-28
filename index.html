@@ -1251,12 +1251,6 @@ if (typeof window.getPremiumData === 'function') {
                                         address: s.address
                                     }));
                                     
-                                    state.kkStores.unshift({
-                                        id: 99999,
-                                        name: "⚠️ STORE HARGA KHUSUS (hanya untuk store tertentu)",
-                                        address: "Pilih lokasi ini Apabila Store Yang Di Pilih Beda Harga."
-                                    });
-                                    
                                     state.isLoadingStores = false;
                                     render();
                                 })
