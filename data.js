@@ -91,7 +91,6 @@ const rawKK = [
     ["Makanan","Roti Srikaya",15000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/bb7f1969-adf1-4402-b565-871903609693_dbf90a98-0acd-2f08-0505-b83f77186496.png?auto=format"],
     ["Makanan","Roti Susu Manis",10000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/396da488-0f99-4e03-9e4d-a60c2c979074_33396a34-db50-f763-4f98-7ec86de19e27.png?auto=format"],
     ["Makanan","Salt Bread Abon",14000,null,"https://huawei-food-cms.grab.com/compressed_webp/items/new-item/photo/09b7f146_e401bd2a47aff24.webp"],
-    ["Makanan","Salt Bread Beef and Cheese",14000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/fab74fca-bc4a-4dff-bad3-7f758510c460_7289c848-7c1c-e767-8582-5fde0af01f81.png?auto=format"],
     ["Makanan","Salt Bread Choco Butter",11000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/7341908f-c1c9-404e-a877-76e2efad8560_c8198f5b-ee48-47c2-a598-9fb61f1e2081.png?auto=format"],
     ["Makanan","Salt Bread Original",11000,null,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/f193bae7-f819-4927-9eb5-2649ea8ba27e_4f833503-36a0-cc16-5b72-5c624190b5be.png?auto=format"],
     ["Makanan","Salt Bread Sausage",14000,null,"https://huawei-food-cms.grab.com/compressed_webp/items/url-d59bae1d/photo/a11e720809d5e4fb.webp"],
