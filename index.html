@@ -208,22 +208,61 @@
                 return;
             }
 
+            const normalize = (str) => String(str).toLowerCase().replace(/[^a-z0-9]/g, '');
+            const normalizedQuery = normalize(query);
+
             const displayStores = state.kkStores.filter(store => 
-                store.name.toLowerCase().includes(q) || 
-                (store.address && store.address.toLowerCase().includes(q))
+                normalize(store.name).includes(normalizedQuery) || 
+                (store.address && normalize(store.address).includes(normalizedQuery))
             ).slice(0, 50);
 
             if (displayStores.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-subtle text-sm font-medium">Cabang tidak ditemukan. Coba kata kunci lain.</div>`;
+                container.innerHTML = `
+                    <div class="text-center py-12 text-subtle flex flex-col items-center gap-3">
+                        <span class="text-3xl">🔍</span>
+                        <p class="text-sm font-semibold text-foreground">Cabang tidak ditemukan.</p>
+                        <p class="text-xs mb-2">Tidak ada di daftar? Bisa ketik manual di bawah ini.</p>
+                        <button onclick="selectManualStore('${escapeHtml(query)}')" class="bg-surface border border-border text-foreground px-5 py-3 rounded-full text-xs font-bold shadow-sm hover:border-[#B43A34]/40 transition-all">
+                            Pilih Cabang: "${escapeHtml(query)}"
+                        </button>
+                    </div>
+                `;
                 return;
             }
+            container.innerHTML = displayStores.map(store => {
+                
+                const isPremium = typeof window.PREMIUM_STORE_IDS !== 'undefined' && window.PREMIUM_STORE_IDS.includes(store.id);
+                
+                const bgClass = isPremium ? 'bg-[#F4F9FF] border-[#BFDBFE]' : 'bg-white border-border/60';
+                const hoverClass = isPremium ? 'hover:border-[#93C5FD]' : 'hover:border-[#B43A34]/40';
+                
+                const indicator = isPremium ? `<span class="w-1.5 h-1.5 rounded-full bg-[#60A5FA] shrink-0"></span>` : '';
 
-            container.innerHTML = displayStores.map(store => `
-                <button onclick="selectKKStore(${store.id})" class="w-full text-left bg-white p-4 rounded-[1.25rem] border border-border/60 shadow-sm hover:border-[#B43A34]/40 transition-colors">
-                    <h4 class="font-semibold text-foreground text-sm line-clamp-1 mb-1">${store.name}</h4>
-                    <p class="text-xs text-subtle line-clamp-2 leading-relaxed">${store.address}</p>
-                </button>
-            `).join('');
+                return `
+                    <button onclick="selectKKStore(${store.id})" class="w-full text-left ${bgClass} p-4 rounded-[1.25rem] border shadow-sm ${hoverClass} transition-colors flex items-start gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <h4 class="font-semibold text-foreground text-sm line-clamp-1">${store.name}</h4>
+                                ${indicator}
+                            </div>
+                            <p class="text-xs text-subtle line-clamp-2 leading-relaxed">${store.address}</p>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        };
+
+        window.selectManualStore = function(storeName) {
+            const manualId = Date.now();
+            
+        
+            state.kkStores.push({
+                id: manualId,
+                name: storeName,
+                address: 'Diinput manual oleh pembeli'
+            });
+            
+            selectKKStore(manualId);
         };
 
         function renderPickupStoreField(inputIcon, inputLabel) {
