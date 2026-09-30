@@ -497,7 +497,7 @@
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
 
             if (!state.allowSingleItem && orderBrand === 'Kopi Kenangan' && getTotalItems() < 2) {
-                showToast('Minimal beli 2 item dulu ya (bisa campur)! ✌️', 'error');
+                showToast('Minimal beli 2 item dulu ya (bisa minuman/makanan)! ✌️', 'error');
                 return;
             }
 
@@ -1112,7 +1112,7 @@
                                             <span class="text-xl">⚠️</span>
                                             <div>
                                                 <h4 class="font-bold text-[#B43A34] text-sm mb-1">Minimal Pembelian 2 Item</h4>
-                                                <p class="text-[11px] text-[#B43A34] leading-relaxed">Mohon maaf, saat ini pesanan Kopi Kenangan minimal 2 item (bisa campur makanan & minuman). Yuk tambah 1 menu lagi!</p>
+                                                <p class="text-[11px] text-[#B43A34] leading-relaxed">Mohon maaf, saat ini pesanan Kopi Kenangan minimal 2 item (bisa mix makanan & minuman).</p>
                                             </div>
                                         </div>
                                     `}
