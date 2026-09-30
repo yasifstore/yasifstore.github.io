@@ -21,6 +21,17 @@
             </label>
         </div>
 
+        <div class="mb-5 flex items-center justify-between p-4 border border-gray-200 rounded-2xl bg-gray-50/50">
+            <div class="text-left">
+                <span class="block text-sm font-bold text-gray-800">Beli 1 Item (Admin 1.500)</span>
+                <span class="block text-[10px] font-medium text-gray-500 mt-0.5">Off = Wajib beli min. 2 item</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="singleItemToggle" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+        </div>
+
         <select id="reasonSelect" class="w-full mb-4 p-4 border border-gray-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-700 bg-white shadow-sm">
             <option value="Admin sedang ada kesibukan lain.">Admin sedang ada kesibukan lain.</option>
             <option value="Lagi istirahat & makan dulu ya.">Lagi istirahat & makan dulu ya.</option>
@@ -53,14 +64,16 @@
         const text = document.getElementById('statusText');
         const reasonSelect = document.getElementById('reasonSelect');
         const autoCloseToggle = document.getElementById('autoCloseToggle');
+        const singleItemToggle = document.getElementById('singleItemToggle');
         
-        let currentStatus = { isOpen: true, reason: "", time: "", autoClose: true };
+        let currentStatus = { isOpen: true, reason: "", time: "", autoClose: true, allowSingleItem: true };
 
         onValue(ref(db, 'store_status'), (snapshot) => {
             const data = snapshot.val();
-            currentStatus = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang sibuk.", time: "", autoClose: true };
+            currentStatus = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang sibuk.", time: "", autoClose: true, allowSingleItem: true };
             
             autoCloseToggle.checked = currentStatus.autoClose !== false;
+            singleItemToggle.checked = currentStatus.allowSingleItem !== false;
 
             if (currentStatus.isOpen) {
                 btn.style.backgroundColor = '#1F2A24';
@@ -80,6 +93,11 @@
             set(ref(db, 'store_status'), currentStatus);
         };
 
+        singleItemToggle.onchange = (e) => {
+            currentStatus.allowSingleItem = e.target.checked;
+            set(ref(db, 'store_status'), currentStatus);
+        };
+
         btn.onclick = () => {
             if (currentStatus.isOpen) {
                 const now = new Date();
@@ -89,14 +107,16 @@
                     isOpen: false, 
                     reason: reasonSelect.value, 
                     time: timeString,
-                    autoClose: currentStatus.autoClose
+                    autoClose: currentStatus.autoClose,
+                    allowSingleItem: currentStatus.allowSingleItem
                 });
             } else {
                 set(ref(db, 'store_status'), { 
                     isOpen: true, 
                     reason: "", 
                     time: "",
-                    autoClose: currentStatus.autoClose
+                    autoClose: currentStatus.autoClose,
+                    allowSingleItem: currentStatus.allowSingleItem
                 });
             }
         };
