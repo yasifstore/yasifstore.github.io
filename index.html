@@ -82,7 +82,7 @@
     <div id="app"></div>
 
     <script src="data.js"></script>
-<script src="data-premium.js"></script>
+    <script src="data-premium.js"></script>
 
     <script>
         let savedCart = localStorage.getItem('yasif_cart');
@@ -113,7 +113,8 @@
             searchQuery: '',
             pickupNameType: 'yasif', 
             customPickupName: '',
-            autoClose: true
+            autoClose: true,
+            allowSingleItem: true
         };
 
         function saveCart() { localStorage.setItem('yasif_cart', JSON.stringify(state.cart)); }
@@ -130,7 +131,7 @@
         const getTotalItems = () => state.cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
         const getTotalPrice = () => {
             let sum = state.cart.reduce((s, item) => s + ((item.promoPrice || 0) * (item.quantity || 0)), 0);
-            if (state.cart.length > 0 && state.cart[0].brand === 'Kopi Kenangan' && getTotalItems() === 1) {
+            if (state.allowSingleItem && state.cart.length > 0 && state.cart[0].brand === 'Kopi Kenangan' && getTotalItems() === 1) {
                 sum += 1500;
             }
             return sum;
@@ -255,7 +256,6 @@
         window.selectManualStore = function(storeName) {
             const manualId = Date.now();
             
-        
             state.kkStores.push({
                 id: manualId,
                 name: storeName,
@@ -341,14 +341,14 @@
             const rankLabel = options.rank ? `Top ${String(options.rank).padStart(2, '0')}` : product.category;
             const safeImage = product.image || 'https://placehold.co/600x750/F7F5F0/77756D?text=No+Image';
             let displayOriginal = product.originalPrice;
-let displayPromo = product.promoPrice || product.originalPrice;
-if (typeof window.getPremiumData === 'function') {
-    let pData = window.getPremiumData(product, state.selectedKKStore?.id, state.selectedBrand);
-    if (pData && (pData.reg || pData.lrg)) {
-        displayOriginal = pData.reg || pData.lrg;
-        displayPromo = Math.floor((displayOriginal * 0.5) + 3500);
-    }
-}
+            let displayPromo = product.promoPrice || product.originalPrice;
+            if (typeof window.getPremiumData === 'function') {
+                let pData = window.getPremiumData(product, state.selectedKKStore?.id, state.selectedBrand);
+                if (pData && (pData.reg || pData.lrg)) {
+                    displayOriginal = pData.reg || pData.lrg;
+                    displayPromo = Math.floor((displayOriginal * 0.5) + 3500);
+                }
+            }
             const displayName = product.name;
 
             const qtyInCart = state.cart.filter(i => i.id === product.id || i.id.startsWith(product.id + '-')).reduce((sum, item) => sum + (item.quantity || 0), 0);
@@ -433,12 +433,12 @@ if (typeof window.getPremiumData === 'function') {
                 if (selectedSize && selectedSize.promoPrice) finalPrice = selectedSize.promoPrice;
             }
             if (typeof window.getPremiumData === 'function') {
-    let pData = window.getPremiumData(state.activeProduct, state.selectedKKStore?.id, state.selectedBrand);
-    if (pData) {
-        let basePremium = (state.tempSize === 'Large' && pData.lrg) ? pData.lrg : (pData.reg || pData.lrg);
-        if (basePremium) finalPrice = Math.floor((basePremium * 0.5) + 3500);
-    }
-}
+                let pData = window.getPremiumData(state.activeProduct, state.selectedKKStore?.id, state.selectedBrand);
+                if (pData) {
+                    let basePremium = (state.tempSize === 'Large' && pData.lrg) ? pData.lrg : (pData.reg || pData.lrg);
+                    if (basePremium) finalPrice = Math.floor((basePremium * 0.5) + 3500);
+                }
+            }
 
             const baseId = state.activeProduct.id;
             const uniqueId = `${baseId}${finalSize ? '-'+finalSize : ''}${finalSugar ? '-'+finalSugar : ''}`;
@@ -496,6 +496,11 @@ if (typeof window.getPremiumData === 'function') {
 
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
 
+            if (!state.allowSingleItem && orderBrand === 'Kopi Kenangan' && getTotalItems() < 2) {
+                showToast('Minimal beli 2 item dulu ya (bisa campur)! ✌️', 'error');
+                return;
+            }
+
             if (state.orderType === 'scheduled' && !state.scheduledTime) {
                 showToast('Jam pengambilan belum diisi!', 'error');
                 return;
@@ -522,7 +527,7 @@ if (typeof window.getPremiumData === 'function') {
                 message += `   harga: ${formatPrice(item.promoPrice * item.quantity)}\n`;
             });
 
-            let isSingleItemKK = orderBrand === 'Kopi Kenangan' && getTotalItems() === 1;
+            let isSingleItemKK = state.allowSingleItem && orderBrand === 'Kopi Kenangan' && getTotalItems() === 1;
             if (isSingleItemKK) {
                 message += `• Biaya Pembelian 1 Item\n`;
                 message += `   harga: Rp 1.500\n`;
@@ -530,13 +535,10 @@ if (typeof window.getPremiumData === 'function') {
             
             message += `\nTotal: ${formatPrice(getTotalPrice())}\n--------------------------------\n`;
             
-           
             message += `Pick Up Atas Nama: ${finalName}\n`; 
             message += `Lokasi Ambil: ${pickupStore}\n`;
             message += `Waktu Pesan: ${state.orderType === 'now' ? 'Sekarang' : `JAM ${state.scheduledTime}`}`;
 
-            // localStorage.removeItem('yasif_cart');
-            // state.cart = [];
             render();
 
             const whatsappUrl = `https://wa.me/6289678644962?text=${encodeURIComponent(message)}`;
@@ -989,12 +991,12 @@ if (typeof window.getPremiumData === 'function') {
                 if (selectedSize && selectedSize.promoPrice) displayPrice = selectedSize.promoPrice;
             }
             if (typeof window.getPremiumData === 'function') {
-    let pData = window.getPremiumData(p, state.selectedKKStore?.id, state.selectedBrand);
-    if (pData) {
-        let basePremium = (state.tempSize === 'Large' && pData.lrg) ? pData.lrg : (pData.reg || pData.lrg);
-        if (basePremium) displayPrice = Math.floor((basePremium * 0.5) + 3500);
-    }
-}
+                let pData = window.getPremiumData(p, state.selectedKKStore?.id, state.selectedBrand);
+                if (pData) {
+                    let basePremium = (state.tempSize === 'Large' && pData.lrg) ? pData.lrg : (pData.reg || pData.lrg);
+                    if (basePremium) displayPrice = Math.floor((basePremium * 0.5) + 3500);
+                }
+            }
 
             return `
                 <div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5">
@@ -1097,13 +1099,23 @@ if (typeof window.getPremiumData === 'function') {
                                 </div>
                             ` : `
                                 ${getTotalItems() === 1 && state.cart[0].brand === 'Kopi Kenangan' ? `
-                                    <div class="mb-4 bg-amber-50 border border-amber-200 p-4 rounded-[1.25rem] flex items-start gap-3">
-                                        <span class="text-xl">⚠️</span>
-                                        <div>
-                                            <h4 class="font-bold text-amber-900 text-sm mb-1">Peringatan Pembelian</h4>
-                                            <p class="text-[11px] text-amber-800 leading-relaxed">Pembelian minimal 2 item. Apabila hanya membeli 1 item makanan/minuman, dikenakan biaya tambahan sebesar Rp 1.500.</p>
+                                    ${state.allowSingleItem ? `
+                                        <div class="mb-4 bg-amber-50 border border-amber-200 p-4 rounded-[1.25rem] flex items-start gap-3">
+                                            <span class="text-xl">⚠️</span>
+                                            <div>
+                                                <h4 class="font-bold text-amber-900 text-sm mb-1">Peringatan Pembelian</h4>
+                                                <p class="text-[11px] text-amber-800 leading-relaxed">Pembelian minimal 2 item. Apabila hanya membeli 1 item makanan/minuman, dikenakan biaya tambahan sebesar Rp 1.500.</p>
+                                            </div>
                                         </div>
-                                    </div>
+                                    ` : `
+                                        <div class="mb-4 bg-[#B43A34]/10 border border-[#B43A34]/20 p-4 rounded-[1.25rem] flex items-start gap-3">
+                                            <span class="text-xl">⚠️</span>
+                                            <div>
+                                                <h4 class="font-bold text-[#B43A34] text-sm mb-1">Minimal Pembelian 2 Item</h4>
+                                                <p class="text-[11px] text-[#B43A34] leading-relaxed">Mohon maaf, saat ini pesanan Kopi Kenangan minimal 2 item (bisa campur makanan & minuman). Yuk tambah 1 menu lagi!</p>
+                                            </div>
+                                        </div>
+                                    `}
                                 ` : ''}
 
                                 <div class="space-y-3">
@@ -1132,7 +1144,7 @@ if (typeof window.getPremiumData === 'function') {
                                         </div>
                                     `).join('')}
 
-                                    ${getTotalItems() === 1 && state.cart[0].brand === 'Kopi Kenangan' ? `
+                                    ${state.allowSingleItem && getTotalItems() === 1 && state.cart[0].brand === 'Kopi Kenangan' ? `
                                         <div class="flex justify-between items-center p-4 bg-[#B43A34]/10 rounded-[1.5rem] border border-[#B43A34]/20 mt-3">
                                             <h4 class="font-semibold text-[#B43A34] text-sm">Biaya Pembelian 1 Item</h4>
                                             <p class="text-sm font-bold text-[#B43A34]">+ Rp 1.500</p>
@@ -1306,17 +1318,19 @@ if (typeof window.getPremiumData === 'function') {
             state.closeReason = "";
             state.closeTime = "";
             state.autoClose = true;
+            state.allowSingleItem = true;
         }
 
         onValue(ref(db, 'store_status'), (snapshot) => {
             const data = snapshot.val();
-            const storeData = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang ada kesibukan lain.", time: "", autoClose: true };
+            const storeData = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang ada kesibukan lain.", time: "", autoClose: true, allowSingleItem: true };
             
             if (typeof state !== 'undefined') {
                 state.isStoreOpen = storeData.isOpen;
                 state.closeReason = storeData.reason;
                 state.closeTime = storeData.time;
                 state.autoClose = storeData.autoClose !== false; 
+                state.allowSingleItem = storeData.allowSingleItem !== false;
                 if (typeof render === 'function') render();
             }
         });
