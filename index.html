@@ -139,7 +139,7 @@
         const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
         
         const KK_WIFI_PASSWORDS = {
-            1: "NgopiSantuy#01", 2: "KopiPenyemangat@02", 3: "WorkFromKenangan+03", 4: "SahabatSetia=4",
+            1: "NgopiSantuy#01", 2: "KopiPenyemangat@02", 3: "SemangatBaru03", 4: "SahabatSetia=4",
             5: "PaduanPas!05", 6: "AndalanMantan#06", 7: "NyantaiNgopi@07", 8: "KenanganNyaman+08",
             9: "SepenuhHati=09", 10: "AsliAsik!10", 11: "KopiKenanganMantan#11", 12: "CafeMaltLatte@12",
             13: "SparksAmericano+13", 14: "KenanganFrappe=14", 15: "SusuGrassJelly!15", 16: "AdamAyam#16",
@@ -707,15 +707,37 @@
                 const reason = isNightClosed ? "Admin sudah tepar dan tertidur nyenyak." : (state.closeReason || "Admin sedang ada kesibukan lain.");
                 const timeText = isNightClosed ? "Jam 01:00 WIB (Otomatis)" : (state.closeTime || "");
 
+                // Logika penarikan password WiFi otomatis sesuai tanggal
+                const todayDate = new Date().getDate(); 
+                const wifiPassword = KK_WIFI_PASSWORDS[todayDate] || "Password belum diupdate";
+
                 app.innerHTML = `
                     <div class="min-h-screen bg-gradient-to-br from-[#F7F5F0] via-[#EFECE6] to-[#E5E0D5] flex flex-col items-center justify-center p-5 text-center">
                         <div class="bg-white/95 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full border border-amber-900/10 relative overflow-hidden">
                             <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-600 via-orange-500 to-rose-600"></div>
                             
+                            <!-- Tombol WiFi di Pojok Kanan Atas -->
+                            <button onclick="document.getElementById('wifi-info-closed').classList.toggle('hidden')" class="absolute top-5 right-5 w-9 h-9 bg-gray-50 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors shadow-sm border border-gray-200 z-10" title="Info WiFi">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.906 14.141 0M2.343 9.343c5.334-5.333 13.981-5.333 19.314 0"/></svg>
+                            </button>
+
                             <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-rose-100">
                                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
+                            </div>
+
+                            <!-- Panel Info WiFi (Disembunyikan secara default) -->
+                            <div id="wifi-info-closed" class="hidden mb-5 bg-gray-50 border border-gray-200 p-4 rounded-2xl text-left shadow-sm relative">
+                                <button onclick="document.getElementById('wifi-info-closed').classList.add('hidden')" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                                <p class="text-[10px] uppercase tracking-widest text-amber-700 font-bold mb-2">📶 WiFi Kenangan</p>
+                                <div class="text-xs text-gray-600 mb-1.5">Username: <strong class="text-gray-800">kopikenangan</strong></div>
+                                <div class="text-xs text-gray-600 flex justify-between items-center gap-2">
+                                    <span class="truncate">Pass: <strong class="text-gray-800">${wifiPassword}</strong></span>
+                                    <button onclick="copyToClipboard('${wifiPassword}')" class="shrink-0 text-amber-700 hover:text-amber-800 font-bold text-[10px] uppercase bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-200 transition-colors">Salin</button>
+                                </div>
                             </div>
 
                             <h2 class="text-2xl font-bold text-gray-900 mb-2 tracking-tight">Yasif Store Sedang Tutup</h2>
