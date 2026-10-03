@@ -32,12 +32,10 @@
             </label>
         </div>
 
-        <select id="reasonSelect" class="w-full mb-4 p-4 border border-gray-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-700 bg-white shadow-sm">
-            <option value="Admin sedang ada kesibukan lain.">Admin sedang ada kesibukan lain.</option>
-            <option value="Lagi istirahat & makan dulu ya.">Lagi istirahat & makan dulu ya.</option>
-            <option value="Stok promo sedang habis.">Stok promo sedang habis.</option>
-            <option value="Admin sudah tepar dan tertidur nyenyak.">Admin sudah tepar dan tertidur nyenyak.</option>
-        </select>
+        <input type="text" id="reasonInput" list="templateMalam" placeholder="Ketik alasan tutup di sini..." class="w-full mb-4 p-4 border border-gray-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-700 bg-white shadow-sm">
+        <datalist id="templateMalam">
+            <option value="Admin sudah tepar dan tertidur nyenyak."></option>
+        </datalist>
 
         <button id="toggleBtn" class="w-full py-4 rounded-full font-bold text-white text-lg mb-4 shadow-md transition-all" style="background-color: gray;">Loading...</button>
         <p id="statusText" class="text-gray-500 font-semibold text-sm"></p>
@@ -62,7 +60,7 @@
         const db = getDatabase(app);
         const btn = document.getElementById('toggleBtn');
         const text = document.getElementById('statusText');
-        const reasonSelect = document.getElementById('reasonSelect');
+        const reasonInput = document.getElementById('reasonInput');
         const autoCloseToggle = document.getElementById('autoCloseToggle');
         const singleItemToggle = document.getElementById('singleItemToggle');
         
@@ -79,12 +77,12 @@
                 btn.style.backgroundColor = '#1F2A24';
                 btn.innerText = 'TUTUP TOKO';
                 text.innerText = '🟢 Toko: BUKA';
-                reasonSelect.disabled = false;
+                reasonInput.disabled = false;
             } else {
                 btn.style.backgroundColor = '#9E3C3C';
                 btn.innerText = 'BUKA TOKO';
                 text.innerText = '🔴 Toko: TUTUP';
-                reasonSelect.disabled = true;
+                reasonInput.disabled = true;
             }
         });
 
@@ -105,7 +103,7 @@
                 
                 set(ref(db, 'store_status'), { 
                     isOpen: false, 
-                    reason: reasonSelect.value, 
+                    reason: reasonInput.value || "Admin sedang ada kesibukan lain.", 
                     time: timeString,
                     autoClose: currentStatus.autoClose,
                     allowSingleItem: currentStatus.allowSingleItem
