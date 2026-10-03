@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>YASIF STORE - Promo Diskon</title>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T3MCJ2C61G"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-T3MCJ2C61G');
-    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -535,8 +528,15 @@
             
             message += `\nTotal: ${formatPrice(getTotalPrice())}\n--------------------------------\n`;
             
+            let finalPickupStore = pickupStore;
+            if (orderBrand === 'Kopi Kenangan' && state.selectedKKStore && typeof window.PREMIUM_STORE_IDS !== 'undefined') {
+                if (window.PREMIUM_STORE_IDS.includes(state.selectedKKStore.id)) {
+                    finalPickupStore += ' •'; 
+                }
+            }
+
             message += `Pick Up Atas Nama: ${finalName}\n`; 
-            message += `Lokasi Ambil: ${pickupStore}\n`;
+            message += `Lokasi Ambil: ${finalPickupStore}\n`;
             message += `Waktu Pesan: ${state.orderType === 'now' ? 'Sekarang' : `JAM ${state.scheduledTime}`}`;
 
             render();
