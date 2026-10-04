@@ -107,7 +107,8 @@
             pickupNameType: 'yasif', 
             customPickupName: '',
             autoClose: true,
-            allowSingleItem: true
+            allowSingleItem: true,
+            minPurchase32k: false
         };
 
         function saveCart() { localStorage.setItem('yasif_cart', JSON.stringify(state.cart)); }
@@ -485,6 +486,12 @@
             if (state.pickupNameType === 'custom') {
                 finalName = (state.customPickupName || '').trim();
                 if (!finalName) { showToast('Isi atas nama pengambilan dulu!', 'error'); return; }
+            }
+
+            // Validasi pop-up untuk syarat minimal 32.000 jika fitur diaktifkan admin
+            if (state.minPurchase32k && getTotalPrice() < 32000) {
+                showToast('Minimal beli Rp 32.000 karena voucher tersisa hanya minimal beli Rp 32.000! ✌️', 'error');
+                return;
             }
 
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
@@ -1140,6 +1147,16 @@
                                     `}
                                 ` : ''}
 
+                                ${state.minPurchase32k && getTotalPrice() < 32000 ? `
+                                    <div class="mb-4 bg-[#B43A34]/10 border border-[#B43A34]/20 p-4 rounded-[1.25rem] flex items-start gap-3 mt-3">
+                                        <span class="text-xl">⚠️</span>
+                                        <div>
+                                            <h4 class="font-bold text-[#B43A34] text-sm mb-1">Syarat Minimal Pembelian</h4>
+                                            <p class="text-[11px] text-[#B43A34] leading-relaxed">Voucher yang tersedia saat ini khusus untuk minimal pembelian Rp 32.000. Yuk, tambah pesananmu!</p>
+                                        </div>
+                                    </div>
+                                ` : ''}
+
                                 <div class="space-y-3">
                                     ${state.cart.map(item => `
                                         <div class="flex gap-4 p-3 sm:p-4 bg-surface/70 rounded-[1.5rem] border brand-border relative group">
@@ -1341,11 +1358,12 @@
             state.closeTime = "";
             state.autoClose = true;
             state.allowSingleItem = true;
+            state.minPurchase32k = false;
         }
 
         onValue(ref(db, 'store_status'), (snapshot) => {
             const data = snapshot.val();
-            const storeData = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang ada kesibukan lain.", time: "", autoClose: true, allowSingleItem: true };
+            const storeData = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang ada kesibukan lain.", time: "", autoClose: true, allowSingleItem: true, minPurchase32k: false };
             
             if (typeof state !== 'undefined') {
                 state.isStoreOpen = storeData.isOpen;
@@ -1353,6 +1371,7 @@
                 state.closeTime = storeData.time;
                 state.autoClose = storeData.autoClose !== false; 
                 state.allowSingleItem = storeData.allowSingleItem !== false;
+                state.minPurchase32k = storeData.minPurchase32k === true;
                 if (typeof render === 'function') render();
             }
         });
