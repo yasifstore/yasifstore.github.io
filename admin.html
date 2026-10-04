@@ -32,6 +32,17 @@
             </label>
         </div>
 
+        <div class="mb-5 flex items-center justify-between p-4 border border-gray-200 rounded-2xl bg-gray-50/50">
+            <div class="text-left">
+                <span class="block text-sm font-bold text-gray-800">Minimal Beli Rp 32.000</span>
+                <span class="block text-[10px] font-medium text-gray-500 mt-0.5">Voucher khusus 32k</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="min32kToggle" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+        </div>
+
         <input type="text" id="reasonInput" list="templateMalam" placeholder="Ketik alasan tutup di sini..." class="w-full mb-4 p-4 border border-gray-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-700 bg-white shadow-sm">
         <datalist id="templateMalam">
             <option value="Admin sudah tepar dan tertidur nyenyak."></option>
@@ -63,15 +74,17 @@
         const reasonInput = document.getElementById('reasonInput');
         const autoCloseToggle = document.getElementById('autoCloseToggle');
         const singleItemToggle = document.getElementById('singleItemToggle');
+        const min32kToggle = document.getElementById('min32kToggle');
         
-        let currentStatus = { isOpen: true, reason: "", time: "", autoClose: true, allowSingleItem: true };
+        let currentStatus = { isOpen: true, reason: "", time: "", autoClose: true, allowSingleItem: true, minPurchase32k: false };
 
         onValue(ref(db, 'store_status'), (snapshot) => {
             const data = snapshot.val();
-            currentStatus = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang sibuk.", time: "", autoClose: true, allowSingleItem: true };
+            currentStatus = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang sibuk.", time: "", autoClose: true, allowSingleItem: true, minPurchase32k: false };
             
             autoCloseToggle.checked = currentStatus.autoClose !== false;
             singleItemToggle.checked = currentStatus.allowSingleItem !== false;
+            min32kToggle.checked = currentStatus.minPurchase32k === true;
 
             if (currentStatus.isOpen) {
                 btn.style.backgroundColor = '#1F2A24';
@@ -96,6 +109,11 @@
             set(ref(db, 'store_status'), currentStatus);
         };
 
+        min32kToggle.onchange = (e) => {
+            currentStatus.minPurchase32k = e.target.checked;
+            set(ref(db, 'store_status'), currentStatus);
+        };
+
         btn.onclick = () => {
             if (currentStatus.isOpen) {
                 const now = new Date();
@@ -106,7 +124,8 @@
                     reason: reasonInput.value || "Admin sedang ada kesibukan lain.", 
                     time: timeString,
                     autoClose: currentStatus.autoClose,
-                    allowSingleItem: currentStatus.allowSingleItem
+                    allowSingleItem: currentStatus.allowSingleItem,
+                    minPurchase32k: currentStatus.minPurchase32k
                 });
             } else {
                 set(ref(db, 'store_status'), { 
@@ -114,7 +133,8 @@
                     reason: "", 
                     time: "",
                     autoClose: currentStatus.autoClose,
-                    allowSingleItem: currentStatus.allowSingleItem
+                    allowSingleItem: currentStatus.allowSingleItem,
+                    minPurchase32k: currentStatus.minPurchase32k
                 });
             }
         };
