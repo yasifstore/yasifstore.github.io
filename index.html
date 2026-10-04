@@ -488,10 +488,17 @@
                 if (!finalName) { showToast('Isi atas nama pengambilan dulu!', 'error'); return; }
             }
 
-            // Validasi pop-up untuk syarat minimal 32.000 jika fitur diaktifkan admin
-            if (state.minPurchase32k && getTotalPrice() < 32000) {
-                showToast('Minimal beli Rp 32.000 karena voucher tersisa hanya minimal beli Rp 32.000! ✌️', 'error');
-                return;
+            // Validasi pop-up untuk syarat minimal 32.000 dan maksimal 39.000
+            if (state.minPurchase32k) {
+                const total = getTotalPrice();
+                if (total < 32000) {
+                    showToast('Minimal beli Rp 32.000 karena voucher tersisa hanya minimal beli Rp 32.000! ✌️', 'error');
+                    return;
+                }
+                if (total > 39000) {
+                    showToast('Gagal! Total belanja melebihi batas diskon promo voucher (Maks Rp 39.000).', 'error');
+                    return;
+                }
             }
 
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
@@ -1147,12 +1154,16 @@
                                     `}
                                 ` : ''}
 
-                                ${state.minPurchase32k && getTotalPrice() < 32000 ? `
+                                ${state.minPurchase32k && (getTotalPrice() < 32000 || getTotalPrice() > 39000) ? `
                                     <div class="mb-4 bg-[#B43A34]/10 border border-[#B43A34]/20 p-4 rounded-[1.25rem] flex items-start gap-3 mt-3">
                                         <span class="text-xl">⚠️</span>
                                         <div>
-                                            <h4 class="font-bold text-[#B43A34] text-sm mb-1">Syarat Minimal Pembelian</h4>
-                                            <p class="text-[11px] text-[#B43A34] leading-relaxed">Voucher yang tersedia saat ini khusus untuk minimal pembelian Rp 32.000. Yuk, tambah pesananmu!</p>
+                                            <h4 class="font-bold text-[#B43A34] text-sm mb-1">Syarat Promo Voucher</h4>
+                                            <p class="text-[11px] text-[#B43A34] leading-relaxed">
+                                                ${getTotalPrice() < 32000 
+                                                    ? 'Voucher yang tersedia saat ini khusus untuk minimal pembelian Rp 32.000. Yuk, tambah pesananmu!' 
+                                                    : 'Total belanja melebihi batas promo voucher (maksimal Rp 39.000). Silakan kurangi pesanan agar bisa checkout!'}
+                                            </p>
                                         </div>
                                     </div>
                                 ` : ''}
