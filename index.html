@@ -501,6 +501,12 @@
                 }
             }
 
+            // Validasi permanen: Khusus beli 2 item, total harga tidak boleh lebih dari 39.000
+            if (getTotalItems() === 2 && getTotalPrice() > 39000) {
+                showToast('Gagal! Total 2 item melebihi batas promo (Maks Rp39.000). Silakan ganti menu lebih murah ATAU tambah item lagi.', 'error');
+                return;
+            }
+
             const orderBrand = state.cart.length > 0 ? state.cart[0].brand : 'Pesanan';
 
             if (!state.allowSingleItem && orderBrand === 'Kopi Kenangan' && getTotalItems() < 2) {
@@ -1163,6 +1169,18 @@
                                                 ${getTotalPrice() < 32000 
                                                     ? 'Voucher yang tersedia saat ini khusus untuk minimal pembelian Rp 32.000. Yuk, tambah pesananmu!' 
                                                     : 'Total belanja melebihi batas promo voucher (maksimal Rp 39.000). Silakan kurangi pesanan agar bisa checkout!'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ` : ''}
+
+                                ${getTotalItems() === 2 && getTotalPrice() > 39000 ? `
+                                    <div class="mb-4 bg-[#B43A34]/10 border border-[#B43A34]/20 p-4 rounded-[1.25rem] flex items-start gap-3 mt-3">
+                                        <span class="text-xl">⚠️️</span>
+                                        <div>
+                                            <h4 class="font-bold text-[#B43A34] text-sm mb-1">Batas Promo Terlampaui</h4>
+                                            <p class="text-[11px] text-[#B43A34] leading-relaxed">
+                                                Khusus pembelian 2 item maksimal <b>Rp 39.000</b>. <br><b>Solusi:</b> Ganti dengan menu yang lebih murah <b>ATAU</b> tambah menu lagi agar bisa checkout.
                                             </p>
                                         </div>
                                     </div>
