@@ -1,4 +1,4 @@
-window.PREMIUM_STORE_IDS = [256, 3056, 172, 3617, 244, 252, 3291, 245, 3302, 296, 585, 3736, 286, 242, 3298, 409, 184, 164, 354, 3226, 206, 2917, 3542, 2620, 3409, 2249, 3611, 99999, 270];
+window.PREMIUM_STORE_IDS = [3709, 257, 2309, 198, 206, 2421, 3341, 256, 3056, 172, 3617, 244, 252, 3291, 245, 3302, 296, 585, 3736, 286, 242, 3298, 409, 184, 164, 354, 3226, 206, 2917, 3542, 2620, 3409, 2249, 3611, 99999, 270];
 
 window.PREMIUM_PRICES = {
     "Taro Cloud Matcha": { reg: 25000, lrg: 32000 },
@@ -23,7 +23,7 @@ window.PREMIUM_PRICES = {
     "Vanilla Latte": { reg: 28000, lrg: 36000 },
     "Avocado Coffee": { reg: 34000, lrg: 44000 },
     "Spanish Latte": { reg: 21000, lrg: 29000 },
-    "Creamy Aren Latte": { reg: 22000, lrg: 33000 },
+    "Creamy Aren Latte": { reg: 24000, lrg: 33000 },
     "Butterscotch Aren Latte": { reg: 22000, lrg: 29000 },
     "Butterscotch Sea Salt Latte": { reg: 27000, lrg: 35000 },
     "Americano": { reg: 20000, lrg: 22000 },
