@@ -77,8 +77,12 @@
 
     <div id="app"></div>
 
-    <script src="data.js"></script>
-    <script src="data-premium.js"></script>
+    <script>
+        // Kode ini akan otomatis membuat versi baru setiap kali web dibuka
+        var antiCache = new Date().getTime();
+        document.write('<script src="data.js?v=' + antiCache + '"><\/script>');
+        document.write('<script src="data-premium.js?v=' + antiCache + '"><\/script>');
+    </script>
 
     <script>
         let savedCart = localStorage.getItem('yasif_cart');
@@ -602,10 +606,10 @@
                             <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">Info Pesanan & Promo</h3>
                             <div class="text-sm text-subtle leading-relaxed mb-6 space-y-2">
                                 <p>Halo! 👋 Waktu proses pesanan sekitar <strong class="text-foreground font-semibold">10-15 menit</strong> Mohon tunggu sampai Admin Merespon Pesanan.</p>
-                                <p>Pantau terus update promo terbaru dengan join Grup WA Yasif Store!</p>
+                                <p>Pantau terus update promo terbaru dengan join Channel WA Yasif Store!</p>
                             </div>
                             <div class="flex gap-3">
-                                <a href="https://chat.whatsapp.com/Bk73XNM1R3D5p8ZdMlna1W" target="_blank" class="flex-1 py-3.5 brand-button-soft rounded-full font-semibold text-sm tracking-[-0.01em] text-center flex items-center justify-center gap-1.5"><span>💬</span> Join Grup</a>
+                                <a href="https://whatsapp.com/channel/0029VbD5v9eLdQel7VENev1n" target="_blank" class="flex-1 py-3.5 brand-button-soft rounded-full font-semibold text-sm tracking-[-0.01em] text-center flex items-center justify-center gap-1.5"><span>📢</span> Channel WA</a>
                                 <button onclick="state.showDisclaimer=false; render()" class="flex-1 py-3.5 brand-button rounded-full font-semibold text-sm tracking-[-0.01em]">Lanjut Pesan</button>
                             </div>
                         </div>
@@ -775,12 +779,16 @@
                                 </div>
                             ` : ''}
 
-                            <div class="space-y-2.5">
+                            <div class="space-y-2.5 mt-2">
                                 <a href="https://wa.me/6289678644962" class="block w-full py-3 border border-gray-300 text-gray-800 font-semibold text-xs rounded-full hover:bg-gray-50 transition-all shadow-2xs">
                                     Hubungi Admin
                                 </a>
                                 
-                                <button onclick="location.reload()" class="w-full py-2.5 border border-gray-200 text-gray-600 font-medium text-[11px] rounded-full hover:bg-gray-50 transition-all">
+                                <a href="https://whatsapp.com/channel/0029VbD5v9eLdQel7VENev1n" target="_blank" class="block w-full py-3 border border-emerald-200 bg-emerald-50 text-emerald-800 font-semibold text-xs rounded-full hover:bg-emerald-100 transition-all shadow-2xs flex items-center justify-center gap-1.5">
+                                    <span class="text-sm">📢</span> Channel WhatsApp
+                                </a>
+                                
+                                <button onclick="location.reload()" class="w-full pt-3 pb-1 text-gray-400 font-medium text-[11px] hover:text-gray-600 transition-all underline decoration-gray-300 underline-offset-2">
                                     Refresh Halaman
                                 </button>
                             </div>
@@ -865,14 +873,25 @@
                                 ${'' /* renderBrandCard('Tomoro Coffee', '02') */}
                             </div>
                             <div class="mt-8 grid grid-cols-2 gap-3">
-                                <a href="https://chat.whatsapp.com/Bk73XNM1R3D5p8ZdMlna1W" target="_blank" class="premium-surface group rounded-[1.5rem] px-5 py-5 flex flex-col gap-5 bg-white/70">
-                                    <div class="flex items-center justify-between"><span class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold">Community</span><span class="text-lg">💬</span></div>
-                                    <div><h3 class="font-heading text-lg font-semibold text-foreground tracking-[-0.03em]">Grup WhatsApp</h3><p class="text-xs text-subtle mt-1">Update promo terbaru</p></div>
-                                </a>
                                 <button onclick="window.location.hash = 'tutorial'" class="premium-surface group rounded-[1.5rem] px-5 py-5 flex flex-col gap-5 text-left bg-white/70">
                                     <div class="flex items-center justify-between"><span class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold">Ordering</span><span class="text-lg">⌁</span></div>
-                                    <div><h3 class="font-heading text-lg font-semibold text-foreground tracking-[-0.03em]">Cara Order</h3><p class="text-xs text-subtle mt-1">Panduan checkout</p></div>
+                                    <div class="mt-auto"><h3 class="font-heading text-lg font-semibold text-foreground tracking-[-0.03em]">Cara Order</h3><p class="text-xs text-subtle mt-1">Panduan checkout</p></div>
                                 </button>
+                                <div class="premium-surface rounded-[1.5rem] p-3.5 flex flex-col bg-white/70">
+                                    <div class="px-1 pt-1.5 mb-3 flex items-center justify-between">
+                                        <span class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold">Community</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2 mt-auto">
+                                        <a href="https://chat.whatsapp.com/Bk73XNM1R3D5p8ZdMlna1W" target="_blank" class="bg-background border border-border rounded-[1rem] py-3 flex flex-col items-center justify-center gap-1.5 hover:border-primary/30 transition-colors">
+                                            <span class="text-lg">💬</span>
+                                            <span class="font-heading text-[11px] font-semibold text-foreground">Grup</span>
+                                        </a>
+                                        <a href="https://whatsapp.com/channel/0029VbD5v9eLdQel7VENev1n" target="_blank" class="bg-background border border-border rounded-[1rem] py-3 flex flex-col items-center justify-center gap-1.5 hover:border-primary/30 transition-colors">
+                                            <span class="text-lg">📢</span>
+                                            <span class="font-heading text-[11px] font-semibold text-foreground">Channel</span>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                             <footer class="mt-12 flex items-center justify-between text-[10px] uppercase tracking-[0.24em] text-subtle/70 font-semibold"><span>Designed by Yasif Store</span><span>2026</span></footer>
                         </div>
@@ -1179,7 +1198,7 @@
 
                                 ${getTotalItems() === 2 && getTotalPrice() > 39000 ? `
                                     <div class="mb-4 bg-[#B43A34]/10 border border-[#B43A34]/20 p-4 rounded-[1.25rem] flex items-start gap-3 mt-3">
-                                        <span class="text-xl">⚠️️</span>
+                                        <span class="text-xl">⚠</span>
                                         <div>
                                             <h4 class="font-bold text-[#B43A34] text-sm mb-1">Batas Promo Terlampaui</h4>
                                             <p class="text-[11px] text-[#B43A34] leading-relaxed">
