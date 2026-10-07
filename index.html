@@ -126,7 +126,7 @@
         const getTotalPrice = () => {
             let sum = state.cart.reduce((s, item) => s + ((item.promoPrice || 0) * (item.quantity || 0)), 0);
             if (state.allowSingleItem && state.cart.length > 0 && state.cart[0].brand === 'Kopi Kenangan' && getTotalItems() === 1) {
-                sum += 1500;
+                sum += 2000;
             }
             return sum;
         };
@@ -134,7 +134,7 @@
         
         const KK_WIFI_PASSWORDS = {
             1: "NgopiSantuy#01", 2: "KopiPenyemangat@02", 3: "SemangatBaru03", 4: "HariCeria=04",
-            5: "KopiTemanSetia!05", 6: "NgopiSeru#06", 7: "NyantaiNgopi@07", 8: "KenanganNyaman+08",
+            5: "KopiTemanSetia!05", 6: "NgopiSeru#06", 7: "KopiTemanPagi@07", 8: "KenanganNyaman+08",
             9: "SepenuhHati=09", 10: "AsliAsik!10", 11: "KopiKenanganMantan#11", 12: "CafeMaltLatte@12",
             13: "SparksAmericano+13", 14: "KenanganFrappe=14", 15: "SusuGrassJelly!15", 16: "AdamAyam#16",
             17: "FriendChip@17", 18: "CoklatKlasik+18", 19: "SaudiSpicy=19", 20: "ChiMateNikmat!20",
@@ -543,7 +543,7 @@
             let isSingleItemKK = state.allowSingleItem && orderBrand === 'Kopi Kenangan' && getTotalItems() === 1;
             if (isSingleItemKK) {
                 message += `• Biaya Pembelian 1 Item\n`;
-                message += `   harga: Rp 1.500\n`;
+                message += `   harga: Rp 2.000\n`;
             }
             
             message += `\nTotal: ${formatPrice(getTotalPrice())}\n--------------------------------\n`;
@@ -1146,7 +1146,7 @@
                                             <span class="text-xl">⚠️</span>
                                             <div>
                                                 <h4 class="font-bold text-amber-900 text-sm mb-1">Peringatan Pembelian</h4>
-                                                <p class="text-[11px] text-amber-800 leading-relaxed">Pembelian minimal 2 item. Apabila hanya membeli 1 item makanan/minuman, dikenakan biaya tambahan sebesar Rp 1.500.</p>
+                                                <p class="text-[11px] text-amber-800 leading-relaxed">Pembelian minimal 2 item. Apabila hanya membeli 1 item makanan/minuman, dikenakan biaya tambahan sebesar Rp 2.000.</p>
                                             </div>
                                         </div>
                                     ` : `
@@ -1215,7 +1215,7 @@
                                     ${state.allowSingleItem && getTotalItems() === 1 && state.cart[0].brand === 'Kopi Kenangan' ? `
                                         <div class="flex justify-between items-center p-4 bg-[#B43A34]/10 rounded-[1.5rem] border border-[#B43A34]/20 mt-3">
                                             <h4 class="font-semibold text-[#B43A34] text-sm">Biaya Pembelian 1 Item</h4>
-                                            <p class="text-sm font-bold text-[#B43A34]">+ Rp 1.500</p>
+                                            <p class="text-sm font-bold text-[#B43A34]">+ Rp 2.000</p>
                                         </div>
                                     ` : ''}
                                 </div>
