@@ -114,6 +114,7 @@ const generatedKKProducts = rawKK.map((item, idx) => {
     let sizes = [];
     let sugars = null;
     let defaultSugar = null;
+    let upgrades = [];
     
     const isMakanan = category === "Makanan" || name.includes("Bagel") || name.includes("Soft");
     
@@ -128,6 +129,64 @@ const generatedKKProducts = rawKK.map((item, idx) => {
             sugars = ["Less Sugar", "Normal Sugar"];
             defaultSugar = "Normal Sugar";
         }
+        
+        const upMap = {
+            "Taro Cloud Matcha": ["Oatside"],
+            "Taro Milk": ["Oatside"],
+            "Taro Cloud Latte": ["Oatside", "Juwara Beans"],
+            "Taro Cloud Milk Tea": [],
+            "Korean Banana Latte": ["Juwara Beans"],
+            "Banana Americano": ["Juwara Beans"],
+            "OG Aren Speculoos Latte": ["Oatside", "Juwara Beans"],
+            "Dua Shot OG Aren": ["Oatside", "Juwara Beans"],
+            "Pistachio Aren Latte": ["Oatside", "Juwara Beans"],
+            "Cafe Malt Latte": [],
+            "Kopi Kenangan Mantan": ["Oatside", "Juwara Beans"],
+            "Caramel Latte": ["Oatside", "Juwara Beans"],
+            "Dua Shot Iced Shaken": ["Oatside", "Juwara Beans"],
+            "Caramel Macchiato": ["Oatside", "Juwara Beans"],
+            "Hazelnut Latte": ["Oatside", "Juwara Beans"],
+            "Kopi Susu Black Aren": ["Oatside", "Juwara Beans"],
+            "Matcha Espresso": ["Oatside", "Juwara Beans"],
+            "Vanilla Latte": ["Oatside", "Juwara Beans"],
+            "Avocado Coffee": ["Oatside", "Juwara Beans"],
+            "Spanish Latte": ["Juwara Beans"],
+            "Creamy Aren Latte": ["Juwara Beans"],
+            "Butterscotch Aren Latte": ["Oatside", "Juwara Beans"],
+            "Butterscotch Sea Salt Latte": ["Oatside", "Juwara Beans"],
+            "Americano": ["Juwara Beans"],
+            "Cappuccino": ["Oatside", "Juwara Beans"],
+            "Latte": ["Oatside", "Juwara Beans"],
+            "Oatside Latte": ["Juwara Beans"],
+            "Oatside Kopi Kenangan Mantan": ["Juwara Beans"],
+            "Mocha Latte": ["Oatside", "Juwara Beans"],
+            "Blueberry Americano": ["Juwara Beans"],
+            "Blueberry Frappe": [],
+            "Chocoberry Frappe": ["Oatside"],
+            "Coffeeberry Frappe": ["Juwara Beans"],
+            "Butterscotch Kenangan Frape": ["Oatside", "Juwara Beans"],
+            "Matcha Kenangan Frappe": ["Oatside"],
+            "Kopi Kenangan Mantan Frappe": ["Oatside", "Juwara Beans"],
+            "Vanilla Kenangan Frappe": ["Oatside"],
+            "Dutch Choco Kenangan Frappe": ["Oatside"],
+            "OG Thai Tea": [],
+            "Thai Tea Loaded": [],
+            "Hazelnut Choco Milk Tea": [],
+            "Lemon Black Tea": [],
+            "Fresh Lemonade": [],
+            "Kenangan Milk Tea": [],
+            "Milo Dinosaurus": [],
+            "Raspberry Hibiscus": [],
+            "Oatside Matcha Latte": []
+        };
+
+        if (upMap[name] !== undefined) {
+            upgrades = upMap[name];
+        } else if (category === "Non-Coffee") {
+            upgrades = ["Oatside"];
+        } else {
+            upgrades = [];
+        }
     }
 
     return {
@@ -141,7 +200,8 @@ const generatedKKProducts = rawKK.map((item, idx) => {
         isPackage: false,
         sizes,
         sugars,
-        defaultSugar
+        defaultSugar,
+        upgrades
     };
 });
 
