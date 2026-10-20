@@ -20,7 +20,6 @@ const rawKK = [
     ["Coffee","Butterscotch Sea Salt Latte",25000,33000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193129017472/detail/a3ebb563_895267a518f2978.webp"],
     ["Coffee","Cafe Malt Latte",23000,30000,"https://i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/20737db3-3d79-409d-be0e-4e2d25b7f2d3_31e7f50a-1561-9ba1-6a85-b77979cf8b66.png?auto=format"],
     ["Coffee","Cappuccino",22000,29000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193131040855/detail/8e5c4d82_c25681b0cfec532.webp"],
-    ["Coffee","Creamy Caramel Latte",26000,33000,"https://huawei-food-cms.grab.com/compressed_webp/items/url-a69e7b1d/photo/8a3fa3a2dcede822.webp"],
     ["Coffee","Caramel Latte",26000,34000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250630193126060859/detail/e9ddffc4_ecba1398e652979.webp"],
     ["Coffee","Caramel Macchiato",28000,38000,"https://food-cms.grab.com/compressed_webp/items/IDITE20250812051421027652/detail/ae93796d_404b2968cc0722e.webp"],
     ["Coffee","Coffeeberry Frappe",25000,32000,"https://huawei-food-cms.grab.com/compressed_webp/items/url-3efbf577/photo/3402bc12b110167e.webp"],
