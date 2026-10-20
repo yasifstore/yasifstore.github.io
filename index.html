@@ -8,7 +8,6 @@
 <meta http-equiv="Expires" content="0" />
     <title>YASIF STORE - Promo Diskon</title>
 
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -108,6 +107,8 @@
             tempQty: 1,
             tempSize: null,
             tempSugar: null,
+            tempOatside: false,
+            tempJuwara: false,
             orderType: 'now',
             scheduledTime: '',
             searchQuery: '',
@@ -441,8 +442,11 @@
                 }
             }
 
+            if (state.tempOatside) finalPrice += 1500;
+            if (state.tempJuwara) finalPrice += 1500;
+
             const baseId = state.activeProduct.id;
-            const uniqueId = `${baseId}${finalSize ? '-'+finalSize : ''}${finalSugar ? '-'+finalSugar : ''}`;
+            const uniqueId = `${baseId}${finalSize ? '-'+finalSize : ''}${finalSugar ? '-'+finalSugar : ''}${state.tempOatside ? '-oat' : ''}${state.tempJuwara ? '-juw' : ''}`;
             const finalQty = state.tempQty || 1;
             
             const existingItem = state.cart.find(item => item.id === uniqueId && item.note === finalNote);
@@ -459,7 +463,9 @@
                     quantity: finalQty,
                     note: finalNote,
                     size: finalSize,
-                    sugar: finalSugar
+                    sugar: finalSugar,
+                    oatside: state.tempOatside,
+                    juwara: state.tempJuwara
                 });
             }
 
@@ -495,7 +501,6 @@
                 if (!finalName) { showToast('Isi atas nama pengambilan dulu!', 'error'); return; }
             }
 
-            // Validasi pop-up untuk syarat minimal 32.000 dan maksimal 39.000
             if (state.minPurchase32k) {
                 const total = getTotalPrice();
                 if (total < 32000) {
@@ -508,7 +513,6 @@
                 }
             }
 
-            // Validasi permanen: Khusus beli 2 item, total harga tidak boleh lebih dari 39.000
             if (getTotalItems() === 2 && getTotalPrice() > 39000) {
                 showToast('Gagal! Total 2 item melebihi batas promo (Maks Rp39.000). Silakan ganti menu lebih murah ATAU tambah item lagi.', 'error');
                 return;
@@ -539,6 +543,12 @@
                 if (item.sugar) {
                     let sg = item.sugar.toLowerCase().replace(' sugar', '').replace('sugar', '').trim();
                     details.push(`sugar: ${sg}`);
+                }
+                if (item.oatside || item.juwara) {
+                    let upArr = [];
+                    if (item.oatside) upArr.push('UP OATSIDE');
+                    if (item.juwara) upArr.push('UP JUWARA');
+                    details.push(upArr.join(' - '));
                 }
                 
                 if (details.length > 0) message += `   ${details.join('  ')}\n`; 
@@ -734,7 +744,6 @@
                 const reason = isNightClosed ? "Admin sudah tepar dan tertidur nyenyak." : (state.closeReason || "Admin sedang ada kesibukan lain.");
                 const timeText = isNightClosed ? "Jam 01:00 WIB (Otomatis)" : (state.closeTime || "");
 
-                // Logika penarikan password WiFi otomatis sesuai tanggal
                 const todayDate = new Date().getDate(); 
                 const wifiPassword = KK_WIFI_PASSWORDS[todayDate] || "Password belum diupdate";
 
@@ -1054,6 +1063,7 @@
                 const selectedSize = p.sizes.find(s => s.name === state.tempSize);
                 if (selectedSize && selectedSize.promoPrice) displayPrice = selectedSize.promoPrice;
             }
+            
             if (typeof window.getPremiumData === 'function') {
                 let pData = window.getPremiumData(p, state.selectedKKStore?.id, state.selectedBrand);
                 if (pData) {
@@ -1061,6 +1071,9 @@
                     if (basePremium) displayPrice = Math.floor((basePremium * 0.5) + 3500);
                 }
             }
+
+            if (state.tempOatside) displayPrice += 1500;
+            if (state.tempJuwara) displayPrice += 1500;
 
             return `
                 <div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5">
@@ -1099,6 +1112,20 @@
                                     <label class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold mb-3 block">Pilih Gula</label>
                                     <div class="flex gap-2 flex-wrap">
                                         ${p.sugars.map(s => `<button onclick="state.tempSugar='${s}'; render()" class="flex-1 min-w-[90px] py-3 rounded-2xl border text-xs font-semibold ${state.tempSugar === s ? 'brand-button' : 'border-border text-subtle'}">${s}</button>`).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${p.upgrades && p.upgrades.length > 0 ? `
+                                <div class="mb-6">
+                                    <label class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold mb-3 block">Upgrade Pilihan</label>
+                                    <div class="flex gap-2">
+                                        ${p.upgrades.includes('Oatside') ? `
+                                            <button onclick="state.tempOatside = !state.tempOatside; render()" class="flex-1 py-3 rounded-2xl border text-xs font-semibold flex flex-col items-center justify-center transition-colors ${state.tempOatside ? 'brand-button border-transparent' : 'bg-surface border-border text-subtle'}">Oatside<span class="text-[9px] mt-0.5 opacity-80 font-normal">+1.500</span></button>
+                                        ` : ''}
+                                        ${p.upgrades.includes('Juwara Beans') ? `
+                                            <button onclick="state.tempJuwara = !state.tempJuwara; render()" class="flex-1 py-3 rounded-2xl border text-xs font-semibold flex flex-col items-center justify-center transition-colors ${state.tempJuwara ? 'brand-button border-transparent' : 'bg-surface border-border text-subtle'}">Juwara Beans<span class="text-[9px] mt-0.5 opacity-80 font-normal">+1.500</span></button>
+                                        ` : ''}
                                     </div>
                                 </div>
                             ` : ''}
@@ -1214,10 +1241,11 @@
                                             <div class="w-20 h-20 rounded-[1.1rem] product-frame overflow-hidden shrink-0"><img src="${item.image}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://placehold.co/200x200/F7F5F0/77756D?text=No+Image'"></div>
                                             <div class="flex-1 pr-9 min-w-0">
                                                 <h4 class="font-heading font-semibold text-foreground text-base tracking-[-0.03em] line-clamp-2">${item.name}</h4>
-                                                ${item.size || item.sugar || item.note ? `
+                                                ${item.size || item.sugar || item.note || item.oatside || item.juwara ? `
                                                     <div class="text-[11px] text-subtle mt-1.5 flex flex-col gap-0.5">
                                                         ${item.size ? `<span>Ukuran: <strong class="font-semibold">${item.size}</strong></span>` : ''}
                                                         ${item.sugar ? `<span>Gula: <strong class="font-semibold">${item.sugar}</strong></span>` : ''}
+                                                        ${item.oatside || item.juwara ? `<span>Upgrade: <strong class="font-semibold brand-text">${[item.oatside ? 'Oatside' : '', item.juwara ? 'Juwara Beans' : ''].filter(Boolean).join(' & ')}</strong></span>` : ''}
                                                         ${item.note ? `<span class="italic text-foreground mt-0.5">Catatan: ${item.note}</span>` : ''}
                                                     </div>
                                                 ` : ''}
@@ -1316,6 +1344,8 @@
                         state.tempQty = 1;
                         state.tempSize = product.sizes && product.sizes.length > 0 ? product.sizes[0].name : null;
                         state.tempSugar = product.defaultSugar || null;
+                        state.tempOatside = false;
+                        state.tempJuwara = false;
                     }
                     state.activeProduct = product;
                     
