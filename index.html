@@ -544,14 +544,12 @@
                     let sg = item.sugar.toLowerCase().replace(' sugar', '').replace('sugar', '').trim();
                     details.push(`sugar: ${sg}`);
                 }
-                if (item.oatside || item.juwara) {
-                    let upArr = [];
-                    if (item.oatside) upArr.push('UP OATSIDE');
-                    if (item.juwara) upArr.push('UP JUWARA');
-                    details.push(upArr.join(' - '));
-                }
-                
                 if (details.length > 0) message += `   ${details.join('  ')}\n`; 
+                
+                let upArr = [];
+                if (item.oatside) upArr.push('UP oatside + 1,5K');
+                if (item.juwara) upArr.push('UP juwara + 1,5K');
+                if (upArr.length > 0) message += `   ${upArr.join(' - ')}\n`; 
                 
                 if (item.note && item.note.trim() !== '') message += `   note: ${item.note}\n`;
                 message += `   harga: ${formatPrice(item.promoPrice * item.quantity)}\n`;
