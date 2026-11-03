@@ -670,15 +670,20 @@
                     <div class="luxury-panel w-full max-w-[400px] rounded-[2rem] z-10 overflow-hidden flex flex-col relative">
                         <div class="px-6 py-7 text-center">
                             <div class="w-16 h-16 bg-[#B43A34]/10 text-[#B43A34] rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span class="text-2xl">📌</span>
+                                <span class="text-2xl">${state.minPurchase32k ? '🎫' : '📌'}</span>
                             </div>
-                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">Penting Sebelum Memesan!</h3>
+                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">${state.minPurchase32k ? 'Info Promo Saat Ini' : 'Penting Sebelum Memesan!'}</h3>
                             <div class="text-sm text-subtle leading-relaxed mb-6 space-y-3 text-left">
-                                <p>1. <strong>Info Harga:</strong> Harga menu dapat berbeda-beda tergantung cabang Kopi Kenangan yang di pilih</p>
-                                <p>2. <strong>Cek Ketersediaan:</strong> Harap cek terlebih dahulu menu yang tersedia di store yang akan dipilih di <strong>aplikasi KOPI KENANGAN</strong> agar mempercepat proses pemesanan, agar tidak perlu konfirmasi ulang apabila ada menu yang kosong.</p>
+                                ${state.minPurchase32k ? `
+                                    <p>Pemberitahuan: Saat ini <strong>voucher yang tersedia hanya untuk minimal pembelian Rp 32.000</strong>.</p>
+                                    <p>Stok promo tanpa minimal nominal sedang kosong.</p>
+                                ` : `
+                                    <p>1. <strong>Info Harga:</strong> Harga menu dapat berbeda-beda tergantung cabang Kopi Kenangan yang di pilih</p>
+                                    <p>2. <strong>Cek Ketersediaan:</strong> Harap cek terlebih dahulu menu yang tersedia di store yang akan dipilih di <strong>aplikasi KOPI KENANGAN</strong> agar mempercepat proses pemesanan, agar tidak perlu konfirmasi ulang apabila ada menu yang kosong.</p>
+                                `}
                             </div>
                             <button onclick="state.showAvailabilityWarning=false; render()" class="w-full py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">
-                                Mengerti & Lanjut
+                                ${state.minPurchase32k ? 'Mengerti & Lanjut Order' : 'Mengerti & Lanjut'}
                             </button>
                         </div>
                     </div>
@@ -769,6 +774,10 @@
             let noteScrollPos = 0;
             const noteScrollEl = document.getElementById('note-scroll-container');
             if (noteScrollEl) noteScrollPos = noteScrollEl.scrollTop;
+
+            let timeScrollPos = 0;
+            const timeScrollEl = document.getElementById('time-scroll-container');
+            if (timeScrollEl) timeScrollPos = timeScrollEl.scrollLeft;
 
             let windowScrollPos = window.scrollY || document.documentElement.scrollTop;
 
@@ -876,6 +885,9 @@
 
             const newNoteScrollEl = document.getElementById('note-scroll-container');
             if (newNoteScrollEl) newNoteScrollEl.scrollTop = noteScrollPos;
+
+            const newTimeScrollEl = document.getElementById('time-scroll-container');
+            if (newTimeScrollEl) newTimeScrollEl.scrollLeft = timeScrollPos;
 
             if (focusedElementId) {
                 const el = document.getElementById(focusedElementId);
@@ -1277,13 +1289,14 @@
                                     </div>
                                     ${state.orderType === 'scheduled' ? `
                                         <div class="mt-2">
-                                            <div class="flex overflow-x-auto gap-2 pb-2 hide-scroll snap-x">
+                                            <div id="time-scroll-container" class="flex overflow-x-auto gap-2 pb-2 hide-scroll snap-x">
                                                 ${generateTimeOptions().map(time => `
                                                     <button onclick="state.scheduledTime='${time}'; render()" class="snap-start shrink-0 py-2.5 px-5 rounded-[1rem] border text-sm font-semibold transition-all ${state.scheduledTime === time ? 'brand-button border-transparent shadow-md' : 'bg-surface border-border text-subtle hover:border-[#B43A34]/40'}">
                                                         ${time}
                                                     </button>
                                                 `).join('')}
                                             </div>
+                                            <p class="text-[10px] text-subtle mt-1.5 text-center italic tracking-wide">← Geser untuk memilih jam →</p>
                                         </div>
                                     ` : ''}
                                 </div>
