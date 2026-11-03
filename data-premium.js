@@ -1,4 +1,4 @@
-window.PREMIUM_STORE_IDS = [378, 240, 3288, 3135, 535, 2848, 159, 290, 3341, 3709, 2393, 3484, 3162, 3822, 2848, 159, 290, 438, 3822, 3709, 257, 2309, 198, 206, 2421, 3341, 256, 3056, 172, 3617, 244, 252, 3291, 245, 3302, 296, 585, 3736, 286, 242, 3298, 409, 184, 164, 354, 3226, 206, 2917, 3542, 2620, 3409, 2249, 3611, 99999, 270];
+window.PREMIUM_STORE_IDS = [378, 240, 3288, 3135, 535, 2848, 381, 2278, 2813, 2389,  159, 290, 3341, 3709, 2393, 3484, 3162, 3822, 2848, 159, 290, 438, 3822, 3709, 257, 2309, 198, 206, 2421, 3341, 256, 3056, 172, 3617, 244, 252, 3291, 245, 3302, 296, 585, 3736, 286, 242, 3298, 409, 184, 164, 354, 3226, 206, 2917, 3542, 2620, 3409, 2249, 3611, 99999, 270];
 
 window.PREMIUM_PRICES = {
     "Taro Cloud Matcha": { reg: 25000, lrg: 32000 },
@@ -57,10 +57,6 @@ window.PREMIUM_PRICES = {
     "Susu Grass Jelly": { reg: 24000, lrg: 32000 },
     "Matcha Latte": { reg: 27000, lrg: 34000 },
     "Oatside Matcha Latte": { reg: 27000, lrg: 34000 },
-    "Blueberry Frappe": { reg: 26000, lrg: 33000 },
-    "Chocoberry Frappe": { reg: 30000, lrg: 37000 },
-    "Coffeeberry Frappe": { reg: 28000, lrg: 35000 },
-    "Blueberry Americano": { reg: 22000, lrg: 29000 },
     "OG Aren Milky Speculoos": { reg: 26000, lrg: 33000 },
     "Bambang Choco Cheese Toast": { reg: 22000 },
     "Adam Ayam Toast": { reg: 25000 },
@@ -82,7 +78,6 @@ window.PREMIUM_PRICES = {
     "Salt Bread Original": { reg: 15000 },
     "Donut Almond": { reg: 17000 },
     "Sandwich Smoked Beef and Cheese": { reg: 25000 },
-    "Sandwich Chicken Tartar": { reg: 25000 },
     "Salt Bread Choco Butter": { reg: 15000 },
     "Roti Coklat Klasik": { reg: 9000 },
     "Roti Susu Manis": { reg: 10000 },
@@ -92,12 +87,11 @@ window.PREMIUM_PRICES = {
     "Join the Dark Side Cookie": { reg: 21000 },
     "Friend Chip Cookie": { reg: 17000 },
     "Salt Bread Sausage": { reg: 18000 },
-    "Canele Original": { reg: 17000 },
-    "Canele Aren": { reg: 19000 },
-    "Choco Muffin": { reg: 19000 },
-    "Aren Apple Pie": { reg: 21000 },
-    "Blueberry Muffin": { reg: 19000 },
-    "Croissant Abon": { reg: 21000 }
+    "Strawberry Peanut Butter Panini": { reg: 23000 },
+    "Choco Peanut Butter Panini": { reg: 23000 },
+    "Classic Peanut Butter Panini": { reg: 21000 },
+    "Gochu Macaroni Chicken": { reg: 26000 },
+    "Rose Spaghetti Sausage": { reg: 26000 }
 };
 
 window.getPremiumData = function(product, storeId, brand) {
