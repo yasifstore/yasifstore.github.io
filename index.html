@@ -483,12 +483,18 @@
 
             if (state.minPurchase32k) {
                 const total = getTotalPrice();
-                if (total < 32000) {
-                    showToast('Minimal beli Rp 32.000 karena voucher tersisa hanya minimal beli Rp 32.000! ✌️', 'error');
+                const totalItems = getTotalItems();
+                
+                // Menentukan batas harga dinamis berdasarkan jumlah item
+                const minPrice = totalItems >= 3 ? 35500 : 32000;
+                const maxPrice = totalItems >= 3 ? 40500 : 39000;
+
+                if (total < minPrice) {
+                    showToast(`Minimal beli Rp ${minPrice.toLocaleString('id-ID')} untuk ${totalItems} item! ✌️`, 'error');
                     return;
                 }
-                if (total > 39000) {
-                    showToast('Gagal! Total belanja melebihi batas diskon promo voucher (Maks Rp 39.000).', 'error');
+                if (total > maxPrice) {
+                    showToast(`Gagal! Total belanja melebihi batas promo voucher (Maks Rp ${maxPrice.toLocaleString('id-ID')} untuk ${totalItems} item).`, 'error');
                     return;
                 }
             } else {
@@ -672,11 +678,14 @@
                             <div class="w-16 h-16 bg-[#B43A34]/10 text-[#B43A34] rounded-full flex items-center justify-center mx-auto mb-4">
                                 <span class="text-2xl">${state.minPurchase32k ? '🎫' : '📌'}</span>
                             </div>
-                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">${state.minPurchase32k ? 'Info Promo Saat Ini' : 'Penting Sebelum Memesan!'}</h3>
+                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">${state.minPurchase32k ? 'Info Promo Saat Ini' : 'Untuk Mempercepat Pesanan!'}</h3>
                             <div class="text-sm text-subtle leading-relaxed mb-6 space-y-3 text-left">
                                 ${state.minPurchase32k ? `
-                                    <p>Pemberitahuan: Saat ini <strong>voucher yang tersedia hanya untuk minimal pembelian Rp 32.000</strong>.</p>
-                                    <p>Stok promo tanpa minimal nominal sedang kosong.</p>
+                                    <p>Pemberitahuan: Saat ini <strong>voucher promo yang tersedia memiliki syarat khusus</strong> berdasarkan jumlah menu.</p>
+                                    <p class="mt-1">
+                                        • 2 Item: Min. 32k - Maks. 39k<br>
+                                        • 3+ Item: Min. 35,5k - Maks. 40,5k
+                                    </p>
                                 ` : `
                                     <p>1. <strong>Info Harga:</strong> Harga menu dapat berbeda-beda tergantung cabang Kopi Kenangan yang di pilih</p>
                                     <p>2. <strong>Cek Ketersediaan:</strong> Harap cek terlebih dahulu menu yang tersedia di store yang akan dipilih di <strong>aplikasi KOPI KENANGAN</strong> agar mempercepat proses pemesanan, agar tidak perlu konfirmasi ulang apabila ada menu yang kosong.</p>
@@ -1009,7 +1018,7 @@
                             <aside class="flex flex-col gap-4">
                                 <div class="premium-surface brand-border rounded-[1.75rem] px-6 py-6">
                                     <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-3">Order Note</p>
-                                    <p class="text-sm leading-relaxed text-subtle tracking-[-0.01em]">Harga sudah final, termasuk diskon dan biaya admin. Pilih ukuran Large atau Regular (jika tersedia) di masing-masing produk.</p>
+                                    <p class="text-sm leading-relaxed text-subtle tracking-[-0.01em]">Harga sudah final, termasuk diskon dan biaya admin. Harga menu dapat berbeda-beda tiap store.</p>
                                 </div>
                                 
                                 <div class="premium-surface brand-border rounded-[1.75rem] px-6 py-5 bg-[#B43A34]/5 border-[#B43A34]/20">
@@ -1218,15 +1227,15 @@
                                     `}
                                 ` : ''}
 
-                                ${state.minPurchase32k && (getTotalPrice() < 32000 || getTotalPrice() > 39000) ? `
+                                ${state.minPurchase32k && (getTotalPrice() < (getTotalItems() >= 3 ? 35500 : 32000) || getTotalPrice() > (getTotalItems() >= 3 ? 40500 : 39000)) ? `
                                     <div class="mb-4 bg-[#B43A34]/10 border border-[#B43A34]/20 p-4 rounded-[1.25rem] flex items-start gap-3 mt-3">
                                         <span class="text-xl">⚠️</span>
                                         <div>
                                             <h4 class="font-bold text-[#B43A34] text-sm mb-1">Syarat Promo Voucher</h4>
                                             <p class="text-[11px] text-[#B43A34] leading-relaxed">
-                                                ${getTotalPrice() < 32000 
-                                                    ? 'Voucher yang tersedia saat ini khusus untuk minimal pembelian Rp 32.000. Yuk, tambah pesananmu!' 
-                                                    : 'Total belanja melebihi batas promo voucher (maksimal Rp 39.000). Silakan kurangi pesanan agar bisa checkout!'}
+                                                ${getTotalPrice() < (getTotalItems() >= 3 ? 35500 : 32000) 
+                                                    ? 'Voucher saat ini khusus minimal pembelian Rp ' + (getTotalItems() >= 3 ? '35.500' : '32.000') + '. Yuk, sesuaikan pesananmu!' 
+                                                    : 'Total belanja melebihi batas promo voucher (maksimal Rp ' + (getTotalItems() >= 3 ? '40.500' : '39.000') + '). Silakan sesuaikan pesanan!'}
                                             </p>
                                         </div>
                                     </div>
@@ -1316,8 +1325,8 @@
 
         function renderTutorialModal() {
             const steps = [
-                { icon: "01", title: "Pilih Menu", desc: "Pilih menu favoritmu, lalu masukkan ke keranjang. Harga sudah final termasuk biaya admin." },
-                { icon: "02", title: "Checkout WA", desc: "Isi lokasi store pengambilan, kemudian kirim list pesanan ke WhatsApp Admin." },
+                { icon: "01", title: "Pilih Menu", desc: "Pilih menu favoritmu, lalu masukkan ke keranjang (Harga dapat berbeda tergantung store yang di pilih)" },
+                { icon: "02", title: "Checkout WA", desc: "Isi nama untuk pengambilan, kemudian kirim list pesanan ke WhatsApp Admin." },
                 { icon: "03", title: "Pembayaran", desc: "Lakukan pembayaran sesuai instruksi Admin di WhatsApp." },
                 { icon: "04", title: "Ambil Pesanan", desc: "Datang ke store dan tunjukkan bukti pemesanan dari Admin. Selesai." }
             ];
