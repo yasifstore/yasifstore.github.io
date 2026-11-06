@@ -79,27 +79,25 @@
     <script>
         var antiCache = new Date().getTime();
         document.write('<script src="data.js?v=' + antiCache + '"><\/script>');
-        document.write('<script src="data-premium.js?v=' + antiCache + '"><\/script>');
     </script>
 
     <script>
-        // Load riwayat keranjang (filter supaya memastikan tidak ada produk selain Kopi Kenangan yang tersangkut)
         let savedCart = localStorage.getItem('yasif_cart');
         let parsedCart = savedCart ? JSON.parse(savedCart) : [];
         parsedCart = parsedCart.filter(item => item.brand === 'Kopi Kenangan');
 
-        // Load riwayat store sebelumnya
         let savedStore = localStorage.getItem('yasif_store');
         let parsedStore = savedStore ? JSON.parse(savedStore) : null;
 
         let state = {
-            selectedBrand: null, // Memastikan halaman awal muncul terlebih dahulu
+            selectedBrand: null, 
             kkStores: [],
             isLoadingStores: false,
+            isLoadingMenu: false,
             showStoreSearch: false,
             selectedKKStore: parsedStore,
             showStorePrompt: false, 
-            hasSeenStorePrompt: false, // Track agar popup "lanjut pesanan" hanya muncul 1x saat user klik brand
+            hasSeenStorePrompt: false, 
             storeSearchQuery: '',
             cart: parsedCart,
             showCart: false,
@@ -128,22 +126,97 @@
             showScheduleWarning: false
         };
 
-        // HELPER UNTUK MENGHASILKAN PILIHAN JAM PER 15 MENIT (Min 30 Menit dari sekarang)
+        window.syncLiveWithLocal = function(liveItems) {
+            // 1. Cek apakah ini Store Premium berdasarkan harga "Kopi Kenangan Mantan" dari API
+            let isPremiumStore = false;
+            const kkmLive = liveItems.find(live => live.name.toLowerCase().trim() === "kopi kenangan mantan");
+            
+            if (kkmLive) {
+                const kkmPrice = kkmLive.outletPrice || kkmLive.normalPrice || 19000;
+                if (kkmPrice > 19000) { // Jika di atas 19.000, otomatis dikategorikan Store Premium
+                    isPremiumStore = true;
+                }
+            }
+
+            window.products.forEach(localProduct => {
+                const liveMatch = liveItems.find(live => 
+                    live.name.toLowerCase().trim() === localProduct.name.toLowerCase().trim()
+                );
+
+                if (liveMatch) {
+                    // 2. Ketersediaan (Sold Out) & Harga Regular 100% ikut API
+                    localProduct.isSoldOut = liveMatch.isSoldOut;
+                    
+                    const apiRegPrice = liveMatch.outletPrice || liveMatch.normalPrice || localProduct.originalPrice;
+                    localProduct.originalPrice = apiRegPrice;
+                    localProduct.promoPrice = Math.floor((apiRegPrice * 0.5) + 3500); // Profit tetap 3.500
+
+                    // 3. Atur Harga Spesifik per Ukuran
+                    if (localProduct.sizes && localProduct.sizes.length > 0) {
+                        
+                        // Set Harga Regular = Ngikut API
+                        const regSize = localProduct.sizes.find(s => s.name === "Regular");
+                        if (regSize) {
+                            regSize.originalPrice = localProduct.originalPrice;
+                            regSize.promoPrice = localProduct.promoPrice;
+                        }
+                        
+                        // Set Harga Large = Ngikut Data Lokal / Premium
+                        // Set Harga Large = Ngikut Data Lokal / Premium
+                        const largeSize = localProduct.sizes.find(s => s.name === "Large");
+                        if (largeSize) {
+                            if (largeSize.baseLrgPrice === undefined) {
+                                largeSize.baseLrgPrice = largeSize.originalPrice;
+                            }
+
+                            let finalLargePrice = largeSize.baseLrgPrice; // Default harga toko biasa
+
+                            // Jika terdeteksi Store Premium, ambil harga Large langsung dari data.js
+                            if (isPremiumStore && window.PREMIUM_PRICES && window.PREMIUM_PRICES[localProduct.name]) {
+                                finalLargePrice = window.PREMIUM_PRICES[localProduct.name];
+                            }
+
+                            largeSize.originalPrice = finalLargePrice;
+                            largeSize.promoPrice = Math.floor((finalLargePrice * 0.5) + 3500);
+                        }
+                    }
+                } else {
+                    localProduct.isSoldOut = true;
+                }
+            });
+        };
+
+        window.fetchLiveMenu = async function(storeCode) {
+            state.isLoadingMenu = true; 
+            render(); 
+
+            try {
+                const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success && data.items) {
+                    window.syncLiveWithLocal(data.items);
+                }
+            } catch (error) {
+                console.error("Gagal menarik data real-time:", error);
+                showToast("Gagal cek stok real-time, menggunakan harga standar.", "error");
+            } finally {
+                state.isLoadingMenu = false;
+            }
+        };
+
         function generateTimeOptions() {
             const options = [];
             const now = new Date();
-            
-            // Tambahkan minimal 30 menit ke waktu sekarang
             now.setMinutes(now.getMinutes() + 30);
 
-            // Bulatkan ke kelipatan 15 menit terdekat ke atas
             const minutes = now.getMinutes();
             const remainder = minutes % 15;
             if (remainder !== 0) {
                 now.setMinutes(minutes + (15 - remainder));
             }
 
-            // Generate opsi sampai jam 23:45 hari ini
             const endOfDay = new Date(now);
             endOfDay.setHours(23, 45, 0, 0);
 
@@ -157,7 +230,6 @@
             return options;
         }
 
-        // Langsung Fetch Store pada load pertama
         if (state.kkStores.length === 0) {
             state.isLoadingStores = true;
             fetch('stores.json')
@@ -165,6 +237,7 @@
                 .then(data => {
                     state.kkStores = data.map(s => ({
                         id: s.id,
+                        code: s.code,
                         name: s.name.trim(),
                         address: s.address
                     }));
@@ -200,7 +273,7 @@
         };
         const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
-        function selectKKStore(storeId) {
+        window.selectKKStore = function(storeId) {
             const store = state.kkStores.find(s => s.id === storeId);
             if (store) {
                 if (state.selectedKKStore && state.selectedKKStore.id !== storeId && state.cart.length > 0) {
@@ -213,16 +286,21 @@
             }
         }
 
-        function executeStoreChange(store) {
+        async function executeStoreChange(store) {
             state.selectedKKStore = store;
-            localStorage.setItem('yasif_store', JSON.stringify(store)); // Auto-save Store
+            localStorage.setItem('yasif_store', JSON.stringify(store));
             state.showStoreSearch = false;
             state.storeLocation = store.name; 
-            state.showAvailabilityWarning = true; // Langsung memunculkan popup ketersediaan
+            
+            if (store.code) {
+                await window.fetchLiveMenu(store.code);
+            }
+            
+            state.showAvailabilityWarning = true; 
             render(); 
         }
 
-        function confirmStoreChange() {
+        window.confirmStoreChange = function() {
             state.cart = [];
             saveCart();
             state.showStoreChangeConfirm = false;
@@ -233,11 +311,22 @@
             showToast('Keranjang dikosongkan untuk menyesuaikan harga.', 'error');
         }
 
-        function cancelStoreChange() {
+        window.cancelStoreChange = function() {
             state.showStoreChangeConfirm = false;
             state.pendingStoreId = null;
             render();
         }
+
+        // --- KODE BARU: REFRESH DATA SAAT LANJUT PESANAN ---
+        window.lanjutPesanan = async function() {
+            state.showStorePrompt = false;
+            if (state.selectedKKStore && state.selectedKKStore.code) {
+                await window.fetchLiveMenu(state.selectedKKStore.code);
+            }
+            state.showAvailabilityWarning = true;
+            render();
+        };
+        // ---------------------------------------------------
 
         window.handleStoreSearch = function(query) {
             state.storeSearchQuery = query;
@@ -272,18 +361,13 @@
                 return;
             }
             container.innerHTML = displayStores.map(store => {
-                
-                const isPremium = typeof window.PREMIUM_STORE_IDS !== 'undefined' && window.PREMIUM_STORE_IDS.includes(store.id);
-                const bgClass = isPremium ? 'bg-[#F4F9FF] border-[#BFDBFE]' : 'bg-white border-border/60';
-                const hoverClass = isPremium ? 'hover:border-[#93C5FD]' : 'hover:border-[#B43A34]/40';
-                const indicator = isPremium ? `<span class="w-1.5 h-1.5 rounded-full bg-[#60A5FA] shrink-0"></span>` : '';
-
+                const bgClass = 'bg-white border-border/60';
+                const hoverClass = 'hover:border-[#B43A34]/40';
                 return `
                     <button onclick="selectKKStore(${store.id})" class="w-full text-left ${bgClass} p-4 rounded-[1.25rem] border shadow-sm ${hoverClass} transition-colors flex items-start gap-3">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 mb-1">
                                 <h4 class="font-semibold text-foreground text-sm line-clamp-1">${store.name}</h4>
-                                ${indicator}
                             </div>
                             <p class="text-xs text-subtle line-clamp-2 leading-relaxed">${store.address}</p>
                         </div>
@@ -335,33 +419,28 @@
             `;
         }
 
-
         const renderProductTile = (product, options = {}) => {
             const safeImage = product.image || 'https://placehold.co/600x750/F7F5F0/77756D?text=No+Image';
             let displayOriginal = product.originalPrice;
             let displayPromo = product.promoPrice || product.originalPrice;
             
-            if (typeof window.getPremiumData === 'function') {
-                let pData = window.getPremiumData(product, state.selectedKKStore?.id, state.selectedBrand);
-                if (pData && (pData.reg || pData.lrg)) {
-                    displayOriginal = pData.reg || pData.lrg;
-                    displayPromo = Math.floor((displayOriginal * 0.5) + 3500);
-                }
-            }
-
             const qtyInCart = state.cart.filter(i => i.id === product.id || i.id.startsWith(product.id + '-')).reduce((sum, item) => sum + (item.quantity || 0), 0);
             const cartBadgeHtml = qtyInCart > 0 ? `<div class="absolute top-2 right-2 z-20 bg-primary text-white text-[9px] font-bold px-2 py-1 rounded-full shadow-md">🛒 ${qtyInCart}x</div>` : '';
 
+            const isSoldOut = product.isSoldOut === true;
+            const opacityClass = isSoldOut ? 'opacity-40 grayscale cursor-not-allowed' : 'cursor-pointer';
+            const clickEvent = isSoldOut ? `onclick="showToast('Maaf, menu ini sedang kosong/habis di cabang ini', 'error')"` : `onclick="window.location.hash = 'product-${product.id}'"`;
+            const soldOutBadge = isSoldOut ? `<div class="absolute inset-0 z-30 flex items-center justify-center backdrop-blur-[1px] bg-white/40 rounded-[1.15rem] sm:rounded-[1.55rem]"><span class="bg-[#B43A34] text-white px-3 py-1.5 rounded-full text-[10px] font-extrabold tracking-widest shadow-md border border-white/20">SOLD OUT</span></div>` : '';
+
             return `
-                <article class="product-card modern-product-card flex flex-col h-full group cursor-pointer rounded-[1.45rem] sm:rounded-[1.85rem] overflow-hidden" onclick="window.location.hash = 'product-${product.id}'">
+                <article class="product-card modern-product-card flex flex-col h-full group rounded-[1.45rem] sm:rounded-[1.85rem] overflow-hidden ${opacityClass}" ${clickEvent}>
                     <div class="p-2 sm:p-3 pb-0 shrink-0">
                         <div class="modern-product-frame aspect-square rounded-[1.15rem] sm:rounded-[1.55rem] overflow-hidden relative p-2.5 sm:p-4">
                             ${cartBadgeHtml}
+                            ${soldOutBadge}
                             <img src="${safeImage}" alt="${product.name}" class="w-full h-full object-contain" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/600x750/F7F5F0/77756D?text=No+Image'"/>
                             <div class="absolute top-2 left-2 z-10 product-badge rounded-full px-2 py-0.5 text-[8px] sm:text-[9px] uppercase tracking-[0.11em] sm:tracking-[0.14em] font-bold max-w-[calc(100%-1rem)] truncate">${product.category}</div>
-                            <div class="absolute right-2 bottom-2 z-10 quick-plus w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 5v14m7-7H5"></path></svg>
-                            </div>
+                            ${!isSoldOut ? `<div class="absolute right-2 bottom-2 z-10 quick-plus w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 5v14m7-7H5"></path></svg></div>` : ''}
                         </div>
                     </div>
                     <div class="p-3 sm:p-4 flex flex-col flex-1">
@@ -375,9 +454,9 @@
             `;
         };
 
-        function updateTempNote(value) { state.tempNote = value; }
+        window.updateTempNote = function(value) { state.tempNote = value; }
 
-        function confirmAddToCart() {
+        window.confirmAddToCart = function() {
             if (!state.activeProduct) return;
 
             let finalPrice = state.activeProduct.promoPrice;
@@ -389,13 +468,6 @@
             if (state.activeProduct.sizes && state.tempSize) {
                 const selectedSize = state.activeProduct.sizes.find(s => s.name === state.tempSize);
                 if (selectedSize && selectedSize.promoPrice) finalPrice = selectedSize.promoPrice;
-            }
-            if (typeof window.getPremiumData === 'function') {
-                let pData = window.getPremiumData(state.activeProduct, state.selectedKKStore?.id, state.selectedBrand);
-                if (pData) {
-                    let basePremium = (state.tempSize === 'Large' && pData.lrg) ? pData.lrg : (pData.reg || pData.lrg);
-                    if (basePremium) finalPrice = Math.floor((basePremium * 0.5) + 3500);
-                }
             }
 
             if (state.tempOatside) finalPrice += 1500;
@@ -455,7 +527,7 @@
             }
         };
 
-        function updateCartQty(cartItemId, delta) {
+        window.updateCartQty = function(cartItemId, delta) {
             const item = state.cart.find(i => i.cartItemId === cartItemId);
             if (item) {
                 item.quantity += delta;
@@ -465,13 +537,13 @@
             }
         }
 
-        function removeFromCart(cartItemId) {
+        window.removeFromCart = function(cartItemId) {
             state.cart = state.cart.filter(i => i.cartItemId !== cartItemId);
             saveCart();
             render();
         }
 
-        function handleWhatsAppOrder() {
+        window.handleWhatsAppOrder = function() {
             const pickupStore = (state.storeLocation || '').trim();
             if (!pickupStore) { showToast('Isi lokasi pengambilan dulu!', 'error'); return; }
 
@@ -485,7 +557,6 @@
                 const total = getTotalPrice();
                 const totalItems = getTotalItems();
                 
-                // Menentukan batas harga dinamis berdasarkan jumlah item
                 const minPrice = totalItems >= 3 ? 35500 : 32000;
                 const maxPrice = totalItems >= 3 ? 40500 : 39000;
 
@@ -504,8 +575,6 @@
                 }
             }
 
-            const orderBrand = 'Kopi Kenangan';
-
             if (!state.allowSingleItem && getTotalItems() < 2) {
                 showToast('Minimal beli 2 item dulu ya (bisa minuman/makanan)! ✌️', 'error');
                 return;
@@ -516,7 +585,6 @@
                 return;
             }
 
-            // JIKA SEMUA VALIDASI AMAN, MUNCULKAN POPUP PERINGATAN
             state.showProcessWarning = true;
             render();
         }
@@ -563,16 +631,8 @@
             }
             
             message += `\nTotal: ${formatPrice(getTotalPrice())}\n--------------------------------\n`;
-            
-            let finalPickupStore = pickupStore;
-            if (state.selectedKKStore && typeof window.PREMIUM_STORE_IDS !== 'undefined') {
-                if (window.PREMIUM_STORE_IDS.includes(state.selectedKKStore.id)) {
-                    finalPickupStore += ' •'; 
-                }
-            }
-
             message += `Pick Up Atas Nama: ${finalName}\n`; 
-            message += `Lokasi Ambil: ${finalPickupStore}\n`;
+            message += `Lokasi Ambil: ${pickupStore}\n`;
             message += `Waktu Pesan: ${state.orderType === 'now' ? 'Sekarang' : 'JAM ' + state.scheduledTime}\n`;
 
             render();
@@ -582,7 +642,7 @@
             safeBack();
         };
 
-        function showToast(message, type = 'success') {
+        window.showToast = function(message, type = 'success') {
             const existingToast = document.getElementById('active-toast');
             if (existingToast) existingToast.remove();
             const toastContainer = document.createElement('div');
@@ -613,7 +673,7 @@
                             </p>
                             <div class="flex gap-3">
                                 <button onclick="state.showStorePrompt=false; state.showStoreSearch=true; render()" class="flex-1 py-3.5 bg-surface border border-border text-foreground rounded-full font-semibold text-sm tracking-[-0.01em]">Ganti Cabang</button>
-                                <button onclick="state.showStorePrompt=false; state.showAvailabilityWarning=true; render()" class="flex-1 py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">Ya, Lanjut</button>
+                                <button onclick="lanjutPesanan()" class="flex-1 py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">Ya, Lanjut</button>
                             </div>
                         </div>
                     </div>
@@ -644,6 +704,7 @@
                 </div>
             `;
         }
+
         function renderScheduleWarningModal() {
             return `
                 <div class="fixed inset-0 z-[140] flex items-center justify-center p-4">
@@ -657,8 +718,7 @@
                             <div class="text-sm text-subtle leading-relaxed mb-4 space-y-3 text-left">
                                 <p>Apabila memilih pesan jadwal, maka pesanan akan dibuat saat kalian sampai store dan harus konfirmasi ke barista, maka pesanan baru akan diproses.</p>
                                 <p>Ini diperuntukkan untuk kalian yang belum pasti akan ke store kapan dan tidak mempermasalahkan apabila pesanan kalian baru dibuat saat kalian konfirmasi ke barista.</p>
-                                <p class="text-[#B43A34] font-semibold text-[12px] italic">pemilihan jam hanya untuk patokan saja, kalian bisa pick up pesanan jam berapa pun selagi di hari yang sama.
-</p>
+                                <p class="text-[#B43A34] font-semibold text-[12px] italic">pemilihan jam hanya untuk patokan saja, kalian bisa pick up pesanan jam berapa pun selagi di hari yang sama.</p>
                             </div>
                             <div class="flex gap-3">
                                 <button onclick="state.showScheduleWarning=false; render()" class="flex-1 py-3.5 bg-surface border border-border text-foreground rounded-full font-semibold text-sm tracking-[-0.01em]">Batal</button>
@@ -669,6 +729,7 @@
                 </div>
             `;
         }
+
         function renderAvailabilityWarningModal() {
             return `
                 <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -765,7 +826,7 @@
             `;
         }
 
-        function render() {
+        window.render = function() {
             let focusedElementId = document.activeElement ? document.activeElement.id : null;
             let cursorStart = null, cursorEnd = null;
             if (focusedElementId && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
@@ -863,6 +924,19 @@
                                            !state.showAvailabilityWarning &&
                                            !state.showStorePrompt;
             
+            if (state.isLoadingMenu) {
+                app.innerHTML = `
+                    <div class="theme-scope">
+                        ${renderHeader()}
+                        <div class="min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center pb-32">
+                            <div class="w-12 h-12 border-4 border-[#B43A34]/20 border-t-[#B43A34] rounded-full animate-spin mb-4"></div>
+                            <p class="text-sm text-subtle font-medium animate-pulse text-center px-4">Mengambil stok real-time toko...<br>Mohon tunggu sebentar.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
             app.innerHTML = `
                 <div class="theme-scope">
                     ${renderHeader()}
@@ -914,7 +988,6 @@
                         </div>
                         <button onclick="window.location.hash = ''" class="font-heading text-[15px] sm:text-base font-semibold text-foreground tracking-[0.28em] uppercase">YASIF STORE</button>
                         <div class="flex-1 flex justify-end items-center gap-4">
-                            <!-- Tombol cara pesan dihapus dari sini -->
                         </div>
                     </div>
                 </header>
@@ -985,7 +1058,10 @@
         function renderMenu() {
             const query = state.searchQuery.toLowerCase();
             const brandProducts = window.products.filter(p => p.name.toLowerCase().includes(query));
-            const regularProducts = brandProducts.filter(p => !p.isPackage);
+            
+            // KODE DIUBAH: Otomatis menyembunyikan (hide) menu yang isSoldOut
+            const regularProducts = brandProducts.filter(p => !p.isPackage && !p.isSoldOut);
+            
             const categories = [...new Set(regularProducts.map(p => p.category))];
             
             return `
@@ -1077,14 +1153,6 @@
             if (p.sizes && p.sizes.length > 0 && state.tempSize) {
                 const selectedSize = p.sizes.find(s => s.name === state.tempSize);
                 if (selectedSize && selectedSize.promoPrice) displayPrice = selectedSize.promoPrice;
-            }
-            
-            if (typeof window.getPremiumData === 'function') {
-                let pData = window.getPremiumData(p, state.selectedKKStore?.id, state.selectedBrand);
-                if (pData) {
-                    let basePremium = (state.tempSize === 'Large' && pData.lrg) ? pData.lrg : (pData.reg || pData.lrg);
-                    if (basePremium) displayPrice = Math.floor((basePremium * 0.5) + 3500);
-                }
             }
 
             if (state.tempOatside) displayPrice += 1500;
