@@ -82,6 +82,18 @@
     </script>
 
     <script>
+        // --- KODE AUTO REFRESH MULAI DARI SINI ---
+        const WEB_VERSION = "1.1"; 
+        const currentLocalVersion = localStorage.getItem("yasif_web_version");
+        
+        if (currentLocalVersion !== WEB_VERSION) {
+            localStorage.removeItem('yasif_cart');
+            localStorage.removeItem('yasif_store');
+            localStorage.setItem("yasif_web_version", WEB_VERSION);
+            window.location.reload(true);
+        }
+        // --- KODE AUTO REFRESH SELESAI ---
+
         let savedCart = localStorage.getItem('yasif_cart');
         let parsedCart = savedCart ? JSON.parse(savedCart) : [];
         parsedCart = parsedCart.filter(item => item.brand === 'Kopi Kenangan');
@@ -191,7 +203,7 @@
             render(); 
 
             try {
-                const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}`;
+const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=${new Date().getTime()}`;
                 const response = await fetch(url);
                 const data = await response.json();
                 
