@@ -70,6 +70,9 @@
             .category-rail { top: 72px !important; z-index: 25 !important; padding-top: .72rem !important; padding-bottom: .72rem !important; }
             .brand-category-pill { padding: .58rem .95rem !important; font-size: 10px !important; letter-spacing: .11em !important; white-space: nowrap; }
         }
+                /* Spinner loading boleh muter, sisanya tetap tanpa animasi */
+        .animate-spin { animation: spin 0.8s linear infinite !important; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-background text-foreground antialiased selection:bg-primary selection:text-white pb-28 md:pb-32">
@@ -418,15 +421,7 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
                     <label class="block text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-4 flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg> Atas Nama Pengambilan <span class="text-[#9E3C3C]">*</span>
                     </label>
-                    <div class="flex gap-2 mb-3 rounded-full bg-background/70 border border-border p-1">
-                        <button onclick="state.pickupNameType='custom'; render()" class="flex-1 py-3 rounded-full text-sm font-semibold transition-all ${state.pickupNameType === 'custom' ? 'brand-button' : 'text-subtle'}">Nama Lain</button>
-                        <button onclick="state.pickupNameType='yasif'; render()" class="flex-1 py-3 rounded-full text-sm font-semibold transition-all ${state.pickupNameType === 'yasif' ? 'brand-button' : 'text-subtle'}">Yasif</button>
-                    </div>
-                    ${state.pickupNameType === 'custom' ? `
-                        <div class="mt-4">
-                            <input type="text" value="${escapeHtml(state.customPickupName)}" oninput="state.customPickupName = this.value" placeholder="Ketik nama untuk pick up..." class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-medium placeholder:text-subtle/45" />
-                        </div>
-                    ` : ''}
+                    <input type="text" value="${escapeHtml(state.customPickupName)}" oninput="state.customPickupName = this.value" placeholder="Ketik nama untuk pick up..." class="w-full bg-surface border border-border px-5 py-4 rounded-[1.25rem] text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-medium placeholder:text-subtle/45" />
                 </div>
             `;
         }
@@ -459,7 +454,7 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
                         <h4 class="font-heading font-semibold text-[15px] sm:text-lg text-foreground leading-tight tracking-[-0.04em] line-clamp-2">${product.name}</h4>
                         <div class="mt-auto pt-2 sm:pt-2.5 flex flex-col gap-0.5">
                             <span class="text-[10px] sm:text-[11px] text-subtle line-through decoration-foreground/30">${formatPrice(displayOriginal)}</span>
-                            <span class="text-[18px] sm:text-lg font-bold text-foreground tracking-[-0.04em]">${formatPrice(displayPromo)}</span>
+                            <span class="text-[18px] sm:text-lg font-bold brand-text tracking-[-0.04em]">${formatPrice(displayPromo)}</span>
                         </div>
                     </div>
                 </article>
@@ -697,19 +692,18 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
             return `
                 <div class="fixed inset-0 z-[140] flex items-center justify-center p-4">
                     <div class="absolute inset-0 diffused-backdrop" onclick="state.showProcessWarning=false; render()"></div>
-                    <div class="luxury-panel w-full max-w-[400px] rounded-[2rem] z-10 overflow-hidden flex flex-col relative">
-                        <div class="px-6 py-7 text-center">
-                            <div class="w-16 h-16 bg-[#B43A34]/10 text-[#B43A34] rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span class="text-2xl">⏳</span>
+                    <div class="luxury-panel w-full max-w-[400px] max-h-[94vh] overflow-y-auto rounded-[2rem] z-10 flex flex-col relative">
+                        <button onclick="state.showProcessWarning=false; render()" class="absolute top-4 right-4 w-9 h-9 rounded-full border border-border flex items-center justify-center text-subtle bg-white z-10">✕</button>
+                        <div class="px-6 pt-7 pb-6 text-center">
+                            <p class="text-[10px] uppercase tracking-[0.24em] text-subtle font-semibold mb-1">Total Pembayaran</p>
+                            <p class="font-heading font-bold text-3xl text-[#B43A34] tracking-[-0.04em] mb-4">${formatPrice(getTotalPrice())}</p>
+                            <div class="border border-border rounded-[1.25rem] p-2 bg-white mb-4">
+                                <img src="qris.png" alt="QRIS Yasif Store" class="w-full max-h-[48vh] object-contain mx-auto" />
                             </div>
-                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">Waktu Proses</h3>
-                            <div class="text-sm text-subtle leading-relaxed mb-6 space-y-2">
-                                <p>Waktu proses pesanan sekitar <strong class="text-foreground">10-15 menit</strong> (tergantung antrian).</p>
-                                <p>Harap menunggu sampai admin merespon pesan WhatsApp kamu ya!</p>
-                            </div>
+                            <p class="text-sm text-subtle leading-relaxed mb-5">Pesanan diproses setelah pembayaran berhasil, harap kirim bukti payment setelah kirim form pesanan.</p>
                             <div class="flex gap-3">
-                                <button onclick="state.showProcessWarning=false; render()" class="flex-1 py-3.5 bg-surface border border-border text-foreground rounded-full font-semibold text-sm tracking-[-0.01em]">Batal</button>
-                                <button onclick="proceedToWhatsApp()" class="flex-1 py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">Mengerti & Kirim</button>
+                                <a href="qris.png" download="QRIS-Yasif-Store.png" class="flex-1 py-3.5 bg-surface border border-border text-foreground rounded-full font-semibold text-sm tracking-[-0.01em] flex items-center justify-center">Download QRIS</a>
+                                <button onclick="proceedToWhatsApp()" class="flex-1 py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">Mengerti & Kirim Form</button>
                             </div>
                         </div>
                     </div>
@@ -940,7 +934,7 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
                 app.innerHTML = `
                     <div class="theme-scope">
                         ${renderHeader()}
-                        <div class="min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center pb-32">
+                        <div class="min-h-[calc(100vh-3.5rem)] flex flex-col items-center justify-center pb-32">
                             <div class="w-12 h-12 border-4 border-[#B43A34]/20 border-t-[#B43A34] rounded-full animate-spin mb-4"></div>
                             <p class="text-sm text-subtle font-medium animate-pulse text-center px-4">Mengambil stok real-time toko...<br>Mohon tunggu sebentar.</p>
                         </div>
@@ -994,7 +988,7 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
         function renderHeader() {
             return `
                 <header id="site-header" class="fixed top-0 w-full z-40 glass">
-                    <div class="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between gap-4">
+                    <div class="mx-auto max-w-7xl px-5 sm:px-8 h-14 flex items-center justify-between gap-4">
                         <div class="flex-1 flex justify-start">
                             ${state.selectedBrand ? `<button onclick="window.location.hash = ''" class="group inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle hover:text-foreground"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 19l-7-7 7-7"></path></svg>Back</button>` : `<span class="hidden sm:block text-[10px] uppercase tracking-[0.22em] text-subtle">Promo Curated</span>`}
                         </div>
@@ -1003,7 +997,7 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
                         </div>
                     </div>
                 </header>
-                <div class="h-20"></div>
+                <div class="h-14"></div>
             `;
         }
 
@@ -1101,19 +1095,9 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
                             </div>
                             
                             <aside class="flex flex-col gap-4">
-                                <div class="premium-surface brand-border rounded-[1.75rem] px-6 py-6">
-                                    <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-3">Order Note</p>
-                                    <p class="text-sm leading-relaxed text-subtle tracking-[-0.01em]">Harga sudah final, termasuk diskon dan biaya admin. Harga menu dapat berbeda-beda tiap store.</p>
-                                </div>
-                                
                                 <div class="premium-surface brand-border rounded-[1.75rem] px-6 py-5 bg-[#B43A34]/5 border-[#B43A34]/20">
-                                    <p class="text-[13px] sm:text-sm uppercase tracking-[0.1em] text-[#B43A34] font-extrabold mb-3 leading-tight flex items-center gap-2">
-                                        <span>📶</span> Wifi Teman Kenangan
-                                    </p>
-                                    <p class="text-[12px] font-semibold text-subtle leading-relaxed">
-                                        Username: <strong class="text-foreground">kopikenangan</strong><br>
-                                        <span class="mt-1 block">Password ada di struk pembelian yang admin kirim saat selesai pesan.</span>
-                                    </p>
+                                    <p class="text-[13px] sm:text-sm uppercase tracking-[0.1em] text-[#B43A34] font-extrabold mb-2 leading-tight flex items-center gap-2"><span>📶</span> Wifi Kopi Kenangan</p>
+                                    <p class="text-[13px] font-bold text-foreground leading-relaxed">Password ada di struk pembelian saat berhasil memesan.</p>
                                 </div>
                             </aside>
                         </div>
@@ -1131,13 +1115,7 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
 
                     </div>
 
-                    <div class="sticky top-[72px] sm:top-20 z-30 category-rail py-4 overflow-x-auto hide-scroll backdrop-blur-md bg-background/90">
-                        <nav class="mx-auto max-w-7xl px-5 sm:px-8 flex gap-2 min-w-max">
-                            ${categories.map((cat, index) => `<button onclick="document.getElementById('cat-${index}').scrollIntoView()" class="brand-category-pill px-4 sm:px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-semibold bg-transparent border border-border text-subtle">${cat}</button>`).join('')}
-                        </nav>
-                    </div>
-
-                    <div class="mx-auto max-w-7xl px-4 sm:px-8 py-9 sm:py-16 space-y-14 sm:space-y-24">
+                                        <div class="mx-auto max-w-7xl px-4 sm:px-8 py-9 sm:py-16 space-y-14 sm:space-y-24">
                         ${categories.map((cat, index) => {
                             const catProducts = regularProducts.filter(p => p.category === cat);
                             if(catProducts.length === 0) return '';
