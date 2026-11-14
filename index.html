@@ -164,7 +164,7 @@
                     
                     const apiRegPrice = liveMatch.outletPrice || liveMatch.normalPrice || localProduct.originalPrice;
                     localProduct.originalPrice = apiRegPrice;
-                    localProduct.promoPrice = Math.floor((apiRegPrice * 0.5) + 3500); // Profit tetap 3.500
+                    localProduct.promoPrice = Math.floor((apiRegPrice * 0.5) + 4000); // Profit tetap 4.000
 
                     // 3. Atur Harga Spesifik per Ukuran
                     if (localProduct.sizes && localProduct.sizes.length > 0) {
@@ -192,7 +192,7 @@
                             }
 
                             largeSize.originalPrice = finalLargePrice;
-                            largeSize.promoPrice = Math.floor((finalLargePrice * 0.5) + 3500);
+                            largeSize.promoPrice = Math.floor((finalLargePrice * 0.5) + 4000);
                         }
                     }
                 } else {
