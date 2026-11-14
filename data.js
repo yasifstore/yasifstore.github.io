@@ -99,8 +99,8 @@ const generatedKKProducts = rawKK.map((item, idx) => {
     
     const regPrice = reg ? Number(reg) : null;
     const lrgPrice = lrg ? Number(lrg) : null;
-    const promoReg = regPrice ? Math.floor((regPrice * 0.5) + 3500) : null;
-    const promoLrg = lrgPrice ? Math.floor((lrgPrice * 0.5) + 3500) : null;
+    const promoReg = regPrice ? Math.floor((regPrice * 0.5) + 4000) : null;
+    const promoLrg = lrgPrice ? Math.floor((lrgPrice * 0.5) + 4000) : null;
     
     let sizes = [];
     let sugars = null;
