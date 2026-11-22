@@ -118,6 +118,7 @@
             showCart: false,
             showTutorial: false,
             showAvailabilityWarning: false,
+            isFallbackWarning: false,
             storeLocation: parsedStore ? parsedStore.name : '',
             activeProduct: null, 
             tempNote: '',
@@ -203,19 +204,23 @@
 
         window.fetchLiveMenu = async function(storeCode) {
             state.isLoadingMenu = true; 
+            state.isFallbackWarning = false;
             render(); 
 
             try {
-const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=${new Date().getTime()}`;
+                const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=${new Date().getTime()}`;
                 const response = await fetch(url);
+                if (!response.ok) throw new Error("Response not OK");
                 const data = await response.json();
                 
-                if (data.success && data.items) {
+                if (data && Array.isArray(data.items) && data.items.length > 0) {
                     window.syncLiveWithLocal(data.items);
+                } else {
+                    state.isFallbackWarning = true;
                 }
             } catch (error) {
                 console.error("Gagal menarik data real-time:", error);
-                showToast("Gagal cek stok real-time, menggunakan harga standar.", "error");
+                state.isFallbackWarning = true;
             } finally {
                 state.isLoadingMenu = false;
             }
@@ -301,13 +306,15 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
             }
         }
 
-        async function executeStoreChange(store) {
+        async function executeStoreChange(store, isManual = false) {
             state.selectedKKStore = store;
             localStorage.setItem('yasif_store', JSON.stringify(store));
             state.showStoreSearch = false;
             state.storeLocation = store.name; 
             
-            if (store.code) {
+            if (isManual || !store.code) {
+                state.isFallbackWarning = true;
+            } else {
                 await window.fetchLiveMenu(store.code);
             }
             
@@ -393,12 +400,20 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
 
         window.selectManualStore = function(storeName) {
             const manualId = Date.now();
-            state.kkStores.push({
+            const manualStore = {
                 id: manualId,
                 name: storeName,
-                address: 'Diinput manual oleh pembeli'
-            });
-            selectKKStore(manualId);
+                address: 'Diinput manual oleh pembeli',
+                isManual: true
+            };
+            state.kkStores.push(manualStore);
+            state.selectedKKStore = manualStore;
+            localStorage.setItem('yasif_store', JSON.stringify(manualStore));
+            state.showStoreSearch = false;
+            state.storeLocation = manualStore.name;
+            state.isFallbackWarning = true;
+            state.showAvailabilityWarning = true;
+            render();
         };
 
         function renderPickupStoreField(inputIcon, inputLabel) {
@@ -564,8 +579,8 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
                 const total = getTotalPrice();
                 const totalItems = getTotalItems();
                 
-                const minPrice = totalItems >= 3 ? 35500 : 32000;
-                const maxPrice = totalItems >= 3 ? 40500 : 39000;
+                const minPrice = totalItems >= 3 ? 36500 : 33000;
+                const maxPrice = totalItems >= 3 ? 41500 : 40000;
 
                 if (total < minPrice) {
                     showToast(`Minimal beli Rp ${minPrice.toLocaleString('id-ID')} untuk ${totalItems} item! ✌️`, 'error');
@@ -743,20 +758,23 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
                     <div class="luxury-panel w-full max-w-[400px] rounded-[2rem] z-10 overflow-hidden flex flex-col relative">
                         <div class="px-6 py-7 text-center">
                             <div class="w-16 h-16 bg-[#B43A34]/10 text-[#B43A34] rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span class="text-2xl">${state.minPurchase32k ? '🎫' : '⏳'}</span>
+                                <span class="text-2xl">${state.isFallbackWarning ? '⚠️' : (state.minPurchase32k ? '🎫' : '⏳')}</span>
                             </div>
-                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">${state.minPurchase32k ? 'Info Promo Saat Ini' : 'Waktu Proses Pesanan'}</h3>
-                            <div class="text-sm text-subtle leading-relaxed mb-6 space-y-3 text-left">
-                                ${state.minPurchase32k ? `
-                                    <p>Pemberitahuan: Saat ini <strong>voucher yang tersedia hanya untuk minimal pembelian Rp 32.000</strong>.</p>
+                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">${state.isFallbackWarning ? 'Info Stok & Harga' : (state.minPurchase32k ? 'Info Promo Saat Ini' : 'Waktu Proses Pesanan')}</h3>
+                            <div class="text-sm text-subtle leading-relaxed mb-6 space-y-2 text-left">
+                                ${state.isFallbackWarning ? `
+                                    <p class="text-foreground font-medium">Ketersediaan stok produk dan harga produk dapat berbeda beda, akan di infokan ulang oleh admin via chat</p>
+                                    <p class="text-[11px] text-subtle/80">gagal memuat data realtime, stok dan harga tidak realtime</p>
+                                ` : (state.minPurchase32k ? `
+                                    <p>Pemberitahuan: Saat ini <strong>voucher yang tersedia hanya untuk minimal pembelian Rp 33.000</strong>.</p>
                                     <p>Stok promo tanpa minimal nominal sedang kosong.</p>
                                 ` : `
                                     <p>Pesanan diproses sekitar <strong>10-15 menit</strong>, tergantung antrian.</p>
-<p>Mohon tunggu sampai admin memproses pesananmu ya.</p>
-                                `}
+                                    <p>Mohon tunggu sampai admin memproses pesananmu ya.</p>
+                                `)}
                             </div>
-                            <button onclick="state.showAvailabilityWarning=false; render()" class="w-full py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">
-                                ${state.minPurchase32k ? 'Mengerti & Lanjut Order' : 'Mengerti & Lanjut'}
+                            <button onclick="state.showAvailabilityWarning=false; state.isFallbackWarning=false; render()" class="w-full py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">
+                                Mengerti
                             </button>
                         </div>
                     </div>
@@ -1282,15 +1300,15 @@ const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=$
                                     `}
                                 ` : ''}
 
-                                ${state.minPurchase32k && (getTotalPrice() < (getTotalItems() >= 3 ? 35500 : 32000) || getTotalPrice() > (getTotalItems() >= 3 ? 40500 : 39000)) ? `
+                                ${state.minPurchase32k && (getTotalPrice() < (getTotalItems() >= 3 ? 36500 : 33000) || getTotalPrice() > (getTotalItems() >= 3 ? 41500 : 40000)) ? `
                                     <div class="mb-4 bg-[#B43A34]/10 border border-[#B43A34]/20 p-4 rounded-[1.25rem] flex items-start gap-3 mt-3">
                                         <span class="text-xl">⚠️</span>
                                         <div>
                                             <h4 class="font-bold text-[#B43A34] text-sm mb-1">Syarat Promo Voucher</h4>
                                             <p class="text-[11px] text-[#B43A34] leading-relaxed">
-                                                ${getTotalPrice() < (getTotalItems() >= 3 ? 35500 : 32000) 
-                                                    ? 'Voucher saat ini khusus minimal pembelian Rp ' + (getTotalItems() >= 3 ? '35.500' : '32.000') + '. Yuk, sesuaikan pesananmu!' 
-                                                    : 'Total belanja melebihi batas promo voucher (maksimal Rp ' + (getTotalItems() >= 3 ? '40.500' : '39.000') + '). Silakan sesuaikan pesanan!'}
+                                                ${getTotalPrice() < (getTotalItems() >= 3 ? 36500 : 33000) 
+                                                    ? 'Voucher saat ini khusus minimal pembelian Rp ' + (getTotalItems() >= 3 ? '36.500' : '33.000') + '. Yuk, sesuaikan pesananmu!' 
+                                                    : 'Total belanja melebihi batas promo voucher (maksimal Rp ' + (getTotalItems() >= 3 ? '41.500' : '40.000') + '). Silakan sesuaikan pesanan!'}
                                             </p>
                                         </div>
                                     </div>
