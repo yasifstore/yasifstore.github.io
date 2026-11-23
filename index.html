@@ -84,12 +84,11 @@
     </script>
 
     <script>
-        const WEB_VERSION = "1.3";
+        const WEB_VERSION = "1.4";
         const currentLocalVersion = localStorage.getItem("yasif_web_version");
         
         if (currentLocalVersion !== WEB_VERSION) {
             localStorage.removeItem('yasif_cart');
-            localStorage.removeItem('yasif_store');
             localStorage.setItem("yasif_web_version", WEB_VERSION);
             window.location.reload(true);
         }
@@ -116,6 +115,7 @@
             kkStores: [],
             isLoadingStores: false,
             isLoadingMenu: false,
+            hasSyncedLiveMenu: false,
             showStoreSearch: false,
             selectedKKStore: parsedStore,
             showStorePrompt: false, 
@@ -154,7 +154,27 @@
             isSubmittingOrder: false,
             activeOrderConfirm: null,
             orderHistoryIds: savedHistoryIds,
-            orderHistoryMap: {}
+            orderHistoryMap: {},
+            confirmDialog: null
+        };
+
+        function openConfirmDialog({ title, message, confirmText = 'Ya, Lanjutkan', cancelText = 'Batal', onConfirm }) {
+            state.confirmDialog = { title, message, confirmText, cancelText, onConfirm };
+            render();
+        }
+
+        window.closeConfirmDialog = function() {
+            state.confirmDialog = null;
+            render();
+        };
+
+        window.executeConfirmDialog = async function() {
+            const dlg = state.confirmDialog;
+            state.confirmDialog = null;
+            render();
+            if (dlg && typeof dlg.onConfirm === 'function') {
+                await dlg.onConfirm();
+            }
         };
 
         function getDeviceSummary() {
@@ -184,7 +204,33 @@
             return digits;
         }
 
+        function resetLocalProductsToBase() {
+            if (!Array.isArray(window.products)) return;
+            window.products.forEach(p => {
+                if (p._baseOriginalPrice === undefined) {
+                    p._baseOriginalPrice = p.originalPrice;
+                    p._basePromoPrice = p.promoPrice;
+                }
+                p.originalPrice = p._baseOriginalPrice;
+                p.promoPrice = p._basePromoPrice;
+                p.isSoldOut = false;
+
+                if (Array.isArray(p.sizes)) {
+                    p.sizes.forEach(s => {
+                        if (s._baseOriginalPrice === undefined) {
+                            s._baseOriginalPrice = s.originalPrice;
+                            s._basePromoPrice = s.promoPrice;
+                        }
+                        s.originalPrice = s._baseOriginalPrice;
+                        s.promoPrice = s._basePromoPrice;
+                    });
+                }
+            });
+        }
+
         window.syncLiveWithLocal = function(liveItems) {
+            resetLocalProductsToBase();
+
             let isPremiumStore = false;
             const kkmLive = liveItems.find(live => live.name.toLowerCase().trim() === "kopi kenangan mantan");
             
@@ -201,7 +247,7 @@
                 );
 
                 if (liveMatch) {
-                    localProduct.isSoldOut = liveMatch.isSoldOut;
+                    localProduct.isSoldOut = Boolean(liveMatch.isSoldOut);
                     
                     const apiRegPrice = liveMatch.outletPrice || liveMatch.normalPrice || localProduct.originalPrice;
                     localProduct.originalPrice = apiRegPrice;
@@ -216,11 +262,9 @@
                         
                         const largeSize = localProduct.sizes.find(s => s.name === "Large");
                         if (largeSize) {
-                            if (largeSize.baseLrgPrice === undefined) {
-                                largeSize.baseLrgPrice = largeSize.originalPrice;
-                            }
-
-                            let finalLargePrice = largeSize.baseLrgPrice;
+                            let finalLargePrice = largeSize._baseOriginalPrice !== undefined
+                                ? largeSize._baseOriginalPrice
+                                : largeSize.originalPrice;
 
                             if (isPremiumStore && window.PREMIUM_PRICES && window.PREMIUM_PRICES[localProduct.name]) {
                                 finalLargePrice = window.PREMIUM_PRICES[localProduct.name];
@@ -236,27 +280,60 @@
             });
         };
 
+        function resolveStoreCode(store) {
+            if (!store) return '';
+            if (store.code) return store.code;
+            if (Array.isArray(state.kkStores) && state.kkStores.length > 0) {
+                const found = state.kkStores.find(s => s.id === store.id || s.name.toLowerCase().trim() === String(store.name || '').toLowerCase().trim());
+                if (found && found.code) {
+                    store.code = found.code;
+                    localStorage.setItem('yasif_store', JSON.stringify(store));
+                    return found.code;
+                }
+            }
+            return '';
+        }
+
         window.fetchLiveMenu = async function(storeCode) {
             state.isLoadingMenu = true; 
             state.isFallbackWarning = false;
             render(); 
 
             try {
-                const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${storeCode}&_t=${new Date().getTime()}`;
-                const response = await fetch(url);
+                const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${encodeURIComponent(storeCode)}&_t=${Date.now()}`;
+                const response = await fetch(url, { cache: 'no-store' });
                 if (!response.ok) throw new Error("Response not OK");
                 const data = await response.json();
                 
                 if (data && Array.isArray(data.items) && data.items.length > 0) {
                     window.syncLiveWithLocal(data.items);
+                    state.hasSyncedLiveMenu = true;
                 } else {
+                    resetLocalProductsToBase();
                     state.isFallbackWarning = true;
                 }
             } catch (error) {
                 console.error("Gagal menarik data real-time:", error);
+                resetLocalProductsToBase();
                 state.isFallbackWarning = true;
             } finally {
                 state.isLoadingMenu = false;
+                render();
+            }
+        };
+
+        window.manualRefreshStoreMenu = async function() {
+            if (!state.selectedKKStore) return;
+            const code = resolveStoreCode(state.selectedKKStore);
+            if (!code) {
+                showToast('Cabang input manual menggunakan harga standar.', 'error');
+                return;
+            }
+            await window.fetchLiveMenu(code);
+            if (!state.isFallbackWarning) {
+                showToast('Stok & harga real-time diperbarui!');
+            } else {
+                showToast('Gagal memuat data real-time, memakai harga standar.', 'error');
             }
         };
 
@@ -286,7 +363,7 @@
 
         if (state.kkStores.length === 0) {
             state.isLoadingStores = true;
-            fetch('stores.json')
+            fetch('stores.json?v=' + antiCache)
                 .then(res => res.json())
                 .then(data => {
                     state.kkStores = data.map(s => ({
@@ -296,6 +373,9 @@
                         address: s.address
                     }));
                     state.isLoadingStores = false;
+                    if (state.selectedKKStore && !state.selectedKKStore.code) {
+                        resolveStoreCode(state.selectedKKStore);
+                    }
                     if(typeof render === 'function') render();
                 })
                 .catch(err => {
@@ -319,29 +399,43 @@
             localStorage.setItem('yasif_order_history', JSON.stringify(state.orderHistoryIds));
         }
 
-        window.cancelCustomerOrder = async function(orderId) {
-            if (!confirm('Batalkan pesanan ini? Pesanan akan dihapus dari antrean admin.')) return;
-            try {
-                if (typeof window.deleteOrderFromFirebase === 'function') {
-                    await window.deleteOrderFromFirebase(orderId);
+        window.cancelCustomerOrder = function(orderId) {
+            openConfirmDialog({
+                title: 'Batalkan Pesanan?',
+                message: 'Pesanan yang dibatalkan akan langsung dihapus dari antrean admin.',
+                confirmText: 'Ya, Batalkan',
+                cancelText: 'Kembali',
+                onConfirm: async () => {
+                    try {
+                        if (typeof window.deleteOrderFromFirebase === 'function') {
+                            await window.deleteOrderFromFirebase(orderId);
+                        }
+                        removeOrderHistoryId(orderId);
+                        if (state.activeOrderConfirm && state.activeOrderConfirm.id === orderId) {
+                            state.activeOrderConfirm = null;
+                        }
+                        render();
+                        showToast('Pesanan berhasil dibatalkan.');
+                    } catch (err) {
+                        console.error(err);
+                        showToast('Gagal membatalkan pesanan, coba lagi!', 'error');
+                    }
                 }
-                removeOrderHistoryId(orderId);
-                if (state.activeOrderConfirm && state.activeOrderConfirm.id === orderId) {
-                    state.activeOrderConfirm = null;
-                }
-                render();
-                showToast('Pesanan berhasil dibatalkan.');
-            } catch (err) {
-                console.error(err);
-                showToast('Gagal membatalkan pesanan, coba lagi!', 'error');
-            }
+            });
         };
 
         window.deleteCustomerHistoryItem = function(orderId) {
-            if (!confirm('Hapus riwayat pesanan ini dari tampilanmu?')) return;
-            removeOrderHistoryId(orderId);
-            render();
-            showToast('Riwayat dihapus.');
+            openConfirmDialog({
+                title: 'Hapus Riwayat?',
+                message: 'Riwayat pesanan ini akan dihapus dari tampilan perangkatmu.',
+                confirmText: 'Ya, Hapus',
+                cancelText: 'Batal',
+                onConfirm: () => {
+                    removeOrderHistoryId(orderId);
+                    render();
+                    showToast('Riwayat dihapus.');
+                }
+            });
         };
 
         window.clearCompletedCustomerHistory = function() {
@@ -350,10 +444,18 @@
                 return o && o.status === 'completed';
             });
             if (completedIds.length === 0) return;
-            if (!confirm(`Hapus semua (${completedIds.length}) riwayat pesanan yang sudah selesai dari tampilanmu?`)) return;
-            completedIds.forEach(id => removeOrderHistoryId(id));
-            render();
-            showToast('Semua riwayat selesai dibersihkan.');
+
+            openConfirmDialog({
+                title: 'Bersihkan Riwayat?',
+                message: `Hapus semua (${completedIds.length}) riwayat pesanan yang sudah selesai dari tampilan perangkatmu?`,
+                confirmText: 'Ya, Bersihkan',
+                cancelText: 'Batal',
+                onConfirm: () => {
+                    completedIds.forEach(id => removeOrderHistoryId(id));
+                    render();
+                    showToast('Semua riwayat selesai dibersihkan.');
+                }
+            });
         };
 
         window.safeBack = function() {
@@ -564,11 +666,15 @@
             localStorage.setItem('yasif_store', JSON.stringify(store));
             state.showStoreSearch = false;
             state.storeLocation = store.name; 
+            state.hasSeenStorePrompt = true;
             
-            if (isManual || !store.code) {
+            const code = isManual ? '' : resolveStoreCode(store);
+            if (!code) {
+                resetLocalProductsToBase();
+                state.hasSyncedLiveMenu = true;
                 state.isFallbackWarning = true;
             } else {
-                await window.fetchLiveMenu(store.code);
+                await window.fetchLiveMenu(code);
             }
             
             state.showAvailabilityWarning = true; 
@@ -595,8 +701,14 @@
 
         window.lanjutPesanan = async function() {
             state.showStorePrompt = false;
-            if (state.selectedKKStore && state.selectedKKStore.code) {
-                await window.fetchLiveMenu(state.selectedKKStore.code);
+            state.hasSeenStorePrompt = true;
+            const code = resolveStoreCode(state.selectedKKStore);
+            if (code) {
+                await window.fetchLiveMenu(code);
+            } else {
+                resetLocalProductsToBase();
+                state.hasSyncedLiveMenu = true;
+                state.isFallbackWarning = true;
             }
             state.showAvailabilityWarning = true;
             render();
@@ -657,13 +769,7 @@
                 isManual: true
             };
             state.kkStores.push(manualStore);
-            state.selectedKKStore = manualStore;
-            localStorage.setItem('yasif_store', JSON.stringify(manualStore));
-            state.showStoreSearch = false;
-            state.storeLocation = manualStore.name;
-            state.isFallbackWarning = true;
-            state.showAvailabilityWarning = true;
-            render();
+            executeStoreChange(manualStore, true);
         };
 
         function renderPickupStoreField(inputIcon, inputLabel) {
@@ -965,7 +1071,7 @@
             if (existingToast) existingToast.remove();
             const toastContainer = document.createElement('div');
             toastContainer.id = 'active-toast';
-            toastContainer.className = 'fixed inset-0 z-[160] flex items-center justify-center px-6 pointer-events-none'; 
+            toastContainer.className = 'fixed inset-0 z-[170] flex items-center justify-center px-6 pointer-events-none'; 
             const bg = type === 'error' ? '#2B1717' : '#4A1E1B';
             const toastContent = document.createElement('div');
             toastContent.className = `text-white px-6 py-5 rounded-[1.75rem] shadow-float flex flex-col items-center justify-center gap-3 text-center w-full max-w-[320px] pointer-events-auto border border-white/10`;
@@ -979,6 +1085,33 @@
             }, 2500);
         }
 
+        function renderConfirmDialogModal() {
+            const dlg = state.confirmDialog;
+            if (!dlg) return '';
+            return `
+                <div class="fixed inset-0 z-[155] flex items-center justify-center p-4">
+                    <div class="absolute inset-0 diffused-backdrop" onclick="closeConfirmDialog()"></div>
+                    <div class="luxury-panel w-full max-w-[380px] rounded-[2rem] z-10 overflow-hidden flex flex-col relative">
+                        <div class="px-6 py-7 text-center">
+                            <div class="w-14 h-14 bg-[#B43A34]/10 text-[#B43A34] rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-2xl">⚠️</span>
+                            </div>
+                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-2.5 tracking-[-0.03em]">${escapeHtml(dlg.title)}</h3>
+                            <p class="text-sm text-subtle leading-relaxed mb-6">${escapeHtml(dlg.message)}</p>
+                            <div class="flex gap-3">
+                                <button onclick="closeConfirmDialog()" class="flex-1 py-3.5 bg-surface border border-border text-foreground rounded-full font-semibold text-sm tracking-[-0.01em]">
+                                    ${escapeHtml(dlg.cancelText)}
+                                </button>
+                                <button onclick="executeConfirmDialog()" class="flex-1 py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">
+                                    ${escapeHtml(dlg.confirmText)}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderStorePrompt() {
             return `
                 <div class="fixed inset-0 z-[130] flex items-center justify-center p-4">
@@ -987,7 +1120,7 @@
                         <div class="px-6 py-7 text-center">
                             <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">Lanjut Pesanan?</h3>
                             <p class="text-sm text-subtle leading-relaxed mb-6">
-                                Apakah kamu ingin memesan dari cabang <strong>${state.selectedKKStore.name}</strong> seperti sebelumnya?
+                                Apakah kamu ingin memesan dari cabang <strong>${escapeHtml(state.selectedKKStore.name)}</strong> seperti sebelumnya?
                             </p>
                             <div class="flex gap-3">
                                 <button onclick="state.showStorePrompt=false; state.showStoreSearch=true; render()" class="flex-1 py-3.5 bg-surface border border-border text-foreground rounded-full font-semibold text-sm tracking-[-0.01em]">Ganti Cabang</button>
@@ -1427,7 +1560,7 @@
                         ${renderHeader()}
                         <div class="min-h-[calc(100vh-3.5rem)] flex flex-col items-center justify-center pb-32">
                             <div class="w-12 h-12 border-4 border-[#B43A34]/20 border-t-[#B43A34] rounded-full animate-spin mb-4"></div>
-                            <p class="text-sm text-subtle font-medium animate-pulse text-center px-4">Mengambil stok real-time toko...<br>Mohon tunggu sebentar.</p>
+                            <p class="text-sm text-subtle font-medium animate-pulse text-center px-4">Mengambil stok & harga real-time toko...<br>Mohon tunggu sebentar.</p>
                         </div>
                     </div>
                 `;
@@ -1456,6 +1589,7 @@
                     ${state.showScheduleWarning ? renderScheduleWarningModal() : ''}
                     ${state.showVoucherMismatchModal ? renderVoucherMismatchModal() : ''}
                     ${state.showStoreChangeConfirm ? renderStoreChangeConfirmModal() : ''}
+                    ${state.confirmDialog ? renderConfirmDialogModal() : ''}
                 </div>
             `;
 
@@ -1589,17 +1723,20 @@
                                 <h2 class="font-heading text-[clamp(3rem,7vw,7rem)] leading-[0.88] tracking-[-0.075em] font-semibold text-foreground">Kopi Kenangan</h2>
                                 
                                 ${state.selectedKKStore ? `
-                                    <div class="mt-8 flex items-center justify-between bg-surface border border-border p-4 rounded-[1.25rem]">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-[#B43A34]/10 rounded-full flex items-center justify-center text-[#B43A34]">
+                                    <div class="mt-8 flex items-center justify-between gap-2 bg-surface border border-border p-4 rounded-[1.25rem]">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <div class="w-10 h-10 bg-[#B43A34]/10 rounded-full flex items-center justify-center text-[#B43A34] shrink-0">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                             </div>
-                                            <div>
+                                            <div class="min-w-0">
                                                 <p class="text-[10px] uppercase tracking-[0.2em] font-bold text-subtle mb-0.5">Cabang Pilihan</p>
-                                                <p class="text-sm font-semibold text-foreground line-clamp-1">${state.selectedKKStore.name}</p>
+                                                <p class="text-sm font-semibold text-foreground line-clamp-1">${escapeHtml(state.selectedKKStore.name)}</p>
                                             </div>
                                         </div>
-                                        <button onclick="state.showStoreSearch = true; render()" class="text-xs font-semibold text-[#B43A34] bg-[#B43A34]/10 px-3 py-1.5 rounded-full hover:bg-[#B43A34]/20">Ganti</button>
+                                        <div class="flex items-center gap-1.5 shrink-0">
+                                            <button onclick="manualRefreshStoreMenu()" title="Refresh stok & harga" class="text-xs font-semibold text-subtle bg-background border border-border px-2.5 py-1.5 rounded-full hover:text-foreground">🔄</button>
+                                            <button onclick="state.showStoreSearch = true; render()" class="text-xs font-semibold text-[#B43A34] bg-[#B43A34]/10 px-3 py-1.5 rounded-full hover:bg-[#B43A34]/20">Ganti</button>
+                                        </div>
                                     </div>
                                 ` : ''}
                             </div>
@@ -1617,7 +1754,7 @@
                                 <svg class="w-5 h-5 text-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
                             <input type="text" id="searchInput" placeholder="Cari menu favoritmu di sini..." 
-                                value="${state.searchQuery}" 
+                                value="${escapeHtml(state.searchQuery)}" 
                                 oninput="state.searchQuery = this.value; render()" 
                                 class="w-full bg-surface border border-border rounded-full py-4 pl-12 pr-5 text-sm focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 text-foreground font-medium placeholder:text-subtle/50 shadow-sm"
                             />
@@ -1722,7 +1859,7 @@
                             </div>
                             <div class="mb-2">
                                 <label class="text-[10px] uppercase tracking-[0.22em] text-subtle font-semibold mb-3 block">Catatan Tambahan</label>
-                                <textarea oninput="updateTempNote(this.value)" placeholder="Contoh: Less ice..." class="w-full p-5 bg-surface border border-border rounded-[1.35rem] focus:ring-1 focus:ring-primary/20 focus:border-primary/30 outline-none text-sm resize-none h-28 placeholder:text-subtle/50">${state.tempNote}</textarea>
+                                <textarea oninput="updateTempNote(this.value)" placeholder="Contoh: Less ice..." class="w-full p-5 bg-surface border border-border rounded-[1.35rem] focus:ring-1 focus:ring-primary/20 focus:border-primary/30 outline-none text-sm resize-none h-28 placeholder:text-subtle/50">${escapeHtml(state.tempNote)}</textarea>
                             </div>
                         </div>
                         <div class="p-5 sm:px-8 sm:pb-7 border-t border-border/70 bg-surface/80 shrink-0">
@@ -1962,6 +2099,11 @@
                     } else if (!state.hasSeenStorePrompt) {
                         state.showStorePrompt = true;
                         state.hasSeenStorePrompt = true;
+                    } else if (!state.hasSyncedLiveMenu) {
+                        const code = resolveStoreCode(state.selectedKKStore);
+                        if (code) {
+                            window.fetchLiveMenu(code);
+                        }
                     }
                 }
             } 
@@ -2111,92 +2253,6 @@
 
         window.syncOrderHistoryFromFirebase();
     </script>
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyB1sNl7HsyQoG_3_UbS-H8QYmjla8i6fKc",
-            authDomain: "yasif-store.firebaseapp.com",
-            databaseURL: "https://yasif-store-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "yasif-store",
-            storageBucket: "yasif-store.firebasestorage.app",
-            messagingSenderId: "76503690642",
-            appId: "1:76503690642:web:e9f3b1d73a545e102ae54b",
-            measurementId: "G-P10WDJPSK4"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        onValue(ref(db, 'store_status'), (snapshot) => {
-            const data = snapshot.val();
-            const storeData = (typeof data === 'object' && data !== null)
-                ? data
-                : { isOpen: !!data, reason: "Admin sedang ada kesibukan lain.", time: "", minPurchase32k: false };
-            
-            if (typeof state !== 'undefined') {
-                state.isStoreOpen = storeData.isOpen !== false;
-                state.closeReason = storeData.reason || "";
-                state.closeTime = storeData.time || "";
-                state.minPurchase32k = storeData.minPurchase32k === true;
-                if (typeof render === 'function') render();
-            }
-        });
-
-        window.submitOrderToFirebase = async function(payload) {
-            const now = new Date();
-            const yyyy = now.getFullYear();
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const dd = String(now.getDate()).padStart(2, '0');
-            const todayKey = `${yyyy}-${mm}-${dd}`;
-
-            let queueNum = 1;
-            try {
-                const counterRef = ref(db, `order_counters/${todayKey}`);
-                const txResult = await runTransaction(counterRef, (currentVal) => (currentVal || 0) + 1);
-                queueNum = txResult.snapshot.val() || 1;
-            } catch (e) {
-                queueNum = Number(String(Date.now()).slice(-3));
-            }
-
-            const queueNumber = String(queueNum).padStart(3, '0');
-            const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
-            const orderId = `ORD-${yyyy}${mm}${dd}-${queueNumber}-${randomSuffix}`;
-            const dateStr = now.toLocaleString('id-ID', {
-                day: '2-digit', month: 'short', year: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-            }) + ' WIB';
-
-            const fullOrder = {
-                ...payload,
-                id: orderId,
-                queueNumber,
-                createdAt: Date.now(),
-                dateStr
-            };
-
-            await set(ref(db, `orders/${orderId}`), fullOrder);
-            return fullOrder;
-        };
-
-        const activeHistoryListeners = new Set();
-
-        window.syncOrderHistoryFromFirebase = function() {
-            if (!state || !Array.isArray(state.orderHistoryIds)) return;
-            state.orderHistoryIds.forEach(orderId => {
-                if (activeHistoryListeners.has(orderId)) return;
-                activeHistoryListeners.add(orderId);
-                onValue(ref(db, `orders/${orderId}`), (snapshot) => {
-                    const val = snapshot.val();
-                    if (val) {
-                        state.orderHistoryMap[orderId] = val;
-                    } else {
-                        delete state.orderHistoryMap[orderId];
-                    }
-                    if (typeof render === 'function') render();
-                });
-            });
-        };
-
-        window.syncOrderHistoryFromFirebase();
-    </script>
 </body>
 </html>
+<!-- AKHIR FILE INDEX.HTML -->
