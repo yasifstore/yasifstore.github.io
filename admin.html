@@ -6,16 +6,58 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1F2A24">
     <title>Admin Yasif Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#F7F5F0] min-h-screen p-2.5 sm:p-6 pb-16 text-gray-900">
+
+    <!-- BANNER ALERT ORDER BARU -->
+    <div id="newOrderBanner" class="hidden fixed top-3 left-3 right-3 z-50 max-w-lg mx-auto bg-[#1F2A24] text-white p-4 rounded-2xl shadow-2xl border border-emerald-400/40 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+            <p class="text-[10px] uppercase tracking-widest text-emerald-300 font-bold">🔔 Orderan Baru Masuk!</p>
+            <p id="newOrderBannerText" class="text-sm font-extrabold truncate mt-0.5">Antrian baru masuk</p>
+        </div>
+        <button onclick="document.getElementById('newOrderBanner').classList.add('hidden')" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-full text-xs font-bold shrink-0">
+            Oke
+        </button>
+    </div>
+
     <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[310px_1fr] gap-4 sm:gap-6 items-start">
         
         <!-- PANEL KONTROL TOKO -->
         <div class="bg-white p-5 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-md text-center border border-gray-100 lg:sticky lg:top-6">
             <h1 class="text-xl sm:text-2xl font-bold mb-0.5 text-gray-900">Admin Yasif Store</h1>
-            <p id="statusText" class="text-gray-500 font-semibold text-xs sm:text-sm mb-5">Memuat status...</p>
+            <p id="statusText" class="text-gray-500 font-semibold text-xs sm:text-sm mb-4">Memuat status...</p>
+
+            <!-- PANEL NOTIFIKASI & STANDBY HP -->
+            <div class="mb-4 p-3.5 border border-emerald-200 rounded-2xl bg-emerald-50/60 text-left space-y-2.5">
+                <div class="flex items-center justify-between gap-2">
+                    <div>
+                        <span class="block text-xs font-extrabold text-emerald-950">Notif & Suara Realtime</span>
+                        <span id="notifStatusLabel" class="block text-[10px] font-semibold text-emerald-700 mt-0.5">Klik aktifkan agar berbunyi</span>
+                    </div>
+                    <button id="testSoundBtn" type="button" class="px-2.5 py-1 bg-white border border-emerald-200 rounded-full text-[10px] font-bold text-emerald-800 hover:bg-emerald-100 shrink-0">
+                        🔊 Tes
+                    </button>
+                </div>
+                <button id="enableNotifBtn" type="button" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm">
+                    🔔 Aktifkan Suara & Notif HP
+                </button>
+                <div class="flex items-center justify-between pt-2 border-t border-emerald-200/70">
+                    <div>
+                        <span class="block text-[11px] font-bold text-gray-800">Layar Tetap Nyala</span>
+                        <span class="block text-[10px] text-gray-500">Cegah HP tidur saat standby</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="wakeLockToggle" class="sr-only peer">
+                        <div class="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                    </label>
+                </div>
+            </div>
 
             <div class="mb-4 flex items-center justify-between p-3.5 border border-gray-200 rounded-2xl bg-gray-50/70">
                 <div class="text-left pr-3">
@@ -68,7 +110,7 @@
         </div>
     </div>
 
-    <!-- MODAL KONFIRMASI ADMIN (PENGGANTI POP-UP CHROME) -->
+    <!-- MODAL KONFIRMASI ADMIN -->
     <div id="adminConfirmModal" onclick="if(event.target===this) this.classList.add('hidden')" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
         <div class="bg-white w-full max-w-sm rounded-[1.75rem] p-6 text-center shadow-2xl border border-gray-100">
             <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">⚠️</div>
@@ -118,14 +160,173 @@
         const min32kToggle = document.getElementById('min32kToggle');
         const ordersListEl = document.getElementById('ordersList');
         const clearDoneBtn = document.getElementById('clearDoneBtn');
+        const enableNotifBtn = document.getElementById('enableNotifBtn');
+        const testSoundBtn = document.getElementById('testSoundBtn');
+        const notifStatusLabel = document.getElementById('notifStatusLabel');
+        const wakeLockToggle = document.getElementById('wakeLockToggle');
 
         let currentStatus = { isOpen: true, reason: "", time: "", minPurchase32k: false };
         let allOrders = [];
         let activeTab = 'waiting_payment';
+        let isInitialOrdersLoad = true;
+        const knownOrderIds = new Set();
+        let audioCtx = null;
+        let wakeLockSentinel = null;
 
         const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price ? price : 0);
         const escapeHtml = (value) => String(value ? value : '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
+        // --- SISTEM NOTIFIKASI SUARA, GETAR, BANNER & WAKE LOCK ---
+        function unlockAudioContext() {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextClass) return null;
+            if (!audioCtx) {
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().catch(() => {});
+            }
+            return audioCtx;
+        }
+
+        function playOrderChime() {
+            try {
+                const ctx = unlockAudioContext();
+                if (!ctx) return;
+                const notes = [587.33, 880, 1174.66]; // D5 -> A5 -> D6
+                const repeats = [0, 0.55]; // Bunyi 2 kali biar jelas terdengar
+
+                repeats.forEach(repOffset => {
+                    notes.forEach((freq, idx) => {
+                        const startTime = ctx.currentTime + repOffset + (idx * 0.13);
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, startTime);
+
+                        gain.gain.setValueAtTime(0.001, startTime);
+                        gain.gain.exponentialRampToValueAtTime(0.35, startTime + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.36);
+                    });
+                });
+            } catch (e) {
+                console.error('Audio chime error:', e);
+            }
+        }
+
+        function updateNotifUI() {
+            const hasNotifSupport = ('Notification' in window);
+            const perm = hasNotifSupport ? Notification.permission : 'unsupported';
+            if (perm === 'granted') {
+                notifStatusLabel.innerText = '✅ Notif HP & Suara Siap';
+                enableNotifBtn.innerText = '🔔 Suara & Notif Aktif';
+                enableNotifBtn.className = 'w-full py-2.5 rounded-xl bg-emerald-800 text-white text-xs font-bold shadow-sm';
+            } else if (perm === 'denied') {
+                notifStatusLabel.innerText = '⚠️ Izin notif diblokir (suara tetap jalan)';
+                enableNotifBtn.innerText = '🔊 Aktifkan Suara Saja';
+            }
+        }
+
+        enableNotifBtn.onclick = async () => {
+            unlockAudioContext();
+            playOrderChime();
+            if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                try {
+                    await Notification.requestPermission();
+                } catch (e) {}
+            }
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+            updateNotifUI();
+        };
+
+        testSoundBtn.onclick = () => {
+            unlockAudioContext();
+            playOrderChime();
+            if (navigator.vibrate) {
+                navigator.vibrate([250, 120, 250]);
+            }
+        };
+
+        async function requestScreenWakeLock() {
+            if (!('wakeLock' in navigator)) {
+                wakeLockToggle.checked = false;
+                alert('Browser ini belum mendukung fitur layar tetap nyala.');
+                return;
+            }
+            try {
+                wakeLockSentinel = await navigator.wakeLock.request('screen');
+                wakeLockSentinel.addEventListener('release', () => {
+                    if (!wakeLockToggle.checked) wakeLockSentinel = null;
+                });
+            } catch (e) {
+                wakeLockToggle.checked = false;
+            }
+        }
+
+        wakeLockToggle.onchange = async (e) => {
+            if (e.target.checked) {
+                await requestScreenWakeLock();
+            } else if (wakeLockSentinel) {
+                await wakeLockSentinel.release().catch(() => {});
+                wakeLockSentinel = null;
+            }
+        };
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && wakeLockToggle.checked) {
+                requestScreenWakeLock();
+            }
+        });
+
+        // Buka kunci audio otomatis pada sentuhan pertama di halaman
+        document.addEventListener('pointerdown', () => {
+            unlockAudioContext();
+        }, { once: true });
+
+        updateNotifUI();
+
+        function triggerNewOrderAlert(latestOrder, newCount) {
+            playOrderChime();
+
+            if (navigator.vibrate) {
+                navigator.vibrate([300, 150, 300, 150, 400]);
+            }
+
+            const titleText = newCount > 1
+                ? `${newCount} Orderan Baru Masuk!`
+                : `Antrian #${latestOrder.queueNumber} • ${latestOrder.customerName}`;
+            const bodyText = `${latestOrder.storeName} • Total ${formatPrice(latestOrder.totalPrice)}`;
+
+            const banner = document.getElementById('newOrderBanner');
+            const bannerText = document.getElementById('newOrderBannerText');
+            if (banner && bannerText) {
+                bannerText.innerText = `${titleText} (${formatPrice(latestOrder.totalPrice)})`;
+                banner.classList.remove('hidden');
+            }
+
+            if ('Notification' in window && Notification.permission === 'granted') {
+                try {
+                    const notif = new Notification(titleText, {
+                        body: bodyText,
+                        tag: 'yasif-order-' + latestOrder.id,
+                        renotify: true
+                    });
+                    notif.onclick = function() {
+                        window.focus();
+                        notif.close();
+                    };
+                } catch (e) {}
+            }
+        }
+
+        // --- MODAL KONFIRMASI ADMIN ---
         function openAdminConfirm(title, message, onOk) {
             const modal = document.getElementById('adminConfirmModal');
             document.getElementById('adminConfirmTitle').innerText = title;
@@ -385,6 +586,18 @@
             const data = rawData ? rawData : {};
             const sorted = Object.values(data).sort((a, b) => (b.createdAt ? b.createdAt : 0) - (a.createdAt ? a.createdAt : 0));
             allOrders = cleanupExpiredOrders(sorted);
+
+            if (isInitialOrdersLoad) {
+                allOrders.forEach(o => knownOrderIds.add(o.id));
+                isInitialOrdersLoad = false;
+            } else {
+                const brandNewOrders = allOrders.filter(o => !knownOrderIds.has(o.id) && o.status !== 'completed');
+                allOrders.forEach(o => knownOrderIds.add(o.id));
+                if (brandNewOrders.length > 0) {
+                    triggerNewOrderAlert(brandNewOrders[0], brandNewOrders.length);
+                }
+            }
+
             renderOrders();
         }, (err) => {
             window.__adminConnected = true;
