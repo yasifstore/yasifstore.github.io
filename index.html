@@ -85,8 +85,7 @@
     </script>
 
     <script>
-        // --- KODE AUTO REFRESH MULAI DARI SINI ---
-        const WEB_VERSION = "1.1"; 
+        const WEB_VERSION = "1.2";
         const currentLocalVersion = localStorage.getItem("yasif_web_version");
         
         if (currentLocalVersion !== WEB_VERSION) {
@@ -139,7 +138,9 @@
             pendingStoreId: null,
             editingCartItemId: null,
             showProcessWarning: false,
-            showScheduleWarning: false
+            showScheduleWarning: false,
+            showVoucherMismatchModal: false,
+            acceptedVoucherSurcharge: false
         };
 
         window.syncLiveWithLocal = function(liveItems) {
@@ -284,10 +285,177 @@
 
         const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price || 0);
         const getTotalItems = () => state.cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+        function solveVoucherPlan(cart, onlyVoucherB) {
+            if (!cart || cart.length === 0) {
+                return { isUnderMinB: false, extraCost: 0, sortedCart: [] };
+            }
+
+            // Pecah keranjang jadi satuan item agar bisa dikelompokkan optimal
+            const units = [];
+            cart.forEach(item => {
+                const orig = item.originalPrice || Math.max(0, (item.promoPrice - 4000) * 2);
+                for (let i = 0; i < (item.quantity || 1); i++) {
+                    units.push({ ...item, quantity: 1, _orig: orig });
+                }
+            });
+
+            const totalNormal = units.reduce((s, u) => s + u._orig, 0);
+
+            // Jika beli 1 item di mode normal, ikut aturan allowSingleItem (+2.000)
+            if (units.length === 1 && !onlyVoucherB) {
+                return { isUnderMinB: false, extraCost: 0, sortedCart: cart };
+            }
+
+            // Jika mode khusus Voucher B (Min 50k) tapi total normal < 50k
+            if (onlyVoucherB && totalNormal < 50000) {
+                return { isUnderMinB: true, extraCost: 0, sortedCart: cart };
+            }
+
+            units.sort((a, b) => b._orig - a._orig);
+
+            const evaluatePartition = (groups) => {
+                let extraCost = 0;
+                let nombok = 0;
+                let countA = 0;
+                let singleItemA = 0;
+                const typedGroups = [];
+
+                for (const g of groups) {
+                    const sum = g.reduce((s, u) => s + u._orig, 0);
+                    if (onlyVoucherB) {
+                        if (sum < 50000) return null; // Wajib >= 50k
+                        const loss = Math.max(0, Math.ceil((sum - 60000) / 2));
+                        nombok += loss;
+                        if (sum > 62000) extraCost += loss; // Toleransi 2k (nombok 1k)
+                        typedGroups.push({ type: 'B', sum, items: g });
+                    } else {
+                        // Cek apakah cocok pakai Voucher B (50k - 62k)
+                        if (sum >= 50000 && sum <= 62000) {
+                            const loss = Math.max(0, Math.ceil((sum - 60000) / 2));
+                            nombok += loss;
+                            typedGroups.push({ type: 'B', sum, items: g });
+                        } else {
+                            // Pakai Voucher A (0 min, maks 70k, toleransi 72k)
+                            const loss = Math.max(0, Math.ceil((sum - 70000) / 2));
+                            nombok += loss;
+                            if (sum > 72000) extraCost += loss;
+                            countA++;
+                            if (g.length === 1) singleItemA++;
+                            typedGroups.push({ type: 'A', sum, items: g });
+                        }
+                    }
+                }
+
+                // Aturan hemat Voucher A:
+                // - Jika total 2 item: tidak boleh pecah jadi 1+1 Voucher A tanpa biaya
+                // - Jika >= 3 item: maksimal 1 Voucher A yang isinya cuma 1 item
+                if (!onlyVoucherB) {
+                    const allowedSingleA = units.length >= 3 ? 1 : 0;
+                    if (singleItemA > allowedSingleA) {
+                        extraCost += (singleItemA - allowedSingleA) * 2000;
+                    }
+                }
+
+                return { extraCost, nombok, countA, groupCount: groups.length, typedGroups };
+            };
+
+            const isBetter = (cand, best) => {
+                if (!best) return true;
+                if (cand.extraCost !== best.extraCost) return cand.extraCost < best.extraCost;
+                if (cand.nombok !== best.nombok) return cand.nombok < best.nombok;
+                if (cand.countA !== best.countA) return cand.countA < best.countA;
+                return cand.groupCount < best.groupCount;
+            };
+
+            let bestResult = null;
+
+            if (units.length <= 10) {
+                // Pencarian kombinasi optimal (DFS) untuk <= 10 item
+                const groups = [];
+                let steps = 0;
+                const MAX_STEPS = 4500;
+
+                const dfs = (idx) => {
+                    if (steps++ > MAX_STEPS) return;
+                    if (idx === units.length) {
+                        const res = evaluatePartition(groups);
+                        if (res && isBetter(res, bestResult)) bestResult = res;
+                        return;
+                    }
+                    const item = units[idx];
+                    for (let i = 0; i < groups.length; i++) {
+                        groups[i].push(item);
+                        dfs(idx + 1);
+                        groups[i].pop();
+                    }
+                    groups.push([item]);
+                    dfs(idx + 1);
+                    groups.pop();
+                };
+                dfs(0);
+            } else {
+                // Mode cepat (Greedy) jika pembeli order > 10 item
+                const remaining = [...units];
+                const groups = [];
+                while (remaining.length > 0) {
+                    let g = [remaining.shift()];
+                    let sum = g[0]._orig;
+                    for (let i = 0; i < remaining.length; ) {
+                        const limit = onlyVoucherB ? 62000 : (sum < 50000 ? 62000 : 72000);
+                        if (sum + remaining[i]._orig <= limit) {
+                            sum += remaining[i]._orig;
+                            g.push(remaining.splice(i, 1)[0]);
+                        } else {
+                            i++;
+                        }
+                    }
+                    groups.push(g);
+                }
+                bestResult = evaluatePartition(groups) || evaluatePartition([units]);
+            }
+
+            if (!bestResult) {
+                bestResult = evaluatePartition([units]);
+            }
+
+            // Urutkan: Kelompok Voucher B di atas, lalu Voucher A di bawah
+            bestResult.typedGroups.sort((a, b) => {
+                if (a.type !== b.type) return a.type === 'B' ? -1 : 1;
+                return b.sum - a.sum;
+            });
+
+            // Gabungkan kembali item yang sama di dalam satu kelompok agar tampilan WA rapi
+            const sortedCart = [];
+            bestResult.typedGroups.forEach(group => {
+                const merged = [];
+                group.items.forEach(u => {
+                    const existing = merged.find(m => m.id === u.id && m.note === u.note);
+                    if (existing) {
+                        existing.quantity += 1;
+                    } else {
+                        merged.push({ ...u, quantity: 1 });
+                    }
+                });
+                sortedCart.push(...merged);
+            });
+
+            return {
+                isUnderMinB: false,
+                extraCost: bestResult.extraCost,
+                sortedCart
+            };
+        }
+
+        const getVoucherPlan = () => solveVoucherPlan(state.cart, state.minPurchase32k);
+
         const getTotalPrice = () => {
             let sum = state.cart.reduce((s, item) => s + ((item.promoPrice || 0) * (item.quantity || 0)), 0);
             if (state.allowSingleItem && state.cart.length > 0 && getTotalItems() === 1) {
                 sum += 2000;
+            }
+            if (state.acceptedVoucherSurcharge && state.cart.length > 0) {
+                const plan = getVoucherPlan();
+                sum += (plan.extraCost || 0);
             }
             return sum;
         };
@@ -482,6 +650,7 @@
             if (!state.activeProduct) return;
 
             let finalPrice = state.activeProduct.promoPrice;
+            let finalOriginalPrice = state.activeProduct.originalPrice;
             let finalName = state.activeProduct.name;
             let finalNote = state.tempNote;
             let finalSize = state.tempSize;
@@ -490,10 +659,17 @@
             if (state.activeProduct.sizes && state.tempSize) {
                 const selectedSize = state.activeProduct.sizes.find(s => s.name === state.tempSize);
                 if (selectedSize && selectedSize.promoPrice) finalPrice = selectedSize.promoPrice;
+                if (selectedSize && selectedSize.originalPrice) finalOriginalPrice = selectedSize.originalPrice;
             }
 
-            if (state.tempOatside) finalPrice += 1500;
-            if (state.tempJuwara) finalPrice += 1500;
+            if (state.tempOatside) {
+                finalPrice += 1500;
+                finalOriginalPrice += 3000;
+            }
+            if (state.tempJuwara) {
+                finalPrice += 1500;
+                finalOriginalPrice += 3000;
+            }
 
             const baseId = state.activeProduct.id;
             const uniqueId = `${baseId}${finalSize ? '-'+finalSize : ''}${finalSugar ? '-'+finalSugar : ''}${state.tempOatside ? '-oat' : ''}${state.tempJuwara ? '-juw' : ''}`;
@@ -514,6 +690,7 @@
                     cartItemId: Date.now().toString(36) + Math.random().toString(36).substr(2),
                     id: uniqueId,
                     name: finalName,
+                    originalPrice: finalOriginalPrice,
                     promoPrice: finalPrice,
                     quantity: finalQty,
                     note: finalNote,
@@ -524,6 +701,7 @@
                 });
             }
 
+            state.acceptedVoucherSurcharge = false;
             saveCart();
             render(); 
             showToast('Berhasil masuk keranjang! 🛒');
@@ -575,28 +753,6 @@
                 if (!finalName) { showToast('Isi atas nama pengambilan dulu!', 'error'); return; }
             }
 
-            if (state.minPurchase32k) {
-                const total = getTotalPrice();
-                const totalItems = getTotalItems();
-                
-                const minPrice = totalItems >= 3 ? 36500 : 33000;
-                const maxPrice = totalItems >= 3 ? 41500 : 40000;
-
-                if (total < minPrice) {
-                    showToast(`Minimal beli Rp ${minPrice.toLocaleString('id-ID')} untuk ${totalItems} item! ✌️`, 'error');
-                    return;
-                }
-                if (total > maxPrice) {
-                    showToast(`Gagal! Total belanja melebihi batas promo voucher (Maks Rp ${maxPrice.toLocaleString('id-ID')} untuk ${totalItems} item).`, 'error');
-                    return;
-                }
-            } else {
-                if (getTotalItems() === 2 && getTotalPrice() > 42000) {
-                    showToast('Gagal! Total 2 item melebihi batas promo (Maks Rp 42.000). Silakan ganti menu lebih murah ATAU tambah item lagi.', 'error');
-                    return;
-                }
-            }
-
             if (!state.allowSingleItem && getTotalItems() < 2) {
                 showToast('Minimal beli 2 item dulu ya (bisa minuman/makanan)! ✌️', 'error');
                 return;
@@ -604,6 +760,19 @@
 
             if (state.orderType === 'scheduled' && !state.scheduledTime) {
                 showToast('Jam pengambilan belum diisi!', 'error');
+                return;
+            }
+
+            const plan = getVoucherPlan();
+
+            if (plan.isUnderMinB) {
+                showToast('Total menu belum mencapai syarat minimal voucher saat ini. Silakan tambah menu lagi ya! ✌️', 'error');
+                return;
+            }
+
+            if (plan.extraCost > 0 && !state.acceptedVoucherSurcharge) {
+                state.showVoucherMismatchModal = true;
+                render();
                 return;
             }
 
@@ -621,9 +790,12 @@
             }
             const orderBrand = 'Kopi Kenangan';
 
+            const plan = getVoucherPlan();
+            const orderedItems = plan.sortedCart.length > 0 ? plan.sortedCart : state.cart;
+
             let message = `Orderan Baru: ${orderBrand}\n--------------------------------\n`;
             
-            state.cart.forEach(item => {
+            orderedItems.forEach(item => {
                 message += `• ${item.name} (${item.quantity}x)\n`;
                 
                 let details = [];
@@ -650,6 +822,11 @@
             if (isSingleItemKK) {
                 message += `• Biaya Pembelian 1 Item\n`;
                 message += `   harga: Rp 2.000\n`;
+            }
+
+            if (state.acceptedVoucherSurcharge && plan.extraCost > 0) {
+                message += `• Biaya Lebihan (Tidak Sesuai Voucher)\n`;
+                message += `   harga: ${formatPrice(plan.extraCost)}\n`;
             }
             
             message += `\nTotal: ${formatPrice(getTotalPrice())}\n--------------------------------\n`;
@@ -744,6 +921,34 @@
                             <div class="flex gap-3">
                                 <button onclick="state.showScheduleWarning=false; render()" class="flex-1 py-3.5 bg-surface border border-border text-foreground rounded-full font-semibold text-sm tracking-[-0.01em]">Batal</button>
                                 <button onclick="state.orderType='scheduled'; state.showScheduleWarning=false; render()" class="flex-1 py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">Mengerti & Lanjut</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderVoucherMismatchModal() {
+            const plan = getVoucherPlan();
+            return `
+                <div class="fixed inset-0 z-[140] flex items-center justify-center p-4">
+                    <div class="absolute inset-0 diffused-backdrop" onclick="state.showVoucherMismatchModal=false; render()"></div>
+                    <div class="luxury-panel w-full max-w-[400px] rounded-[2rem] z-10 overflow-hidden flex flex-col relative">
+                        <div class="px-6 py-7 text-center">
+                            <div class="w-16 h-16 bg-[#B43A34]/10 text-[#B43A34] rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-2xl">⚠️</span>
+                            </div>
+                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-3 tracking-[-0.03em]">Penyesuaian Voucher</h3>
+                            <p class="text-sm text-subtle leading-relaxed mb-4">
+                                Voucher tidak cocok dengan jumlah atau nominal produk yang dipilih, akan dikenakan biaya tambahan sebesar <strong class="text-[#B43A34]">${formatPrice(plan.extraCost)}</strong> karena tidak sesuai voucher.
+                            </p>
+                            <div class="flex gap-3 mt-6">
+                                <button onclick="state.showVoucherMismatchModal=false; render()" class="flex-1 py-3.5 px-3 bg-surface border border-border text-foreground rounded-full font-semibold text-xs sm:text-sm tracking-[-0.01em]">
+                                    Ubah & Edit Menu
+                                </button>
+                                <button onclick="state.acceptedVoucherSurcharge=true; state.showVoucherMismatchModal=false; render()" class="flex-1 py-3.5 px-3 bg-[#B43A34] text-white rounded-full font-semibold text-xs sm:text-sm tracking-[-0.01em]">
+                                    Lanjut dengan Tambahan Biaya
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -980,6 +1185,7 @@
                     ${state.showAvailabilityWarning ? renderAvailabilityWarningModal() : ''}
                     ${state.showProcessWarning ? renderProcessWarningModal() : ''}
                     ${state.showScheduleWarning ? renderScheduleWarningModal() : ''}
+                    ${state.showVoucherMismatchModal ? renderVoucherMismatchModal() : ''}
                     ${state.showStoreChangeConfirm ? renderStoreChangeConfirmModal() : ''}
                 </div>
             `;
@@ -1300,27 +1506,13 @@
                                     `}
                                 ` : ''}
 
-                                ${state.minPurchase32k && (getTotalPrice() < (getTotalItems() >= 3 ? 36500 : 33000) || getTotalPrice() > (getTotalItems() >= 3 ? 41500 : 40000)) ? `
+                                ${getVoucherPlan().isUnderMinB ? `
                                     <div class="mb-4 bg-[#B43A34]/10 border border-[#B43A34]/20 p-4 rounded-[1.25rem] flex items-start gap-3 mt-3">
                                         <span class="text-xl">⚠️</span>
                                         <div>
                                             <h4 class="font-bold text-[#B43A34] text-sm mb-1">Syarat Promo Voucher</h4>
                                             <p class="text-[11px] text-[#B43A34] leading-relaxed">
-                                                ${getTotalPrice() < (getTotalItems() >= 3 ? 36500 : 33000) 
-                                                    ? 'Voucher saat ini khusus minimal pembelian Rp ' + (getTotalItems() >= 3 ? '36.500' : '33.000') + '. Yuk, sesuaikan pesananmu!' 
-                                                    : 'Total belanja melebihi batas promo voucher (maksimal Rp ' + (getTotalItems() >= 3 ? '41.500' : '40.000') + '). Silakan sesuaikan pesanan!'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ` : ''}
-
-                                ${!state.minPurchase32k && getTotalItems() === 2 && getTotalPrice() > 42000 ? `
-                                    <div class="mb-4 bg-[#B43A34]/10 border border-[#B43A34]/20 p-4 rounded-[1.25rem] flex items-start gap-3 mt-3">
-                                        <span class="text-xl">⚠</span>
-                                        <div>
-                                            <h4 class="font-bold text-[#B43A34] text-sm mb-1">Batas Promo Terlampaui</h4>
-                                            <p class="text-[11px] text-[#B43A34] leading-relaxed">
-                                                Khusus pembelian 2 item maksimal <b>Rp 42.000</b>. <br><b>Solusi:</b> Ganti dengan menu yang lebih murah <b>ATAU</b> tambah menu lagi agar bisa checkout.
+                                                Voucher saat ini membutuhkan minimal belanja lebih tinggi. Yuk, tambah menu atau ubah ukuran ke Large agar bisa checkout!
                                             </p>
                                         </div>
                                     </div>
@@ -1387,6 +1579,12 @@
                         </div>
                         ${state.cart.length > 0 ? `
                             <div class="px-6 sm:px-8 py-6 bg-surface/86 border-t border-border/70 shrink-0">
+                                ${state.acceptedVoucherSurcharge && getVoucherPlan().extraCost > 0 ? `
+                                    <div class="flex items-center justify-between mb-2 text-xs font-bold text-[#B43A34]">
+                                        <span>Biaya lebihan (tidak sesuai voucher)</span>
+                                        <span>+ ${formatPrice(getVoucherPlan().extraCost)}</span>
+                                    </div>
+                                ` : ''}
                                 <div class="flex items-center justify-between mb-5"><span class="text-[11px] uppercase tracking-[0.2em] text-subtle font-semibold">Total Pembayaran</span><span class="text-3xl font-heading font-semibold text-foreground tracking-[-0.06em]">${formatPrice(getTotalPrice())}</span></div>
                                 <button onclick="handleWhatsAppOrder()" class="w-full brand-button py-4 rounded-full font-semibold text-base flex items-center justify-center gap-3"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.846 0 01-1.353-5.033c0-5.42 4.409-9.85 9.85-9.85 2.632 0 5.108 1.025 6.969 2.887 1.861 1.862 2.887 4.337 2.887 6.968.001 5.423-4.41 9.85-9.853 9.85"/></svg> Checkout WhatsApp</button>
                             </div>
@@ -1437,6 +1635,7 @@
             state.editingCartItemId = null;
             state.showProcessWarning = false;
             state.showScheduleWarning = false;
+            state.showVoucherMismatchModal = false;
 
             if (hash.startsWith('#product-')) {
                 const id = hash.replace('#product-', '');
