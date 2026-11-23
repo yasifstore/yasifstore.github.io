@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Admin Yasif Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -65,6 +68,18 @@
         </div>
     </div>
 
+    <script>
+        window.__adminConnected = false;
+        setTimeout(function() {
+            if (!window.__adminConnected) {
+                var st = document.getElementById('statusText');
+                var ol = document.getElementById('ordersList');
+                if (st) st.innerText = '⚠️ Gagal terhubung ke server (cek koneksi / refresh)';
+                if (ol) ol.innerHTML = '<div class="text-center py-10 text-rose-600 text-xs font-semibold">Koneksi ke Firebase lambat atau terputus. Coba matikan/nyalakan internet lalu refresh halaman ini.</div>';
+            }
+        }, 7000);
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
         import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
@@ -98,6 +113,7 @@
         const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
         onValue(ref(db, 'store_status'), (snapshot) => {
+            window.__adminConnected = true;
             const data = snapshot.val();
             currentStatus = (typeof data === 'object' && data !== null)
                 ? {
@@ -121,6 +137,9 @@
                 text.innerText = '🔴 Toko: TUTUP';
                 reasonInput.disabled = true;
             }
+        }, (err) => {
+            window.__adminConnected = true;
+            text.innerText = '⚠️ Error Firebase: ' + err.message;
         });
 
         min32kToggle.onchange = (e) => {
@@ -149,9 +168,13 @@
         };
 
         onValue(ref(db, 'orders'), (snapshot) => {
+            window.__adminConnected = true;
             const data = snapshot.val() || {};
             allOrders = Object.values(data).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
             renderOrders();
+        }, (err) => {
+            window.__adminConnected = true;
+            ordersListEl.innerHTML = `<div class="text-center py-10 text-rose-600 text-xs font-semibold">Gagal memuat pesanan: ${escapeHtml(err.message)}</div>`;
         });
 
         document.querySelectorAll('.tab-btn').forEach(tabBtn => {
@@ -189,13 +212,83 @@
             lines.push(`No. Antrian: *#${order.queueNumber}*`);
             lines.push(`Lokasi Store: *${order.storeName}*`);
             lines.push(`Pick Up Atas Nama: *${order.customerName}*`);
-            lines.push(`Waktu Pesan: *${waktuPesan}*`); lines.push(`--------------------------------`);  const items = Array.isArray(order.items) ? order.items : []; items.forEach(item => { const qty = Number(item.quantity \vert{}\vert{} 1); lines.push(`• *${item.name}* (${qty}x)`);  let details = []; if (item.size) { details.push(`Size: ${item.size}`);
+            lines.push(`Waktu Pesan: *${waktuPesan}*`);
+            lines.push(`--------------------------------`);
+
+            const items = Array.isArray(order.items) ? order.items : [];
+            items.forEach(item => {
+                const qty = Number(item.quantity || 1);
+                lines.push(`• *${item.name}* (${qty}x)`);
+
+                let details = [];
+                if (item.size) {
+                    details.push(`Size: ${item.size}`);
                 }
                 if (item.sugar) {
                     let sg = item.sugar.replace(/ sugar/i, '').trim();
-                    details.push(`Sugar: ${sg}`); } if (details.length > 0) lines.push(`   ${details.join(' • ')}`);
+                    details.push(`Sugar: ${sg}`);
+                }
+                if (details.length > 0) lines.push(`   ${details.join(' • ')}`);
 
                 let upArr = [];
                 if (item.oatside) upArr.push('UP Oatside +1,5K');
                 if (item.juwara) upArr.push('UP Juwara +1,5K');
-                if (upArr.length > 0) lines.push(`
+                if (upArr.length > 0) lines.push(`   ${upArr.join(' - ')}`);
+
+                if (item.note) lines.push(`   Note: ${item.note}`);
+                lines.push(`   Harga: ${formatPrice((item.promoPrice || 0) * qty)}`);
+            });
+
+            if (Number(order.extraCost || 0) > 0) {
+                lines.push(`• *Biaya Lebihan (Tidak Sesuai Voucher)*`);
+                lines.push(`   Harga: ${formatPrice(order.extraCost)}`);
+            }
+
+            lines.push(`--------------------------------`);
+            lines.push(`Total Pembayaran: *${formatPrice(order.totalPrice)}*`);
+            lines.push(``);
+            lines.push(`*Silakan kirim bukti pembayaran sesuai nominal di atas, Terima kasih!*`);
+
+            const url = `https://wa.me/${order.customerWa}?text=${encodeURIComponent(lines.join('\n'))}`;
+            window.open(url, '_blank');
+        };
+
+        window.toggleOrderStatus = async function(orderId, newStatus) {
+            await update(ref(db, `orders/${orderId}`), { status: newStatus });
+        };
+
+        window.deleteOrder = async function(orderId) {
+            if (!confirm('Yakin ingin menghapus pesanan ini?')) return;
+            await remove(ref(db, `orders/${orderId}`));
+        };
+
+        function renderOrders() {
+            const waitingOrders = allOrders.filter(o => o.status !== 'completed');
+            const completedOrders = allOrders.filter(o => o.status === 'completed');
+
+            document.getElementById('countWaiting').innerText = waitingOrders.length;
+            document.getElementById('countCompleted').innerText = completedOrders.length;
+            document.getElementById('countAll').innerText = allOrders.length;
+
+            if (completedOrders.length > 0) {
+                clearDoneBtn.classList.remove('hidden');
+            } else {
+                clearDoneBtn.classList.add('hidden');
+            }
+
+            const visible = activeTab === 'waiting_payment'
+                ? waitingOrders
+                : (activeTab === 'completed' ? completedOrders : allOrders);
+
+            if (visible.length === 0) {
+                ordersListEl.innerHTML = `<div class="text-center py-12 text-gray-400 text-sm">Belum ada pesanan di kategori ini.</div>`;
+                return;
+            }
+
+            ordersListEl.innerHTML = visible.map(order => {
+                const isDone = order.status === 'completed';
+                const badgeClass = isDone
+                    ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                    : 'bg-amber-100 text-amber-900 border-amber-200';
+                const statusLabel = isDone ? 'Selesai' : 'Menunggu Bayar';
+                const items = Array.isArray(order.items)
