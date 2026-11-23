@@ -841,16 +841,17 @@
             render();
 
             try {
-                const orderedItems = (plan.sortedCart.length > 0 ? plan.sortedCart : state.cart).map(item => ({
+                const sourceItems = (plan.sortedCart && plan.sortedCart.length > 0) ? plan.sortedCart : state.cart;
+                const orderedItems = sourceItems.map(item => ({
                     name: item.name,
-                    quantity: item.quantity,
+                    quantity: Number(item.quantity || 1),
                     size: item.size || '',
                     sugar: item.sugar || '',
-                    oatside: !!item.oatside,
-                    juwara: !!item.juwara,
-                    note: (item.note || '').trim(),
-                    promoPrice: item.promoPrice || 0,
-                    originalPrice: item.originalPrice || 0
+                    oatside: Boolean(item.oatside),
+                    juwara: Boolean(item.juwara),
+                    note: String(item.note || '').trim(),
+                    promoPrice: Number(item.promoPrice || 0),
+                    originalPrice: Number(item.originalPrice || 0)
                 }));
 
                 const payload = {
