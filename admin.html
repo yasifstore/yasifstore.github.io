@@ -42,7 +42,7 @@
             <div class="flex flex-wrap items-center justify-between gap-2 mb-4 px-1">
                 <div>
                     <h2 class="text-lg sm:text-xl font-bold text-gray-900">Antrean Orderan Masuk</h2>
-                    <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Urutan menu sudah otomatis dikelompokkan sesuai voucher.</p>
+                    <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Menu otomatis dikelompokkan per voucher untuk memudahkan order.</p>
                 </div>
                 <button id="clearDoneBtn" class="hidden text-[11px] font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-full hover:bg-rose-100">
                     Hapus Semua Selesai
@@ -112,6 +112,169 @@
         const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price ? price : 0);
         const escapeHtml = (value) => String(value ? value : '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
+        function buildVoucherGroupsForDisplay(order) {
+            const items = Array.isArray(order.items) ? order.items : [];
+            if (items.length === 0) return [];
+
+            const onlyVoucherB = currentStatus.minPurchase32k === true;
+            const units = [];
+
+            items.forEach(item => {
+                const qty = Number(item.quantity ? item.quantity : 1);
+                const promo = Number(item.promoPrice ? item.promoPrice : 0);
+                const orig = Number(item.originalPrice ? item.originalPrice : Math.max(0, (promo - 4000) * 2));
+                for (let i = 0; i < qty; i++) {
+                    units.push({ ...item, quantity: 1, _orig: orig });
+                }
+            });
+
+            units.sort((a, b) => b._orig - a._orig);
+
+            const evaluatePartition = (groups) => {
+                let extraCost = 0;
+                let nombok = 0;
+                let countA = 0;
+                let singleItemA = 0;
+                const typedGroups = [];
+
+                for (const g of groups) {
+                    const sum = g.reduce((s, u) => s + u._orig, 0);
+                    if (onlyVoucherB) {
+                        if (sum < 50000) return null;
+                        const loss = Math.max(0, Math.ceil((sum - 60000) / 2));
+                        nombok += loss;
+                        if (sum > 62000) extraCost += loss;
+                        typedGroups.push({ type: 'B', sum, items: [...g] });
+                    } else {
+                        if (sum >= 50000 && sum <= 62000) {
+                            const loss = Math.max(0, Math.ceil((sum - 60000) / 2));
+                            nombok += loss;
+                            typedGroups.push({ type: 'B', sum, items: [...g] });
+                        } else {
+                            const loss = Math.max(0, Math.ceil((sum - 70000) / 2));
+                            nombok += loss;
+                            if (sum > 72000) extraCost += loss;
+                            countA++;
+                            if (g.length === 1) singleItemA++;
+                            typedGroups.push({ type: 'A', sum, items: [...g] });
+                        }
+                    }
+                }
+
+                if (!onlyVoucherB) {
+                    const allowedSingleA = units.length >= 3 ? 1 : 0;
+                    if (singleItemA > allowedSingleA) {
+                        extraCost += (singleItemA - allowedSingleA) * 2000;
+                    }
+                }
+
+                return { extraCost, nombok, countA, groupCount: groups.length, typedGroups };
+            };
+
+            const isBetter = (cand, best) => {
+                if (!best) return true;
+                if (cand.extraCost !== best.extraCost) return cand.extraCost < best.extraCost;
+                if (cand.countA !== best.countA) return cand.countA < best.countA;
+                if (cand.groupCount !== best.groupCount) return cand.groupCount < best.groupCount;
+                return cand.nombok < best.nombok;
+            };
+
+            let bestResult = null;
+
+            if (units.length <= 10) {
+                const groups = [];
+                let steps = 0;
+                const MAX_STEPS = 4500;
+
+                const dfs = (idx) => {
+                    if (steps++ > MAX_STEPS) return;
+                    if (idx === units.length) {
+                        const res = evaluatePartition(groups);
+                        if (res && isBetter(res, bestResult)) bestResult = res;
+                        return;
+                    }
+                    const item = units[idx];
+                    for (let i = 0; i < groups.length; i++) {
+                        groups[i].push(item);
+                        dfs(idx + 1);
+                        groups[i].pop();
+                    }
+                    groups.push([item]);
+                    dfs(idx + 1);
+                    groups.pop();
+                };
+                dfs(0);
+            } else {
+                const remaining = [...units];
+                const groups = [];
+                while (remaining.length > 0) {
+                    let g = [remaining.shift()];
+                    let sum = g[0]._orig;
+                    for (let i = 0; i < remaining.length; ) {
+                        const limit = onlyVoucherB ? 62000 : (sum < 50000 ? 62000 : 72000);
+                        if (sum + remaining[i]._orig <= limit) {
+                            sum += remaining[i]._orig;
+                            g.push(remaining.splice(i, 1)[0]);
+                        } else {
+                            i++;
+                        }
+                    }
+                    groups.push(g);
+                }
+                const greedyRes = evaluatePartition(groups);
+                bestResult = greedyRes ? greedyRes : evaluatePartition([units]);
+            }
+
+            if (!bestResult) {
+                bestResult = evaluatePartition([units]);
+            }
+
+            bestResult.typedGroups.sort((a, b) => {
+                if (a.type !== b.type) return a.type === 'B' ? -1 : 1;
+                return b.sum - a.sum;
+            });
+
+            const totalB = bestResult.typedGroups.filter(g => g.type === 'B').length;
+            const totalA = bestResult.typedGroups.filter(g => g.type === 'A').length;
+            let idxB = 0;
+            let idxA = 0;
+
+            return bestResult.typedGroups.map(group => {
+                const merged = [];
+                group.items.forEach(u => {
+                    const existing = merged.find(m =>
+                        m.name === u.name &&
+                        (m.size ? m.size : '') === (u.size ? u.size : '') &&
+                        (m.sugar ? m.sugar : '') === (u.sugar ? u.sugar : '') &&
+                        Boolean(m.oatside) === Boolean(u.oatside) &&
+                        Boolean(m.juwara) === Boolean(u.juwara) &&
+                        (m.note ? m.note : '') === (u.note ? u.note : '')
+                    );
+                    if (existing) {
+                        existing.quantity += 1;
+                    } else {
+                        merged.push({ ...u, quantity: 1 });
+                    }
+                });
+
+                let label = '';
+                if (group.type === 'B') {
+                    idxB++;
+                    label = totalB > 1 ? `Voucher B #${idxB} (Min Beli 50k)` : `Voucher B (Min Beli 50k)`;
+                } else {
+                    idxA++;
+                    label = totalA > 1 ? `Voucher A #${idxA} (Tanpa Min)` : `Voucher A (Tanpa Min)`;
+                }
+
+                return {
+                    type: group.type,
+                    label,
+                    normalSum: group.sum,
+                    items: merged
+                };
+            });
+        }
+
         onValue(ref(db, 'store_status'), (snapshot) => {
             window.__adminConnected = true;
             const data = snapshot.val();
@@ -137,6 +300,7 @@
                 text.innerText = '🔴 Toko: TUTUP';
                 reasonInput.disabled = true;
             }
+            renderOrders();
         }, (err) => {
             window.__adminConnected = true;
             text.innerText = '⚠️ Error Firebase: ' + err.message;
@@ -299,6 +463,7 @@
                 const waktuPesan = order.orderType === 'scheduled' ? 'JADWAL ' + order.scheduledTime : 'Sekarang';
                 const waDisplay = order.customerWaRaw ? order.customerWaRaw : order.customerWa;
                 const extraCostVal = Number(order.extraCost ? order.extraCost : 0);
+                const voucherGroups = buildVoucherGroupsForDisplay(order);
 
                 return `
                     <div class="border ${isDone ? 'border-gray-200 bg-gray-50/60' : 'border-amber-300 bg-[#FFFDF8]'} rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-sm">
@@ -333,34 +498,52 @@
                             </div>
                         </div>
 
-                        <div class="bg-[#F7F5F0] rounded-xl p-3 sm:p-3.5 space-y-2.5 mb-3.5 border border-gray-200/70">
-                            <p class="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-gray-500">Daftar Menu (${totalItemCount} Item)</p>
-                            ${items.map(item => {
-                                const qty = Number(item.quantity ? item.quantity : 1);
-                                const itemPrice = item.promoPrice ? item.promoPrice : 0;
-                                const varParts = [
-                                    item.size ? 'Size: ' + item.size : '',
-                                    item.sugar ? 'Sugar: ' + item.sugar.replace(/ sugar/i, '').trim() : '',
-                                    item.oatside ? 'UP Oatside (+1,5K)' : '',
-                                    item.juwara ? 'UP Juwara (+1,5K)' : ''
-                                ].filter(Boolean);
+                        <div class="bg-[#F7F5F0] rounded-xl p-3 sm:p-3.5 mb-3.5 border border-gray-200/70">
+                            <p class="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-gray-500 mb-2.5">Daftar Menu (${totalItemCount} Item)</p>
+                            
+                            <div class="space-y-3">
+                                ${voucherGroups.map((group, gIdx) => {
+                                    const pillClass = group.type === 'B'
+                                        ? 'bg-amber-200/80 text-amber-950 border-amber-300'
+                                        : 'bg-emerald-100 text-emerald-900 border-emerald-200';
+                                    return `
+                                        <div class="${gIdx > 0 ? 'pt-2.5 border-t border-dashed border-gray-300' : ''}">
+                                            <div class="flex items-center justify-between gap-2 mb-2">
+                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold border ${pillClass}">${escapeHtml(group.label)}</span>
+                                                <span class="text-[10px] font-semibold text-gray-400 whitespace-nowrap">Normal ${formatPrice(group.normalSum)}</span>
+                                            </div>
+                                            <div class="space-y-2">
+                                                ${group.items.map(item => {
+                                                    const qty = Number(item.quantity ? item.quantity : 1);
+                                                    const itemPrice = item.promoPrice ? item.promoPrice : 0;
+                                                    const varParts = [
+                                                        item.size ? 'Size: ' + item.size : '',
+                                                        item.sugar ? 'Sugar: ' + item.sugar.replace(/ sugar/i, '').trim() : '',
+                                                        item.oatside ? 'UP Oatside (+1,5K)' : '',
+                                                        item.juwara ? 'UP Juwara (+1,5K)' : ''
+                                                    ].filter(Boolean);
 
-                                return `
-                                    <div class="flex justify-between items-start gap-2.5 pb-2 border-b border-gray-200/80 last:border-b-0 last:pb-0">
-                                        <div class="min-w-0 flex-1">
-                                            <p class="text-[13.5px] sm:text-[15px] font-bold text-gray-950 leading-snug">
-                                                ${escapeHtml(item.name)} <span class="text-[#B43A34] whitespace-nowrap">(${qty}x)</span>
-                                            </p>
-                                            ${varParts.length > 0 ? `<p class="text-xs font-medium text-gray-600 mt-0.5">${escapeHtml(varParts.join(' • '))}</p>` : ''}
-                                            ${item.note ? `<p class="text-xs font-semibold italic text-rose-800 mt-0.5">Note: ${escapeHtml(item.note)}</p>` : ''}
+                                                    return `
+                                                        <div class="flex justify-between items-start gap-2.5">
+                                                            <div class="min-w-0 flex-1">
+                                                                <p class="text-[13.5px] sm:text-[15px] font-bold text-gray-950 leading-snug">
+                                                                    ${escapeHtml(item.name)} <span class="text-[#B43A34] whitespace-nowrap">(${qty}x)</span>
+                                                                </p>
+                                                                ${varParts.length > 0 ? `<p class="text-xs font-medium text-gray-600 mt-0.5">${escapeHtml(varParts.join(' • '))}</p>` : ''}
+                                                                ${item.note ? `<p class="text-xs font-semibold italic text-rose-800 mt-0.5">Note: ${escapeHtml(item.note)}</p>` : ''}
+                                                            </div>
+                                                            <span class="text-[13px] sm:text-sm font-bold text-gray-900 shrink-0 whitespace-nowrap">${formatPrice(itemPrice * qty)}</span>
+                                                        </div>
+                                                    `;
+                                                }).join('')}
+                                            </div>
                                         </div>
-                                        <span class="text-[13px] sm:text-sm font-bold text-gray-900 shrink-0 whitespace-nowrap">${formatPrice(itemPrice * qty)}</span>
-                                    </div>
-                                `;
-                            }).join('')}
+                                    `;
+                                }).join('')}
+                            </div>
 
                             ${extraCostVal > 0 ? `
-                                <div class="flex justify-between items-center text-xs font-bold text-[#B43A34] pt-1.5 border-t border-gray-300">
+                                <div class="flex justify-between items-center text-xs font-bold text-[#B43A34] mt-2.5 pt-2 border-t border-gray-300">
                                     <span>Biaya Lebihan Voucher</span>
                                     <span class="whitespace-nowrap">+ ${formatPrice(extraCostVal)}</span>
                                 </div>
@@ -373,9 +556,6 @@
                                 <span class="text-lg sm:text-xl font-extrabold text-[#B43A34]">${formatPrice(order.totalPrice)}</span>
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="confirmToCustomer('${order.id}')" class="flex-1 sm:flex-none px-3.5 sm:px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
-                                    💬 Konfirmasi WA
-                                </button>
                                 ${!isDone ? `
                                     <button onclick="toggleOrderStatus('${order.id}', 'completed')" class="flex-1 sm:flex-none px-3.5 sm:px-4 py-2.5 bg-[#1F2A24] hover:bg-black text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
                                         ✓ Tandai Selesai
@@ -385,6 +565,9 @@
                                         ↺ Belum Selesai
                                     </button>
                                 `}
+                                <button onclick="confirmToCustomer('${order.id}')" class="flex-1 sm:flex-none px-3.5 sm:px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
+                                    💬 Konfirmasi WA
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -394,3 +577,4 @@
     </script>
 </body>
 </html>
+<!-- AKHIR FILE ADMIN.HTML -->
