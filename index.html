@@ -313,6 +313,49 @@
             localStorage.setItem('yasif_order_history', JSON.stringify(state.orderHistoryIds));
         }
 
+        function removeOrderHistoryId(orderId) {
+            state.orderHistoryIds = state.orderHistoryIds.filter(id => id !== orderId);
+            delete state.orderHistoryMap[orderId];
+            localStorage.setItem('yasif_order_history', JSON.stringify(state.orderHistoryIds));
+        }
+
+        window.cancelCustomerOrder = async function(orderId) {
+            if (!confirm('Batalkan pesanan ini? Pesanan akan dihapus dari antrean admin.')) return;
+            try {
+                if (typeof window.deleteOrderFromFirebase === 'function') {
+                    await window.deleteOrderFromFirebase(orderId);
+                }
+                removeOrderHistoryId(orderId);
+                if (state.activeOrderConfirm && state.activeOrderConfirm.id === orderId) {
+                    state.activeOrderConfirm = null;
+                }
+                render();
+                showToast('Pesanan berhasil dibatalkan.');
+            } catch (err) {
+                console.error(err);
+                showToast('Gagal membatalkan pesanan, coba lagi!', 'error');
+            }
+        };
+
+        window.deleteCustomerHistoryItem = function(orderId) {
+            if (!confirm('Hapus riwayat pesanan ini dari tampilanmu?')) return;
+            removeOrderHistoryId(orderId);
+            render();
+            showToast('Riwayat dihapus.');
+        };
+
+        window.clearCompletedCustomerHistory = function() {
+            const completedIds = state.orderHistoryIds.filter(id => {
+                const o = state.orderHistoryMap[id];
+                return o && o.status === 'completed';
+            });
+            if (completedIds.length === 0) return;
+            if (!confirm(`Hapus semua (${completedIds.length}) riwayat pesanan yang sudah selesai dari tampilanmu?`)) return;
+            completedIds.forEach(id => removeOrderHistoryId(id));
+            render();
+            showToast('Semua riwayat selesai dibersihkan.');
+        };
+
         window.safeBack = function() {
             if (window.history.length > 1) {
                 window.history.back();
@@ -1012,20 +1055,28 @@
             const orders = state.orderHistoryIds
                 .map(id => state.orderHistoryMap[id])
                 .filter(Boolean);
+            const hasCompleted = orders.some(o => o.status === 'completed');
 
             return `
                 <div class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-5">
                     <div class="absolute inset-0 diffused-backdrop" onclick="safeBack()"></div>
                     <div class="luxury-panel w-full md:max-w-[600px] h-[90vh] md:h-auto md:max-h-[86vh] md:rounded-[2.25rem] rounded-t-[2rem] z-10 flex flex-col overflow-hidden">
-                        <div class="px-6 sm:px-8 py-6 border-b border-border/70 bg-surface/70 flex justify-between items-start shrink-0">
+                        <div class="px-6 sm:px-8 py-5 border-b border-border/70 bg-surface/70 flex justify-between items-center gap-3 shrink-0">
                             <div>
-                                <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-1.5">Order Tracker</p>
+                                <p class="text-[10px] uppercase tracking-[0.24em] brand-text font-semibold mb-1">Order Tracker</p>
                                 <h2 class="text-2xl sm:text-3xl font-heading font-semibold text-foreground tracking-[-0.055em]">Riwayat Pesanan</h2>
                             </div>
-                            <button onclick="safeBack()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle">✕</button>
+                            <div class="flex items-center gap-2">
+                                ${hasCompleted ? `
+                                    <button onclick="clearCompletedCustomerHistory()" class="px-3 py-2 rounded-full border border-border bg-white text-[11px] font-semibold text-subtle hover:text-[#B43A34]">
+                                        Bersihkan Selesai
+                                    </button>
+                                ` : ''}
+                                <button onclick="safeBack()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle">✕</button>
+                            </div>
                         </div>
 
-                        <div class="flex-1 overflow-y-auto px-5 sm:px-7 py-5 space-y-4 bg-[#F7F5F0]">
+                        <div class="flex-1 overflow-y-auto px-4 sm:px-7 py-5 space-y-4 bg-[#F7F5F0]">
                             ${orders.length === 0 ? `
                                 <div class="flex flex-col items-center justify-center py-16 text-center">
                                     <div class="w-16 h-16 border border-border bg-white rounded-full flex items-center justify-center mb-4 text-2xl">🧾</div>
@@ -1038,15 +1089,17 @@
                                     ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
                                     : 'bg-amber-100 text-amber-900 border-amber-200';
                                 const statusLabel = isDone ? 'Selesai' : 'Menunggu Pembayaran';
+                                const itemsList = Array.isArray(order.items) ? order.items : [];
+                                const extraCostVal = Number(order.extraCost ? order.extraCost : 0);
 
                                 return `
                                     <div class="bg-white border border-border rounded-[1.5rem] p-4 sm:p-5 shadow-sm">
-                                        <div class="flex items-start justify-between gap-3 border-b border-border/70 pb-3 mb-3">
+                                        <div class="flex items-start justify-between gap-2 border-b border-border/70 pb-3 mb-3">
                                             <div>
                                                 <div class="flex items-center gap-2">
                                                     <span class="font-heading font-bold text-lg text-foreground">Antrian #${escapeHtml(order.queueNumber)}</span>
                                                 </div>
-                                                <p class="text-[11px] text-subtle mt-0.5">${escapeHtml(order.dateStr || '')}</p>
+                                                <p class="text-[11px] text-subtle mt-0.5">${escapeHtml(order.dateStr ? order.dateStr : '')}</p>
                                             </div>
                                             <span class="px-3 py-1 rounded-full text-[10px] font-bold border ${badgeClass} shrink-0">${statusLabel}</span>
                                         </div>
@@ -1057,43 +1110,60 @@
                                         </div>
 
                                         <div class="bg-[#F7F5F0] rounded-2xl p-3 space-y-2 mb-3">
-                                            ${(order.items || []).map(item => `
-                                                <div class="flex justify-between items-start gap-2 text-xs">
-                                                    <div class="min-w-0">
-                                                        <p class="font-semibold text-foreground">${escapeHtml(item.name)} (${item.quantity}x)</p>
-                                                        <p class="text-[10px] text-subtle">
-                                                            ${[
-                                                                item.size ? 'Size ' + item.size : '',
-                                                                item.sugar ? item.sugar : '',
-                                                                item.oatside ? 'Oatside' : '',
-                                                                item.juwara ? 'Juwara' : ''
-                                                            ].filter(Boolean).join(' • ')}
-                                                        </p>
-                                                        ${item.note ? `<p class="text-[10px] italic text-subtle">Note: ${escapeHtml(item.note)}</p>` : ''}
+                                            ${itemsList.map(item => {
+                                                const qty = Number(item.quantity ? item.quantity : 1);
+                                                const pPrice = Number(item.promoPrice ? item.promoPrice : 0);
+                                                return `
+                                                    <div class="flex justify-between items-start gap-2 text-xs">
+                                                        <div class="min-w-0">
+                                                            <p class="font-semibold text-foreground">${escapeHtml(item.name)} (${qty}x)</p>
+                                                            <p class="text-[10px] text-subtle">
+                                                                ${[
+                                                                    item.size ? 'Size ' + item.size : '',
+                                                                    item.sugar ? item.sugar : '',
+                                                                    item.oatside ? 'Oatside' : '',
+                                                                    item.juwara ? 'Juwara' : ''
+                                                                ].filter(Boolean).join(' • ')}
+                                                            </p>
+                                                            ${item.note ? `<p class="text-[10px] italic text-subtle">Note: ${escapeHtml(item.note)}</p>` : ''}
+                                                        </div>
+                                                        <span class="font-semibold text-foreground shrink-0">${formatPrice(pPrice * qty)}</span>
                                                     </div>
-                                                    <span class="font-semibold text-foreground shrink-0">${formatPrice((item.promoPrice || 0) * (item.quantity || 1))}</span>
-                                                </div>
-                                            `).join('')}
-                                            ${order.extraCost > 0 ? `
+                                                `;
+                                            }).join('')}
+                                            ${extraCostVal > 0 ? `
                                                 <div class="flex justify-between items-center text-[11px] font-bold text-[#B43A34] pt-1 border-t border-border/60">
                                                     <span>Biaya lebihan voucher</span>
-                                                    <span>+ ${formatPrice(order.extraCost)}</span>
+                                                    <span>+ ${formatPrice(extraCostVal)}</span>
                                                 </div>
                                             ` : ''}
                                         </div>
 
-                                        <div class="flex items-center justify-between pt-1">
+                                        ${!isDone ? `
+                                            <p class="text-[10px] text-amber-800 bg-amber-50 border border-amber-200/70 rounded-xl px-3 py-1.5 mb-3">
+                                                ⏳ Otomatis dibatalkan jika belum dibayar dalam 2 jam.
+                                            </p>
+                                        ` : ''}
+
+                                        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
                                             <div>
                                                 <p class="text-[10px] uppercase tracking-wider text-subtle font-semibold">Total</p>
                                                 <p class="font-heading font-bold text-lg text-[#B43A34]">${formatPrice(order.totalPrice)}</p>
                                             </div>
-                                            ${!isDone ? `
-                                                <button onclick="openOrderPaymentModalFromHistory('${order.id}')" class="px-4 py-2.5 bg-[#B43A34] text-white rounded-full text-xs font-semibold">
-                                                    Konfirmasi Pembayaran
-                                                </button>
-                                            ` : `
-                                                <span class="text-xs font-semibold text-emerald-700">✓ Terima kasih!</span>
-                                            `}
+                                            <div class="flex items-center gap-2">
+                                                ${!isDone ? `
+                                                    <button onclick="cancelCustomerOrder('${order.id}')" class="px-3.5 py-2.5 bg-surface border border-border text-subtle hover:text-[#B43A34] rounded-full text-xs font-semibold">
+                                                        Batalkan Pesanan
+                                                    </button>
+                                                    <button onclick="openOrderPaymentModalFromHistory('${order.id}')" class="px-4 py-2.5 bg-[#B43A34] text-white rounded-full text-xs font-semibold">
+                                                        Konfirmasi Pembayaran
+                                                    </button>
+                                                ` : `
+                                                    <button onclick="deleteCustomerHistoryItem('${order.id}')" class="px-3.5 py-2 bg-surface border border-border text-subtle hover:text-[#B43A34] rounded-full text-xs font-semibold">
+                                                        Hapus Riwayat
+                                                    </button>
+                                                `}
+                                            </div>
                                         </div>
                                     </div>
                                 `;
@@ -1914,7 +1984,133 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-        import { getDatabase, ref, onValue, set, runTransaction } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+        import { getDatabase, ref, onValue, set, remove, runTransaction } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB1sNl7HsyQoG_3_UbS-H8QYmjla8i6fKc",
+            authDomain: "yasif-store.firebaseapp.com",
+            databaseURL: "https://yasif-store-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "yasif-store",
+            storageBucket: "yasif-store.firebasestorage.app",
+            messagingSenderId: "76503690642",
+            appId: "1:76503690642:web:e9f3b1d73a545e102ae54b",
+            measurementId: "G-P10WDJPSK4"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+
+        onValue(ref(db, 'store_status'), (snapshot) => {
+            const data = snapshot.val();
+            const storeData = (typeof data === 'object' && data !== null)
+                ? data
+                : { isOpen: !!data, reason: "Admin sedang ada kesibukan lain.", time: "", minPurchase32k: false };
+            
+            if (typeof state !== 'undefined') {
+                state.isStoreOpen = storeData.isOpen !== false;
+                state.closeReason = storeData.reason ? storeData.reason : "";
+                state.closeTime = storeData.time ? storeData.time : "";
+                state.minPurchase32k = storeData.minPurchase32k === true;
+                if (typeof render === 'function') render();
+            }
+        });
+
+        window.deleteOrderFromFirebase = async function(orderId) {
+            await remove(ref(db, `orders/${orderId}`));
+        };
+
+        window.submitOrderToFirebase = async function(payload) {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const todayKey = `${yyyy}-${mm}-${dd}`;
+
+            let queueNum = 1;
+            try {
+                const counterRef = ref(db, `order_counters/${todayKey}`);
+                const txResult = await runTransaction(counterRef, (currentVal) => (currentVal ? currentVal : 0) + 1);
+                const snapVal = txResult.snapshot.val();
+                queueNum = snapVal ? snapVal : 1;
+            } catch (e) {
+                queueNum = Number(String(Date.now()).slice(-3));
+            }
+
+            const queueNumber = String(queueNum).padStart(3, '0');
+            const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const orderId = `ORD-${yyyy}${mm}${dd}-${queueNumber}-${randomSuffix}`;
+            const dateStr = now.toLocaleString('id-ID', {
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            }) + ' WIB';
+
+            const fullOrder = {
+                ...payload,
+                id: orderId,
+                queueNumber,
+                createdAt: Date.now(),
+                dateStr
+            };
+
+            await set(ref(db, `orders/${orderId}`), fullOrder);
+            return fullOrder;
+        };
+
+        const activeHistoryListeners = new Set();
+
+        function isUnpaidExpired(order) {
+            if (!order || order.status === 'completed') return false;
+            const created = Number(order.createdAt ? order.createdAt : 0);
+            if (!created) return false;
+            return (Date.now() - created) >= TWO_HOURS_MS;
+        }
+
+        window.syncOrderHistoryFromFirebase = function() {
+            if (!state || !Array.isArray(state.orderHistoryIds)) return;
+            state.orderHistoryIds.forEach(orderId => {
+                if (activeHistoryListeners.has(orderId)) return;
+                activeHistoryListeners.add(orderId);
+                onValue(ref(db, `orders/${orderId}`), (snapshot) => {
+                    const val = snapshot.val();
+                    if (!val) {
+                        removeOrderHistoryId(orderId);
+                        if (state.activeOrderConfirm && state.activeOrderConfirm.id === orderId) {
+                            state.activeOrderConfirm = null;
+                        }
+                    } else if (isUnpaidExpired(val)) {
+                        remove(ref(db, `orders/${orderId}`)).catch(() => {});
+                        removeOrderHistoryId(orderId);
+                        if (state.activeOrderConfirm && state.activeOrderConfirm.id === orderId) {
+                            state.activeOrderConfirm = null;
+                        }
+                    } else {
+                        state.orderHistoryMap[orderId] = val;
+                    }
+                    if (typeof render === 'function') render();
+                });
+            });
+        };
+
+        setInterval(() => {
+            if (!state || !state.orderHistoryMap) return;
+            let changed = false;
+            Object.keys(state.orderHistoryMap).forEach(orderId => {
+                const order = state.orderHistoryMap[orderId];
+                if (isUnpaidExpired(order)) {
+                    remove(ref(db, `orders/${orderId}`)).catch(() => {});
+                    removeOrderHistoryId(orderId);
+                    if (state.activeOrderConfirm && state.activeOrderConfirm.id === orderId) {
+                        state.activeOrderConfirm = null;
+                    }
+                    changed = true;
+                }
+            });
+            if (changed && typeof render === 'function') render();
+        }, 60000);
+
+        window.syncOrderHistoryFromFirebase();
+    </script>
 
         const firebaseConfig = {
             apiKey: "AIzaSyB1sNl7HsyQoG_3_UbS-H8QYmjla8i6fKc",
