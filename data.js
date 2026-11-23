@@ -1,4 +1,14 @@
 const rawKK = [
+    ["New! Cheesecake Berrylicious Series", "Bluebericano", 19000, 26000, "https://huawei-food-cms.grab.com/compressed_webp/items/url-d3dfdb93/photo/57cfc125403a7733.webp"],
+    ["New! Cheesecake Berrylicious Series", "Strawbericano", 19000, 26000, "https://huawei-food-cms.grab.com/compressed_webp/items/url-d101a36c/photo/b568f120afd358dd.webp"],
+    ["New! Cheesecake Berrylicious Series", "Creamy Cheesecake Latte", 22000, 29000, "https://huawei-food-cms.grab.com/compressed_webp/items/url-610ffaae/photo/1cca4a02735479a9.webp"],
+    ["New! Cheesecake Berrylicious Series", "Strawberry Cheesecake Frappe", 26000, 33000, "https://huawei-food-cms.grab.com/compressed_webp/items/url-1ba89062/photo/1af54521c9375613.webp"],
+    ["New! Cheesecake Berrylicious Series", "Blueberry Cheesecake Frappe", 26000, 33000, "https://huawei-food-cms.grab.com/compressed_webp/items/url-90a74f94/photo/6019af0062098f9d.webp"],
+    ["New! Cheesecake Berrylicious Series", "Cookies n’ Cream Cheesycake", 19000, null, "https://huawei-food-cms.grab.com/compressed_webp/items/url-18fd90c4/photo/34bca31ae96ac5bf.webp"],
+    ["New! Cheesecake Berrylicious Series", "Strawberry Cheesycake", 19000, null, "https://huawei-food-cms.grab.com/compressed_webp/items/url-f775edd8/photo/d48e928cf146377e.webp"],
+    ["New! Cheesecake Berrylicious Series", "Cheese Cream Long Bread", 14000, null, "https://huawei-food-cms.grab.com/compressed_webp/items/url-ff40228a/photo/3d34463f686ba47a.webp"],
+    ["New! Cheesecake Berrylicious Series", "Choco Cream Long Bread", 14000, null, "https://huawei-food-cms.grab.com/compressed_webp/items/url-db0fdf09/photo/4187dfc640218ff7.webp"],
+    ["New! Cheesecake Berrylicious Series", "Vanilla Cream Long Bread", 13000, null, "https://huawei-food-cms.grab.com/compressed_webp/items/url-2a27360b/photo/df3a639062181b09.webp"],
     ["New! Purple Cloud Series", "Taro Milk", 19000, 26000, "https://huawei-food-cms.grab.com/compressed_webp/items/IDITE20260920180754023277/photo/647e9992b61141ebb43de133bc56883a_1789927674874643305.webp"],
     ["New! Purple Cloud Series", "Taro Cloud Milk Tea", 19000, 26000, "https://huawei-food-cms.grab.com/compressed_webp/items/IDITE20260920180754031890/photo/7184937c9b8f4259bddc0be50cbef1c3_1789927674970992687.webp"],
     ["New! Purple Cloud Series", "Taro Cloud Latte", 22000, 29000, "https://huawei-food-cms.grab.com/compressed_webp/items/IDITE20260920180755017639/photo/dcc3312a11f344a58bc613f118aba0c1_1789927675058487238.webp"],
@@ -107,7 +117,7 @@ const generatedKKProducts = rawKK.map((item, idx) => {
     let defaultSugar = null;
     let upgrades = [];
     
-    const isMakanan = category === "Makanan" || name.includes("Bagel") || name.includes("Soft");
+    const isMakanan = category === "Makanan" || name.includes("Bagel") || name.includes("Soft") || name.includes("Cheesycake") || name.includes("Bread");
     
     if (!isMakanan) {
         if (regPrice) sizes.push({ name: "Regular", promoPrice: promoReg, originalPrice: regPrice });
@@ -122,6 +132,9 @@ const generatedKKProducts = rawKK.map((item, idx) => {
         }
         
         const upMap = {
+            "Creamy Cheesecake Latte": ["Oatside", "Juwara Beans"],
+    "Bluebericano": ["Juwara Beans"],
+    "Strawbericano": ["Juwara Beans"],
             "Taro Cloud Matcha": ["Oatside"],
             "Taro Milk": ["Oatside"],
             "Taro Cloud Latte": ["Oatside", "Juwara Beans"],
@@ -196,6 +209,11 @@ window.products = generatedKKProducts;
 
 // --- KODE TAMBAHAN DI DATA.JS ---
 window.PREMIUM_PRICES = {
+    "Bluebericano": 29000,
+    "Strawbericano": 29000,
+    "Creamy Cheesecake Latte": 32000,
+    "Strawberry Cheesecake Frappe": 36000,
+    "Blueberry Cheesecake Frappe": 36000,
     "Taro Cloud Matcha": 32000,
     "Taro Milk": 29000,
     "Taro Cloud Latte": 32000,
