@@ -109,8 +109,8 @@
         let allOrders = [];
         let activeTab = 'waiting_payment';
 
-        const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price || 0);
-        const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+        const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price ? price : 0);
+        const escapeHtml = (value) => String(value ? value : '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
         onValue(ref(db, 'store_status'), (snapshot) => {
             window.__adminConnected = true;
@@ -118,8 +118,8 @@
             currentStatus = (typeof data === 'object' && data !== null)
                 ? {
                     isOpen: data.isOpen !== false,
-                    reason: data.reason || "",
-                    time: data.time || "",
+                    reason: data.reason ? data.reason : "",
+                    time: data.time ? data.time : "",
                     minPurchase32k: data.minPurchase32k === true
                 }
                 : { isOpen: !!data, reason: "Admin sedang sibuk.", time: "", minPurchase32k: false };
@@ -153,7 +153,7 @@
                 const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
                 set(ref(db, 'store_status'), { 
                     isOpen: false, 
-                    reason: reasonInput.value || "Admin sedang ada kesibukan lain.", 
+                    reason: reasonInput.value ? reasonInput.value : "Admin sedang ada kesibukan lain.", 
                     time: timeString,
                     minPurchase32k: currentStatus.minPurchase32k
                 });
@@ -169,8 +169,9 @@
 
         onValue(ref(db, 'orders'), (snapshot) => {
             window.__adminConnected = true;
-            const data = snapshot.val() || {};
-            allOrders = Object.values(data).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            const rawData = snapshot.val();
+            const data = rawData ? rawData : {};
+            allOrders = Object.values(data).sort((a, b) => (b.createdAt ? b.createdAt : 0) - (a.createdAt ? a.createdAt : 0));
             renderOrders();
         }, (err) => {
             window.__adminConnected = true;
@@ -217,7 +218,7 @@
 
             const items = Array.isArray(order.items) ? order.items : [];
             items.forEach(item => {
-                const qty = Number(item.quantity || 1);
+                const qty = Number(item.quantity ? item.quantity : 1);
                 lines.push(`• *${item.name}* (${qty}x)`);
 
                 let details = [];
@@ -236,12 +237,14 @@
                 if (upArr.length > 0) lines.push(`   ${upArr.join(' - ')}`);
 
                 if (item.note) lines.push(`   Note: ${item.note}`);
-                lines.push(`   Harga: ${formatPrice((item.promoPrice || 0) * qty)}`);
+                const itemPrice = item.promoPrice ? item.promoPrice : 0;
+                lines.push(`   Harga: ${formatPrice(itemPrice * qty)}`);
             });
 
-            if (Number(order.extraCost || 0) > 0) {
+            const extraCostVal = Number(order.extraCost ? order.extraCost : 0);
+            if (extraCostVal > 0) {
                 lines.push(`• *Biaya Lebihan (Tidak Sesuai Voucher)*`);
-                lines.push(`   Harga: ${formatPrice(order.extraCost)}`);
+                lines.push(`   Harga: ${formatPrice(extraCostVal)}`);
             }
 
             lines.push(`--------------------------------`);
@@ -291,4 +294,103 @@
                     ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
                     : 'bg-amber-100 text-amber-900 border-amber-200';
                 const statusLabel = isDone ? 'Selesai' : 'Menunggu Bayar';
-                const items = Array.isArray(order.items)
+                const items = Array.isArray(order.items) ? order.items : [];
+                const totalItemCount = items.reduce((acc, i) => acc + Number(i.quantity ? i.quantity : 1), 0);
+                const waktuPesan = order.orderType === 'scheduled' ? 'JADWAL ' + order.scheduledTime : 'Sekarang';
+                const waDisplay = order.customerWaRaw ? order.customerWaRaw : order.customerWa;
+                const extraCostVal = Number(order.extraCost ? order.extraCost : 0);
+
+                return `
+                    <div class="border ${isDone ? 'border-gray-200 bg-gray-50/60' : 'border-amber-300 bg-[#FFFDF8]'} rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-sm">
+                        
+                        <div class="flex items-start justify-between gap-2 border-b border-gray-200/80 pb-2.5 mb-3">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-base sm:text-lg font-extrabold text-gray-900 whitespace-nowrap">Antrian #${escapeHtml(order.queueNumber)}</span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold border ${badgeClass} whitespace-nowrap">${statusLabel}</span>
+                                </div>
+                                <p class="text-[11px] text-gray-500 mt-0.5 truncate">${escapeHtml(order.dateStr ? order.dateStr : '')}${order.deviceInfo ? ' • ' + escapeHtml(order.deviceInfo) : ''}</p>
+                            </div>
+                            <button onclick="deleteOrder('${order.id}')" class="text-[11px] font-bold text-gray-400 hover:text-rose-600 px-2 py-1 shrink-0">Hapus</button>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-3 border border-gray-100 space-y-1.5 text-[13px] sm:text-sm mb-3">
+                            <div class="flex justify-between items-start gap-3">
+                                <span class="text-gray-500 shrink-0">Nama Pick Up</span>
+                                <strong class="text-gray-950 font-bold text-right">${escapeHtml(order.customerName)}</strong>
+                            </div>
+                            <div class="flex justify-between items-start gap-3">
+                                <span class="text-gray-500 shrink-0">Cabang / Store</span>
+                                <strong class="text-[#B43A34] font-bold text-right">${escapeHtml(order.storeName)}</strong>
+                            </div>
+                            <div class="flex justify-between items-start gap-3">
+                                <span class="text-gray-500 shrink-0">Waktu Pesan</span>
+                                <strong class="${order.orderType === 'scheduled' ? 'text-rose-700' : 'text-gray-950'} font-bold text-right">${escapeHtml(waktuPesan)}</strong>
+                            </div>
+                            <div class="flex justify-between items-start gap-3 pt-1 border-t border-gray-100 text-xs">
+                                <span class="text-gray-400 shrink-0">No. WA</span>
+                                <strong class="text-gray-700 font-semibold text-right">${escapeHtml(waDisplay)}</strong>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#F7F5F0] rounded-xl p-3 sm:p-3.5 space-y-2.5 mb-3.5 border border-gray-200/70">
+                            <p class="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-gray-500">Daftar Menu (${totalItemCount} Item)</p>
+                            ${items.map(item => {
+                                const qty = Number(item.quantity ? item.quantity : 1);
+                                const itemPrice = item.promoPrice ? item.promoPrice : 0;
+                                const varParts = [
+                                    item.size ? 'Size: ' + item.size : '',
+                                    item.sugar ? 'Sugar: ' + item.sugar.replace(/ sugar/i, '').trim() : '',
+                                    item.oatside ? 'UP Oatside (+1,5K)' : '',
+                                    item.juwara ? 'UP Juwara (+1,5K)' : ''
+                                ].filter(Boolean);
+
+                                return `
+                                    <div class="flex justify-between items-start gap-2.5 pb-2 border-b border-gray-200/80 last:border-b-0 last:pb-0">
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-[13.5px] sm:text-[15px] font-bold text-gray-950 leading-snug">
+                                                ${escapeHtml(item.name)} <span class="text-[#B43A34] whitespace-nowrap">(${qty}x)</span>
+                                            </p>
+                                            ${varParts.length > 0 ? `<p class="text-xs font-medium text-gray-600 mt-0.5">${escapeHtml(varParts.join(' • '))}</p>` : ''}
+                                            ${item.note ? `<p class="text-xs font-semibold italic text-rose-800 mt-0.5">Note: ${escapeHtml(item.note)}</p>` : ''}
+                                        </div>
+                                        <span class="text-[13px] sm:text-sm font-bold text-gray-900 shrink-0 whitespace-nowrap">${formatPrice(itemPrice * qty)}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+
+                            ${extraCostVal > 0 ? `
+                                <div class="flex justify-between items-center text-xs font-bold text-[#B43A34] pt-1.5 border-t border-gray-300">
+                                    <span>Biaya Lebihan Voucher</span>
+                                    <span class="whitespace-nowrap">+ ${formatPrice(extraCostVal)}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex sm:flex-col items-baseline sm:items-start justify-between">
+                                <span class="text-[10px] sm:text-[11px] uppercase tracking-wider text-gray-500 font-bold">Total Pembayaran</span>
+                                <span class="text-lg sm:text-xl font-extrabold text-[#B43A34]">${formatPrice(order.totalPrice)}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="confirmToCustomer('${order.id}')" class="flex-1 sm:flex-none px-3.5 sm:px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
+                                    💬 Konfirmasi WA
+                                </button>
+                                ${!isDone ? `
+                                    <button onclick="toggleOrderStatus('${order.id}', 'completed')" class="flex-1 sm:flex-none px-3.5 sm:px-4 py-2.5 bg-[#1F2A24] hover:bg-black text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
+                                        ✓ Tandai Selesai
+                                    </button>
+                                ` : `
+                                    <button onclick="toggleOrderStatus('${order.id}', 'waiting_payment')" class="flex-1 sm:flex-none px-3.5 sm:px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-full text-xs font-bold whitespace-nowrap">
+                                        ↺ Belum Selesai
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
