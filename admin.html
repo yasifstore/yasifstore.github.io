@@ -6,15 +6,15 @@
     <title>Admin Yasif Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#F7F5F0] min-h-screen p-4 sm:p-6 pb-16 text-gray-900">
-    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 items-start">
+<body class="bg-[#F7F5F0] min-h-screen p-2.5 sm:p-6 pb-16 text-gray-900">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[310px_1fr] gap-4 sm:gap-6 items-start">
         
         <!-- PANEL KONTROL TOKO -->
-        <div class="bg-white p-6 sm:p-7 rounded-[2rem] shadow-lg text-center border border-gray-100 lg:sticky lg:top-6">
-            <h1 class="text-2xl font-bold mb-1 text-gray-900">Admin Yasif Store</h1>
-            <p id="statusText" class="text-gray-500 font-semibold text-sm mb-6">Memuat status...</p>
+        <div class="bg-white p-5 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-md text-center border border-gray-100 lg:sticky lg:top-6">
+            <h1 class="text-xl sm:text-2xl font-bold mb-0.5 text-gray-900">Admin Yasif Store</h1>
+            <p id="statusText" class="text-gray-500 font-semibold text-xs sm:text-sm mb-5">Memuat status...</p>
 
-            <div class="mb-5 flex items-center justify-between p-4 border border-gray-200 rounded-2xl bg-gray-50/70">
+            <div class="mb-4 flex items-center justify-between p-3.5 border border-gray-200 rounded-2xl bg-gray-50/70">
                 <div class="text-left pr-3">
                     <span class="block text-sm font-bold text-gray-800">Promo (Min 33k)</span>
                     <span class="block text-[11px] font-medium text-gray-500 mt-0.5">Khusus Voucher Min 50k</span>
@@ -25,41 +25,41 @@
                 </label>
             </div>
 
-            <input type="text" id="reasonInput" list="templateMalam" placeholder="Ketik alasan tutup di sini..." class="w-full mb-4 p-4 border border-gray-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-700 bg-white shadow-sm">
+            <input type="text" id="reasonInput" list="templateMalam" placeholder="Ketik alasan tutup di sini..." class="w-full mb-3.5 p-3.5 border border-gray-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-700 bg-white shadow-sm">
             <datalist id="templateMalam">
                 <option value="Admin sudah tepar dan tertidur nyenyak."></option>
                 <option value="Admin sedang istirahat sebentar, buka lagi nanti ya."></option>
             </datalist>
 
-            <button id="toggleBtn" class="w-full py-4 rounded-full font-bold text-white text-base shadow-md transition-all" style="background-color: gray;">Loading...</button>
+            <button id="toggleBtn" class="w-full py-3.5 rounded-full font-bold text-white text-sm sm:text-base shadow-md transition-all" style="background-color: gray;">Loading...</button>
         </div>
 
         <!-- PANEL ANTREAN ORDERAN -->
-        <div class="bg-white p-5 sm:p-7 rounded-[2rem] shadow-lg border border-gray-100">
-            <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+        <div class="bg-white p-3.5 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-md border border-gray-100">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4 px-1">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900">Antrean Orderan Masuk</h2>
-                    <p class="text-xs text-gray-500 mt-0.5">Urutan menu sudah otomatis dikelompokkan sesuai voucher.</p>
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-900">Antrean Orderan Masuk</h2>
+                    <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Urutan menu sudah otomatis dikelompokkan sesuai voucher.</p>
                 </div>
-                <button id="clearDoneBtn" class="hidden text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-3.5 py-2 rounded-full hover:bg-rose-100">
+                <button id="clearDoneBtn" class="hidden text-[11px] font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-full hover:bg-rose-100">
                     Hapus Semua Selesai
                 </button>
             </div>
 
             <!-- FILTER TAB -->
-            <div class="flex gap-2 mb-5 bg-[#F7F5F0] p-1.5 rounded-full">
-                <button data-tab="waiting_payment" class="tab-btn flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all bg-[#1F2A24] text-white">
-                    Menunggu Bayar (<span id="countWaiting">0</span>)
+            <div class="flex gap-1.5 mb-4 bg-[#F7F5F0] p-1 rounded-full">
+                <button data-tab="waiting_payment" class="tab-btn flex-1 py-2 px-2 rounded-full text-[11px] sm:text-xs font-bold transition-all bg-[#1F2A24] text-white whitespace-nowrap">
+                    Menunggu (<span id="countWaiting">0</span>)
                 </button>
-                <button data-tab="completed" class="tab-btn flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all text-gray-600">
+                <button data-tab="completed" class="tab-btn flex-1 py-2 px-2 rounded-full text-[11px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap">
                     Selesai (<span id="countCompleted">0</span>)
                 </button>
-                <button data-tab="all" class="tab-btn flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all text-gray-600">
+                <button data-tab="all" class="tab-btn flex-1 py-2 px-2 rounded-full text-[11px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap">
                     Semua (<span id="countAll">0</span>)
                 </button>
             </div>
 
-            <div id="ordersList" class="space-y-5">
+            <div id="ordersList" class="space-y-3.5">
                 <div class="text-center py-12 text-gray-400 text-sm">Memuat data pesanan...</div>
             </div>
         </div>
@@ -159,9 +159,9 @@
                 activeTab = tabBtn.dataset.tab;
                 document.querySelectorAll('.tab-btn').forEach(b => {
                     if (b.dataset.tab === activeTab) {
-                        b.className = 'tab-btn flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all bg-[#1F2A24] text-white';
+                        b.className = 'tab-btn flex-1 py-2 px-2 rounded-full text-[11px] sm:text-xs font-bold transition-all bg-[#1F2A24] text-white whitespace-nowrap';
                     } else {
-                        b.className = 'tab-btn flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all text-gray-600';
+                        b.className = 'tab-btn flex-1 py-2 px-2 rounded-full text-[11px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap';
                     }
                 });
                 renderOrders();
@@ -189,164 +189,13 @@
             lines.push(`No. Antrian: *#${order.queueNumber}*`);
             lines.push(`Lokasi Store: *${order.storeName}*`);
             lines.push(`Pick Up Atas Nama: *${order.customerName}*`);
-            lines.push(`Waktu Pesan: *${waktuPesan}*`);
-            lines.push(`--------------------------------`);
-
-            const items = Array.isArray(order.items) ? order.items : [];
-            items.forEach(item => {
-                const qty = Number(item.quantity || 1);
-                lines.push(`• *${item.name}* (${qty}x)`);
-
-                let details = [];
-                if (item.size) {
-                    let s = item.size.toLowerCase().includes('large') ? 'L' : 'R';
-                    details.push(`size: ${s}`);
+            lines.push(`Waktu Pesan: *${waktuPesan}*`); lines.push(`--------------------------------`);  const items = Array.isArray(order.items) ? order.items : []; items.forEach(item => { const qty = Number(item.quantity \vert{}\vert{} 1); lines.push(`• *${item.name}* (${qty}x)`);  let details = []; if (item.size) { details.push(`Size: ${item.size}`);
                 }
                 if (item.sugar) {
-                    let sg = item.sugar.toLowerCase().replace(' sugar', '').replace('sugar', '').trim();
-                    details.push(`sugar: ${sg}`);
-                }
-                if (details.length > 0) lines.push(`   ${details.join('  ')}`);
+                    let sg = item.sugar.replace(/ sugar/i, '').trim();
+                    details.push(`Sugar: ${sg}`); } if (details.length > 0) lines.push(`   ${details.join(' • ')}`);
 
                 let upArr = [];
-                if (item.oatside) upArr.push('UP oatside + 1,5K');
-                if (item.juwara) upArr.push('UP juwara + 1,5K');
-                if (upArr.length > 0) lines.push(`   ${upArr.join(' - ')}`);
-
-                if (item.note) lines.push(`   note: ${item.note}`);
-                lines.push(`   harga: ${formatPrice((item.promoPrice || 0) * qty)}`);
-            });
-
-            if (Number(order.extraCost || 0) > 0) {
-                lines.push(`• *Biaya Lebihan (Tidak Sesuai Voucher)*`);
-                lines.push(`   harga: ${formatPrice(order.extraCost)}`);
-            }
-
-            lines.push(`--------------------------------`);
-            lines.push(`Total Pembayaran: *${formatPrice(order.totalPrice)}*`);
-            lines.push(``);
-            lines.push(`*Silakan kirim bukti pembayaran sesuai nominal di atas, Terima kasih!*`);
-
-            const url = `https://wa.me/${order.customerWa}?text=${encodeURIComponent(lines.join('\n'))}`;
-            window.open(url, '_blank');
-        };
-
-        window.toggleOrderStatus = async function(orderId, newStatus) {
-            await update(ref(db, `orders/${orderId}`), { status: newStatus });
-        };
-
-        window.deleteOrder = async function(orderId) {
-            if (!confirm('Yakin ingin menghapus pesanan ini?')) return;
-            await remove(ref(db, `orders/${orderId}`));
-        };
-
-        function renderOrders() {
-            const waitingOrders = allOrders.filter(o => o.status !== 'completed');
-            const completedOrders = allOrders.filter(o => o.status === 'completed');
-
-            document.getElementById('countWaiting').innerText = waitingOrders.length;
-            document.getElementById('countCompleted').innerText = completedOrders.length;
-            document.getElementById('countAll').innerText = allOrders.length;
-
-            if (completedOrders.length > 0) {
-                clearDoneBtn.classList.remove('hidden');
-            } else {
-                clearDoneBtn.classList.add('hidden');
-            }
-
-            const visible = activeTab === 'waiting_payment'
-                ? waitingOrders
-                : (activeTab === 'completed' ? completedOrders : allOrders);
-
-            if (visible.length === 0) {
-                ordersListEl.innerHTML = `<div class="text-center py-12 text-gray-400 text-sm">Belum ada pesanan di kategori ini.</div>`;
-                return;
-            }
-
-            ordersListEl.innerHTML = visible.map(order => {
-                const isDone = order.status === 'completed';
-                const badgeClass = isDone
-                    ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
-                    : 'bg-amber-100 text-amber-900 border-amber-200';
-                const statusLabel = isDone ? 'Selesai' : 'Menunggu Pembayaran';
-                const items = Array.isArray(order.items) ? order.items : [];
-                const waktuPesan = order.orderType === 'scheduled' ? 'JADWAL JAM ' + order.scheduledTime : 'Sekarang';
-
-                return `
-                    <div class="border-2 ${isDone ? 'border-gray-200 bg-gray-50/50' : 'border-amber-300 bg-[#FFFDF8]'} rounded-[1.5rem] p-5 sm:p-6 shadow-sm">
-                        <div class="flex flex-wrap items-start justify-between gap-2 border-b border-gray-200 pb-3.5 mb-4">
-                            <div>
-                                <div class="flex items-center gap-2.5">
-                                    <span class="text-xl font-extrabold text-gray-900">Antrian #${escapeHtml(order.queueNumber)}</span>
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold border ${badgeClass}">${statusLabel}</span>
-                                </div>
-                                <p class="text-xs text-gray-500 mt-1">${escapeHtml(order.dateStr || '')} ${order.deviceInfo ? '• ' + escapeHtml(order.deviceInfo) : ''}</p>
-                            </div>
-                            <button onclick="deleteOrder('${order.id}')" class="text-xs font-bold text-gray-400 hover:text-rose-600 px-2.5 py-1">Hapus</button>
-                        </div>
-
-                        <div class="space-y-2 text-base text-gray-800 mb-4 bg-white p-4 rounded-2xl border border-gray-100">
-                            <div><span class="text-gray-500 font-medium">Nama Pick Up:</span> <strong class="text-lg text-gray-950">${escapeHtml(order.customerName)}</strong></div>
-                            <div><span class="text-gray-500 font-medium">Cabang / Store:</span> <strong class="text-lg text-[#B43A34]">${escapeHtml(order.storeName)}</strong></div>
-                            <div><span class="text-gray-500 font-medium">Waktu Pesan:</span> <strong class="text-lg ${order.orderType === 'scheduled' ? 'text-rose-700' : 'text-gray-950'}">${escapeHtml(waktuPesan)}</strong></div>
-                            <div class="text-sm pt-1 border-t border-gray-100"><span class="text-gray-500">No. WA:</span> <strong>${escapeHtml(order.customerWaRaw || order.customerWa)}</strong></div>
-                        </div>
-
-                        <div class="bg-[#F7F5F0] rounded-2xl p-4 space-y-3 mb-5 border border-gray-200/70">
-                            <p class="text-xs uppercase tracking-wider font-extrabold text-gray-500">Daftar Menu (${items.reduce((acc, i) => acc + Number(i.quantity || 1), 0)} item)</p>
-                            ${items.map(item => {
-                                const qty = Number(item.quantity || 1);
-                                const varParts = [
-                                    item.size ? 'Size: ' + (item.size.toLowerCase().includes('large') ? 'L' : 'R') : '',
-                                    item.sugar ? 'Sugar: ' + item.sugar.replace(/ sugar/i, '') : '',
-                                    item.oatside ? 'UP Oatside (+1,5K)' : '',
-                                    item.juwara ? 'UP Juwara (+1,5K)' : ''
-                                ].filter(Boolean);
-
-                                return `
-                                    <div class="flex justify-between items-start gap-3 pb-2.5 border-b border-gray-200/80 last:border-b-0 last:pb-0">
-                                        <div class="min-w-0">
-                                            <p class="text-base sm:text-lg font-extrabold text-gray-950 leading-snug">• ${escapeHtml(item.name)} <span class="text-[#B43A34]">(${qty}x)</span></p>
-                                            ${varParts.length > 0 ? `<p class="text-sm font-semibold text-gray-700 pl-3.5 mt-0.5">${escapeHtml(varParts.join(' • '))}</p>` : ''}
-                                            ${item.note ? `<p class="text-sm font-bold italic text-rose-800 pl-3.5 mt-0.5">Note: ${escapeHtml(item.note)}</p>` : ''}
-                                        </div>
-                                        <span class="text-base font-extrabold text-gray-900 shrink-0">${formatPrice((item.promoPrice || 0) * qty)}</span>
-                                    </div>
-                                `;
-                            }).join('')}
-
-                            ${Number(order.extraCost || 0) > 0 ? `
-                                <div class="flex justify-between items-center text-sm font-extrabold text-[#B43A34] pt-2 border-t border-gray-300">
-                                    <span>• Biaya Lebihan (Tidak Sesuai Voucher)</span>
-                                    <span>+ ${formatPrice(order.extraCost)}</span>
-                                </div>
-                            ` : ''}
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div>
-                                <span class="text-xs uppercase tracking-wider text-gray-500 font-bold block">Total Pembayaran</span>
-                                <span class="text-2xl font-extrabold text-[#B43A34]">${formatPrice(order.totalPrice)}</span>
-                            </div>
-                            <div class="flex gap-2.5">
-                                <button onclick="confirmToCustomer('${order.id}')" class="flex-1 sm:flex-none px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs sm:text-sm font-bold shadow-sm">
-                                    💬 Konfirmasi ke Customer
-                                </button>
-                                ${!isDone ? `
-                                    <button onclick="toggleOrderStatus('${order.id}', 'completed')" class="flex-1 sm:flex-none px-5 py-3 bg-[#1F2A24] hover:bg-black text-white rounded-full text-xs sm:text-sm font-bold shadow-sm">
-                                        ✓ Tandai Selesai
-                                    </button>
-                                ` : `
-                                    <button onclick="toggleOrderStatus('${order.id}', 'waiting_payment')" class="flex-1 sm:flex-none px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-full text-xs sm:text-sm font-bold">
-                                        ↺ Belum Selesai
-                                    </button>
-                                `}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-    </script>
-</body>
-</html>
+                if (item.oatside) upArr.push('UP Oatside +1,5K');
+                if (item.juwara) upArr.push('UP Juwara +1,5K');
+                if (upArr.length > 0) lines.push(`
