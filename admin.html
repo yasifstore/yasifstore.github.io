@@ -6,55 +6,68 @@
     <title>Admin Yasif Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#F7F5F0] flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-7 sm:p-8 rounded-[2rem] shadow-xl text-center max-w-sm w-full border border-gray-100 relative">
-        <h1 class="text-2xl font-bold mb-6 text-gray-900">Admin Yasif Store</h1>
+<body class="bg-[#F7F5F0] min-h-screen p-4 sm:p-6 pb-16 text-gray-900">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 items-start">
         
-        <div class="mb-5 flex items-center justify-between p-4 border border-gray-200 rounded-2xl bg-gray-50/50">
-            <div class="text-left">
-                <span class="block text-sm font-bold text-gray-800">Mode Auto-Tutup</span>
-                <span class="block text-[10px] font-medium text-gray-500 mt-0.5">Otomatis tutup 01:00 - 09:00</span>
+        <!-- PANEL KONTROL TOKO -->
+        <div class="bg-white p-6 sm:p-7 rounded-[2rem] shadow-lg text-center border border-gray-100 lg:sticky lg:top-6">
+            <h1 class="text-2xl font-bold mb-1 text-gray-900">Admin Yasif Store</h1>
+            <p id="statusText" class="text-gray-500 font-semibold text-sm mb-6">Memuat status...</p>
+
+            <div class="mb-5 flex items-center justify-between p-4 border border-gray-200 rounded-2xl bg-gray-50/70">
+                <div class="text-left pr-3">
+                    <span class="block text-sm font-bold text-gray-800">Promo (Min 33k)</span>
+                    <span class="block text-[11px] font-medium text-gray-500 mt-0.5">Khusus Voucher Min 50k</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" id="min32kToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
             </div>
-            <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                <input type="checkbox" id="autoCloseToggle" class="sr-only peer">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-            </label>
+
+            <input type="text" id="reasonInput" list="templateMalam" placeholder="Ketik alasan tutup di sini..." class="w-full mb-4 p-4 border border-gray-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-700 bg-white shadow-sm">
+            <datalist id="templateMalam">
+                <option value="Admin sudah tepar dan tertidur nyenyak."></option>
+                <option value="Admin sedang istirahat sebentar, buka lagi nanti ya."></option>
+            </datalist>
+
+            <button id="toggleBtn" class="w-full py-4 rounded-full font-bold text-white text-base shadow-md transition-all" style="background-color: gray;">Loading...</button>
         </div>
 
-        <div class="mb-5 flex items-center justify-between p-4 border border-gray-200 rounded-2xl bg-gray-50/50">
-            <div class="text-left">
-                <span class="block text-sm font-bold text-gray-800">Beli 1 Item (Admin 2.000)</span>
-                <span class="block text-[10px] font-medium text-gray-500 mt-0.5">Off = Wajib beli min. 2 item</span>
+        <!-- PANEL ANTREAN ORDERAN -->
+        <div class="bg-white p-5 sm:p-7 rounded-[2rem] shadow-lg border border-gray-100">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">Antrean Orderan Masuk</h2>
+                    <p class="text-xs text-gray-500 mt-0.5">Urutan menu sudah otomatis dikelompokkan sesuai voucher.</p>
+                </div>
+                <button id="clearDoneBtn" class="hidden text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-3.5 py-2 rounded-full hover:bg-rose-100">
+                    Hapus Semua Selesai
+                </button>
             </div>
-            <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                <input type="checkbox" id="singleItemToggle" class="sr-only peer">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-            </label>
-        </div>
 
-        <div class="mb-5 flex items-center justify-between p-4 border border-gray-200 rounded-2xl bg-gray-50/50">
-            <div class="text-left">
-                <span class="block text-sm font-bold text-gray-800">Promo (Min 33k - Maks 40k)</span>
-                <span class="block text-[10px] font-medium text-gray-500 mt-0.5">Voucher khusus 33k - 40k</span>
+            <!-- FILTER TAB -->
+            <div class="flex gap-2 mb-5 bg-[#F7F5F0] p-1.5 rounded-full">
+                <button data-tab="waiting_payment" class="tab-btn flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all bg-[#1F2A24] text-white">
+                    Menunggu Bayar (<span id="countWaiting">0</span>)
+                </button>
+                <button data-tab="completed" class="tab-btn flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all text-gray-600">
+                    Selesai (<span id="countCompleted">0</span>)
+                </button>
+                <button data-tab="all" class="tab-btn flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all text-gray-600">
+                    Semua (<span id="countAll">0</span>)
+                </button>
             </div>
-            <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                <input type="checkbox" id="min32kToggle" class="sr-only peer">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-            </label>
+
+            <div id="ordersList" class="space-y-4">
+                <div class="text-center py-12 text-gray-400 text-sm">Memuat data pesanan...</div>
+            </div>
         </div>
-
-        <input type="text" id="reasonInput" list="templateMalam" placeholder="Ketik alasan tutup di sini..." class="w-full mb-4 p-4 border border-gray-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-700 bg-white shadow-sm">
-        <datalist id="templateMalam">
-            <option value="Admin sudah tepar dan tertidur nyenyak."></option>
-        </datalist>
-
-        <button id="toggleBtn" class="w-full py-4 rounded-full font-bold text-white text-lg mb-4 shadow-md transition-all" style="background-color: gray;">Loading...</button>
-        <p id="statusText" class="text-gray-500 font-semibold text-sm"></p>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+        import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB1sNl7HsyQoG_3_UbS-H8QYmjla8i6fKc",
@@ -69,21 +82,33 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+
         const btn = document.getElementById('toggleBtn');
         const text = document.getElementById('statusText');
         const reasonInput = document.getElementById('reasonInput');
-        const autoCloseToggle = document.getElementById('autoCloseToggle');
-        const singleItemToggle = document.getElementById('singleItemToggle');
         const min32kToggle = document.getElementById('min32kToggle');
-        
-        let currentStatus = { isOpen: true, reason: "", time: "", autoClose: true, allowSingleItem: true, minPurchase32k: false };
+        const ordersListEl = document.getElementById('ordersList');
+        const clearDoneBtn = document.getElementById('clearDoneBtn');
 
+        let currentStatus = { isOpen: true, reason: "", time: "", minPurchase32k: false };
+        let allOrders = [];
+        let activeTab = 'waiting_payment';
+
+        const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price || 0);
+        const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+        // --- KONTROL STATUS TOKO ---
         onValue(ref(db, 'store_status'), (snapshot) => {
             const data = snapshot.val();
-            currentStatus = (typeof data === 'object' && data !== null) ? data : { isOpen: !!data, reason: "Admin sedang sibuk.", time: "", autoClose: true, allowSingleItem: true, minPurchase32k: false };
+            currentStatus = (typeof data === 'object' && data !== null)
+                ? {
+                    isOpen: data.isOpen !== false,
+                    reason: data.reason || "",
+                    time: data.time || "",
+                    minPurchase32k: data.minPurchase32k === true
+                }
+                : { isOpen: !!data, reason: "Admin sedang sibuk.", time: "", minPurchase32k: false };
             
-            autoCloseToggle.checked = currentStatus.autoClose !== false;
-            singleItemToggle.checked = currentStatus.allowSingleItem !== false;
             min32kToggle.checked = currentStatus.minPurchase32k === true;
 
             if (currentStatus.isOpen) {
@@ -99,16 +124,6 @@
             }
         });
 
-        autoCloseToggle.onchange = (e) => {
-            currentStatus.autoClose = e.target.checked;
-            set(ref(db, 'store_status'), currentStatus);
-        };
-
-        singleItemToggle.onchange = (e) => {
-            currentStatus.allowSingleItem = e.target.checked;
-            set(ref(db, 'store_status'), currentStatus);
-        };
-
         min32kToggle.onchange = (e) => {
             currentStatus.minPurchase32k = e.target.checked;
             set(ref(db, 'store_status'), currentStatus);
@@ -118,13 +133,10 @@
             if (currentStatus.isOpen) {
                 const now = new Date();
                 const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
-                
                 set(ref(db, 'store_status'), { 
                     isOpen: false, 
                     reason: reasonInput.value || "Admin sedang ada kesibukan lain.", 
                     time: timeString,
-                    autoClose: currentStatus.autoClose,
-                    allowSingleItem: currentStatus.allowSingleItem,
                     minPurchase32k: currentStatus.minPurchase32k
                 });
             } else {
@@ -132,12 +144,200 @@
                     isOpen: true, 
                     reason: "", 
                     time: "",
-                    autoClose: currentStatus.autoClose,
-                    allowSingleItem: currentStatus.allowSingleItem,
                     minPurchase32k: currentStatus.minPurchase32k
                 });
             }
         };
+
+        // --- ANTREAN ORDERAN ---
+        onValue(ref(db, 'orders'), (snapshot) => {
+            const data = snapshot.val() || {};
+            allOrders = Object.values(data).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            renderOrders();
+        });
+
+        document.querySelectorAll('.tab-btn').forEach(tabBtn => {
+            tabBtn.onclick = () => {
+                activeTab = tabBtn.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    if (b.dataset.tab === activeTab) {
+                        b.className = 'tab-btn flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all bg-[#1F2A24] text-white';
+                    } else {
+                        b.className = 'tab-btn flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all text-gray-600';
+                    }
+                });
+                renderOrders();
+            };
+        });
+
+        clearDoneBtn.onclick = async () => {
+            const doneOrders = allOrders.filter(o => o.status === 'completed');
+            if (doneOrders.length === 0) return;
+            if (!confirm(`Hapus semua ${doneOrders.length} pesanan yang sudah selesai?`)) return;
+            for (const o of doneOrders) {
+                await remove(ref(db, `orders/${o.id}`));
+            }
+        };
+
+        window.confirmToCustomer = function(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            let lines = [];
+            lines.push(`Halo Kak ${order.customerName}, pesanan ${order.brand || 'Kopi Kenangan'} kamu sudah masuk ke Yasif Store ya!`);
+            lines.push(``);
+            lines.push(`No. Antrian: #${order.queueNumber}`);
+            lines.push(`Lokasi Store: ${order.storeName}`);
+            lines.push(`Pick Up Atas Nama: ${order.customerName}`);
+            lines.push(`Waktu Pesan: ${order.orderType === 'scheduled' ? 'JAM ' + order.scheduledTime : 'Sekarang'}`);
+            lines.push(`--------------------------------`);
+
+            (order.items || []).forEach(item => {
+                lines.push(`• ${item.name} (${item.quantity}x)`);
+                let details = [];
+                if (item.size) {
+                    let s = item.size.toLowerCase().includes('large') ? 'L' : 'R';
+                    details.push(`size: ${s}`);
+                }
+                if (item.sugar) {
+                    let sg = item.sugar.toLowerCase().replace(' sugar', '').replace('sugar', '').trim();
+                    details.push(`sugar: ${sg}`);
+                }
+                if (details.length > 0) lines.push(`   ${details.join('  ')}`);
+
+                let upArr = [];
+                if (item.oatside) upArr.push('UP oatside + 1,5K');
+                if (item.juwara) upArr.push('UP juwara + 1,5K');
+                if (upArr.length > 0) lines.push(`   ${upArr.join(' - ')}`);
+
+                if (item.note) lines.push(`   note: ${item.note}`);
+                lines.push(`   harga: ${formatPrice((item.promoPrice || 0) * (item.quantity || 1))}`);
+            });
+
+            if (order.extraCost > 0) {
+                lines.push(`• Biaya Lebihan (Tidak Sesuai Voucher)`);
+                lines.push(`   harga: ${formatPrice(order.extraCost)}`);
+            }
+
+            lines.push(`--------------------------------`);
+            lines.push(`Total Pembayaran: ${formatPrice(order.totalPrice)}`);
+            lines.push(``);
+            lines.push(`Silakan transfer/bayar sesuai nominal di atas dan kirim bukti pembayarannya ke chat ini ya Kak agar pesanan segera diproses. Terima kasih!`);
+
+            const url = `https://wa.me/${order.customerWa}?text=${encodeURIComponent(lines.join('\n'))}`;
+            window.open(url, '_blank');
+        };
+
+        window.toggleOrderStatus = async function(orderId, newStatus) {
+            await update(ref(db, `orders/${orderId}`), { status: newStatus });
+        };
+
+        window.deleteOrder = async function(orderId) {
+            if (!confirm('Yakin ingin menghapus pesanan ini?')) return;
+            await remove(ref(db, `orders/${orderId}`));
+        };
+
+        function renderOrders() {
+            const waitingOrders = allOrders.filter(o => o.status !== 'completed');
+            const completedOrders = allOrders.filter(o => o.status === 'completed');
+
+            document.getElementById('countWaiting').innerText = waitingOrders.length;
+            document.getElementById('countCompleted').innerText = completedOrders.length;
+            document.getElementById('countAll').innerText = allOrders.length;
+
+            if (completedOrders.length > 0) {
+                clearDoneBtn.classList.remove('hidden');
+            } else {
+                clearDoneBtn.classList.add('hidden');
+            }
+
+            const visible = activeTab === 'waiting_payment'
+                ? waitingOrders
+                : (activeTab === 'completed' ? completedOrders : allOrders);
+
+            if (visible.length === 0) {
+                ordersListEl.innerHTML = `<div class="text-center py-12 text-gray-400 text-sm">Belum ada pesanan di kategori ini.</div>`;
+                return;
+            }
+
+            ordersListEl.innerHTML = visible.map(order => {
+                const isDone = order.status === 'completed';
+                const badgeClass = isDone
+                    ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                    : 'bg-amber-100 text-amber-900 border-amber-200';
+                const statusLabel = isDone ? 'Selesai' : 'Menunggu Pembayaran';
+
+                return `
+                    <div class="border ${isDone ? 'border-gray-200 bg-gray-50/50' : 'border-amber-200 bg-[#FFFDF8]'} rounded-[1.5rem] p-4 sm:p-5 shadow-sm">
+                        <div class="flex flex-wrap items-start justify-between gap-2 border-b border-gray-200/80 pb-3 mb-3">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg font-extrabold text-gray-900">Antrian #${escapeHtml(order.queueNumber)}</span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${badgeClass}">${statusLabel}</span>
+                                </div>
+                                <p class="text-[11px] text-gray-500 mt-0.5">${escapeHtml(order.dateStr || '')} ${order.deviceInfo ? '• ' + escapeHtml(order.deviceInfo) : ''}</p>
+                            </div>
+                            <button onclick="deleteOrder('${order.id}')" class="text-xs font-semibold text-gray-400 hover:text-rose-600 px-2 py-1">Hapus</button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-gray-700 mb-3">
+                            <div><span class="text-gray-400">Nama Pick Up:</span> <strong>${escapeHtml(order.customerName)}</strong></div>
+                            <div><span class="text-gray-400">No. WA:</span> <strong>${escapeHtml(order.customerWaRaw || order.customerWa)}</strong></div>
+                            <div class="sm:col-span-2"><span class="text-gray-400">Cabang:</span> <strong>${escapeHtml(order.storeName)}</strong></div>
+                            <div class="sm:col-span-2"><span class="text-gray-400">Waktu Pesan:</span> <strong class="${order.orderType === 'scheduled' ? 'text-rose-700' : ''}">${escapeHtml(order.orderType === 'scheduled' ? 'JADWAL JAM ' + order.scheduledTime : 'Sekarang')}</strong></div>
+                        </div>
+
+                        <div class="bg-[#F7F5F0] rounded-2xl p-3.5 space-y-2 mb-4">
+                            ${(order.items || []).map(item => `
+                                <div class="flex justify-between items-start gap-3 text-xs">
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-gray-900">• ${escapeHtml(item.name)} (${item.quantity}x)</p>
+                                        <p class="text-[11px] text-gray-600 pl-2.5">
+                                            ${[
+                                                item.size ? 'Size: ' + (item.size.toLowerCase().includes('large') ? 'L' : 'R') : '',
+                                                item.sugar ? 'Sugar: ' + item.sugar.replace(/ sugar/i, '') : '',
+                                                item.oatside ? 'UP Oatside' : '',
+                                                item.juwara ? 'UP Juwara' : ''
+                                            ].filter(Boolean).join(' • ')}
+                                        </p>
+                                        ${item.note ? `<p class="text-[11px] italic text-rose-800 pl-2.5">Note: ${escapeHtml(item.note)}</p>` : ''}
+                                    </div>
+                                    <span class="font-bold text-gray-800 shrink-0">${formatPrice((item.promoPrice || 0) * (item.quantity || 1))}</span>
+                                </div>
+                            `).join('')}
+
+                            ${order.extraCost > 0 ? `
+                                <div class="flex justify-between items-center text-xs font-bold text-[#B43A34] pt-2 border-t border-gray-300/60">
+                                    <span>• Biaya Lebihan (Tidak Sesuai Voucher)</span>
+                                    <span>+ ${formatPrice(order.extraCost)}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold block">Total Pembayaran</span>
+                                <span class="text-xl font-extrabold text-[#B43A34]">${formatPrice(order.totalPrice)}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="confirmToCustomer('${order.id}')" class="flex-1 sm:flex-none px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-bold shadow-sm">
+                                    💬 Konfirmasi ke Customer
+                                </button>
+                                ${!isDone ? `
+                                    <button onclick="toggleOrderStatus('${order.id}', 'completed')" class="flex-1 sm:flex-none px-4 py-2.5 bg-[#1F2A24] hover:bg-black text-white rounded-full text-xs font-bold shadow-sm">
+                                        ✓ Tandai Selesai
+                                    </button>
+                                ` : `
+                                    <button onclick="toggleOrderStatus('${order.id}', 'waiting_payment')" class="flex-1 sm:flex-none px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-full text-xs font-bold">
+                                        ↺ Belum Selesai
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
     </script>
 </body>
 </html>
