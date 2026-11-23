@@ -732,6 +732,7 @@
             if (item) {
                 item.quantity += delta;
                 if (item.quantity <= 0) state.cart = state.cart.filter(i => i.cartItemId !== cartItemId);
+                state.acceptedVoucherSurcharge = false;
                 saveCart();
                 render();
             }
@@ -739,6 +740,7 @@
 
         window.removeFromCart = function(cartItemId) {
             state.cart = state.cart.filter(i => i.cartItemId !== cartItemId);
+            state.acceptedVoucherSurcharge = false;
             saveCart();
             render();
         }
