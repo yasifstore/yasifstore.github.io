@@ -364,19 +364,19 @@
                         const loss = Math.max(0, Math.ceil((sum - 60000) / 2));
                         nombok += loss;
                         if (sum > 62000) extraCost += loss;
-                        typedGroups.push({ type: 'B', sum, items: g });
+                        typedGroups.push({ type: 'B', sum, items: [...g] });
                     } else {
                         if (sum >= 50000 && sum <= 62000) {
                             const loss = Math.max(0, Math.ceil((sum - 60000) / 2));
                             nombok += loss;
-                            typedGroups.push({ type: 'B', sum, items: g });
+                            typedGroups.push({ type: 'B', sum, items: [...g] });
                         } else {
                             const loss = Math.max(0, Math.ceil((sum - 70000) / 2));
                             nombok += loss;
                             if (sum > 72000) extraCost += loss;
                             countA++;
                             if (g.length === 1) singleItemA++;
-                            typedGroups.push({ type: 'A', sum, items: g });
+                            typedGroups.push({ type: 'A', sum, items: [...g] });
                         }
                     }
                 }
