@@ -68,6 +68,19 @@
         </div>
     </div>
 
+    <!-- MODAL KONFIRMASI ADMIN (PENGGANTI POP-UP CHROME) -->
+    <div id="adminConfirmModal" onclick="if(event.target===this) this.classList.add('hidden')" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
+        <div class="bg-white w-full max-w-sm rounded-[1.75rem] p-6 text-center shadow-2xl border border-gray-100">
+            <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">⚠️</div>
+            <h3 id="adminConfirmTitle" class="text-lg font-bold text-gray-900 mb-1.5">Konfirmasi</h3>
+            <p id="adminConfirmMsg" class="text-xs text-gray-500 leading-relaxed mb-5"></p>
+            <div class="flex gap-2.5">
+                <button id="adminConfirmCancel" class="flex-1 py-3 rounded-full border border-gray-200 text-xs font-bold text-gray-700">Batal</button>
+                <button id="adminConfirmOk" class="flex-1 py-3 rounded-full bg-[#B43A34] text-white text-xs font-bold">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.__adminConnected = false;
         setTimeout(function() {
@@ -112,6 +125,21 @@
 
         const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price ? price : 0);
         const escapeHtml = (value) => String(value ? value : '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+        function openAdminConfirm(title, message, onOk) {
+            const modal = document.getElementById('adminConfirmModal');
+            document.getElementById('adminConfirmTitle').innerText = title;
+            document.getElementById('adminConfirmMsg').innerText = message;
+            modal.classList.remove('hidden');
+
+            document.getElementById('adminConfirmCancel').onclick = function() {
+                modal.classList.add('hidden');
+            };
+            document.getElementById('adminConfirmOk').onclick = async function() {
+                modal.classList.add('hidden');
+                await onOk();
+            };
+        }
 
         function isUnpaidExpired(order) {
             if (!order || order.status === 'completed') return false;
@@ -385,13 +413,18 @@
             };
         });
 
-        clearDoneBtn.onclick = async () => {
+        clearDoneBtn.onclick = () => {
             const doneOrders = allOrders.filter(o => o.status === 'completed');
             if (doneOrders.length === 0) return;
-            if (!confirm(`Hapus semua ${doneOrders.length} pesanan yang sudah selesai?`)) return;
-            for (const o of doneOrders) {
-                await remove(ref(db, `orders/${o.id}`));
-            }
+            openAdminConfirm(
+                'Hapus Semua Selesai?',
+                `Yakin ingin menghapus semua ${doneOrders.length} pesanan yang sudah selesai?`,
+                async () => {
+                    for (const o of doneOrders) {
+                        await remove(ref(db, `orders/${o.id}`));
+                    }
+                }
+            );
         };
 
         window.confirmToCustomer = function(orderId) {
@@ -453,9 +486,14 @@
             await update(ref(db, `orders/${orderId}`), { status: newStatus });
         };
 
-        window.deleteOrder = async function(orderId) {
-            if (!confirm('Yakin ingin menghapus pesanan ini?')) return;
-            await remove(ref(db, `orders/${orderId}`));
+        window.deleteOrder = function(orderId) {
+            openAdminConfirm(
+                'Hapus Pesanan?',
+                'Pesanan ini akan dihapus permanen dari daftar admin.',
+                async () => {
+                    await remove(ref(db, `orders/${orderId}`));
+                }
+            );
         };
 
         function renderOrders() {
