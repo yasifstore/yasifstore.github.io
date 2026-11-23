@@ -42,7 +42,7 @@
             <div class="flex flex-wrap items-center justify-between gap-2 mb-4 px-1">
                 <div>
                     <h2 class="text-lg sm:text-xl font-bold text-gray-900">Antrean Orderan Masuk</h2>
-                    <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Menu otomatis dikelompokkan per voucher untuk memudahkan order.</p>
+                    <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Belum bayar > 2 jam otomatis terhapus. Riwayat selesai tersimpan.</p>
                 </div>
                 <button id="clearDoneBtn" class="hidden text-[11px] font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-full hover:bg-rose-100">
                     Hapus Semua Selesai
@@ -97,6 +97,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
 
         const btn = document.getElementById('toggleBtn');
         const text = document.getElementById('statusText');
@@ -111,6 +112,25 @@
 
         const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price ? price : 0);
         const escapeHtml = (value) => String(value ? value : '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+        function isUnpaidExpired(order) {
+            if (!order || order.status === 'completed') return false;
+            const created = Number(order.createdAt ? order.createdAt : 0);
+            if (!created) return false;
+            return (Date.now() - created) >= TWO_HOURS_MS;
+        }
+
+        function cleanupExpiredOrders(ordersArray) {
+            const validOrders = [];
+            ordersArray.forEach(order => {
+                if (isUnpaidExpired(order)) {
+                    remove(ref(db, `orders/${order.id}`)).catch(() => {});
+                } else {
+                    validOrders.push(order);
+                }
+            });
+            return validOrders;
+        }
 
         function buildVoucherGroupsForDisplay(order) {
             const items = Array.isArray(order.items) ? order.items : [];
@@ -335,12 +355,21 @@
             window.__adminConnected = true;
             const rawData = snapshot.val();
             const data = rawData ? rawData : {};
-            allOrders = Object.values(data).sort((a, b) => (b.createdAt ? b.createdAt : 0) - (a.createdAt ? a.createdAt : 0));
+            const sorted = Object.values(data).sort((a, b) => (b.createdAt ? b.createdAt : 0) - (a.createdAt ? a.createdAt : 0));
+            allOrders = cleanupExpiredOrders(sorted);
             renderOrders();
         }, (err) => {
             window.__adminConnected = true;
             ordersListEl.innerHTML = `<div class="text-center py-10 text-rose-600 text-xs font-semibold">Gagal memuat pesanan: ${escapeHtml(err.message)}</div>`;
         });
+
+        setInterval(() => {
+            const beforeLen = allOrders.length;
+            allOrders = cleanupExpiredOrders(allOrders);
+            if (allOrders.length !== beforeLen) {
+                renderOrders();
+            }
+        }, 60000);
 
         document.querySelectorAll('.tab-btn').forEach(tabBtn => {
             tabBtn.onclick = () => {
