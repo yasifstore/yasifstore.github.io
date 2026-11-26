@@ -92,14 +92,17 @@
             </div>
 
             <!-- FILTER TAB -->
-            <div class="flex gap-1.5 mb-4 bg-[#F7F5F0] p-1 rounded-full">
-                <button data-tab="waiting_payment" class="tab-btn flex-1 py-2 px-2 rounded-full text-[11px] sm:text-xs font-bold transition-all bg-[#1F2A24] text-white whitespace-nowrap">
+            <div class="grid grid-cols-4 gap-1 mb-4 bg-[#F7F5F0] p-1 rounded-full">
+                <button data-tab="waiting_payment" class="tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all bg-[#1F2A24] text-white whitespace-nowrap">
                     Menunggu (<span id="countWaiting">0</span>)
                 </button>
-                <button data-tab="completed" class="tab-btn flex-1 py-2 px-2 rounded-full text-[11px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap">
+                <button data-tab="processing" class="tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap">
+                    Proses (<span id="countProcessing">0</span>)
+                </button>
+                <button data-tab="completed" class="tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap">
                     Selesai (<span id="countCompleted">0</span>)
                 </button>
-                <button data-tab="all" class="tab-btn flex-1 py-2 px-2 rounded-full text-[11px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap">
+                <button data-tab="all" class="tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap">
                     Semua (<span id="countAll">0</span>)
                 </button>
             </div>
@@ -343,7 +346,7 @@
         }
 
         function isUnpaidExpired(order) {
-            if (!order || order.status === 'completed') return false;
+            if (!order || order.status === 'completed' || order.status === 'processing') return false;
             const created = Number(order.createdAt ? order.createdAt : 0);
             if (!created) return false;
             return (Date.now() - created) >= TWO_HOURS_MS;
@@ -365,7 +368,7 @@
             const items = Array.isArray(order.items) ? order.items : [];
             if (items.length === 0) return [];
 
-            const onlyVoucherB = currentStatus.minPurchase32k === true;
+            const onlyVoucherB = false;
             const units = [];
 
             items.forEach(item => {
@@ -478,6 +481,17 @@
                 bestResult = evaluatePartition([units]);
             }
 
+            if (!bestResult) {
+                const totalSum = units.reduce((s, u) => s + u._orig, 0);
+                bestResult = {
+                    extraCost: 0,
+                    nombok: 0,
+                    countA: 1,
+                    groupCount: 1,
+                    typedGroups: [{ type: 'A', sum: totalSum, items: [...units] }]
+                };
+            }
+
             bestResult.typedGroups.sort((a, b) => {
                 if (a.type !== b.type) return a.type === 'B' ? -1 : 1;
                 return b.sum - a.sum;
@@ -549,7 +563,6 @@
                 text.innerText = '🔴 Toko: TUTUP';
                 reasonInput.disabled = true;
             }
-            renderOrders();
         }, (err) => {
             window.__adminConnected = true;
             text.innerText = '⚠️ Error Firebase: ' + err.message;
@@ -591,7 +604,7 @@
                 allOrders.forEach(o => knownOrderIds.add(o.id));
                 isInitialOrdersLoad = false;
             } else {
-                const brandNewOrders = allOrders.filter(o => !knownOrderIds.has(o.id) && o.status !== 'completed');
+                const brandNewOrders = allOrders.filter(o => !knownOrderIds.has(o.id) && o.status !== 'completed' && o.status !== 'processing');
                 allOrders.forEach(o => knownOrderIds.add(o.id));
                 if (brandNewOrders.length > 0) {
                     triggerNewOrderAlert(brandNewOrders[0], brandNewOrders.length);
@@ -617,9 +630,9 @@
                 activeTab = tabBtn.dataset.tab;
                 document.querySelectorAll('.tab-btn').forEach(b => {
                     if (b.dataset.tab === activeTab) {
-                        b.className = 'tab-btn flex-1 py-2 px-2 rounded-full text-[11px] sm:text-xs font-bold transition-all bg-[#1F2A24] text-white whitespace-nowrap';
+                        b.className = 'tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all bg-[#1F2A24] text-white whitespace-nowrap';
                     } else {
-                        b.className = 'tab-btn flex-1 py-2 px-2 rounded-full text-[11px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap';
+                        b.className = 'tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap';
                     }
                 });
                 renderOrders();
@@ -640,7 +653,7 @@
             );
         };
 
-        window.confirmToCustomer = function(orderId) {
+        window.confirmToCustomer = function(orderId, mode = 'remind') {
             const order = allOrders.find(o => o.id === orderId);
             if (!order) return;
 
@@ -689,7 +702,11 @@
             lines.push(`--------------------------------`);
             lines.push(`Total Pembayaran: *${formatPrice(order.totalPrice)}*`);
             lines.push(``);
-            lines.push(`*Silakan kirim bukti pembayaran sesuai nominal di atas, Terima kasih!*`);
+            if (mode === 'processing') {
+                lines.push(`*Pesanan sedang dalam proses, tunggu sampai Yasif Store mengirim bukti pesanan, terima kasih.*`);
+            } else {
+                lines.push(`*Silakan kirim bukti pembayaran sesuai nominal di atas, Terima kasih!*`);
+            }
 
             const url = `https://wa.me/${order.customerWa}?text=${encodeURIComponent(lines.join('\n'))}`;
             window.open(url, '_blank');
@@ -710,10 +727,12 @@
         };
 
         function renderOrders() {
-            const waitingOrders = allOrders.filter(o => o.status !== 'completed');
+            const waitingOrders = allOrders.filter(o => o.status !== 'completed' && o.status !== 'processing');
+            const processingOrders = allOrders.filter(o => o.status === 'processing');
             const completedOrders = allOrders.filter(o => o.status === 'completed');
 
             document.getElementById('countWaiting').innerText = waitingOrders.length;
+            document.getElementById('countProcessing').innerText = processingOrders.length;
             document.getElementById('countCompleted').innerText = completedOrders.length;
             document.getElementById('countAll').innerText = allOrders.length;
 
@@ -725,7 +744,9 @@
 
             const visible = activeTab === 'waiting_payment'
                 ? waitingOrders
-                : (activeTab === 'completed' ? completedOrders : allOrders);
+                : (activeTab === 'processing'
+                    ? processingOrders
+                    : (activeTab === 'completed' ? completedOrders : allOrders));
 
             if (visible.length === 0) {
                 ordersListEl.innerHTML = `<div class="text-center py-12 text-gray-400 text-sm">Belum ada pesanan di kategori ini.</div>`;
@@ -734,19 +755,31 @@
 
             ordersListEl.innerHTML = visible.map(order => {
                 const isDone = order.status === 'completed';
+                const isProcessing = order.status === 'processing';
+                const isWaiting = !isDone && !isProcessing;
                 const badgeClass = isDone
                     ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
-                    : 'bg-amber-100 text-amber-900 border-amber-200';
-                const statusLabel = isDone ? 'Selesai' : 'Menunggu Bayar';
+                    : (isProcessing ? 'bg-sky-100 text-sky-800 border-sky-200' : 'bg-amber-100 text-amber-900 border-amber-200');
+                const cardClass = isDone
+                    ? 'border-gray-200 bg-gray-50/60'
+                    : (isProcessing ? 'border-sky-300 bg-sky-50/30' : 'border-amber-300 bg-[#FFFDF8]');
+                const statusLabel = isDone ? 'Selesai' : (isProcessing ? 'Proses' : 'Menunggu Bayar');
                 const items = Array.isArray(order.items) ? order.items : [];
                 const totalItemCount = items.reduce((acc, i) => acc + Number(i.quantity ? i.quantity : 1), 0);
                 const waktuPesan = order.orderType === 'scheduled' ? 'JADWAL ' + order.scheduledTime : 'Sekarang';
                 const waDisplay = order.customerWaRaw ? order.customerWaRaw : order.customerWa;
                 const extraCostVal = Number(order.extraCost ? order.extraCost : 0);
-                const voucherGroups = buildVoucherGroupsForDisplay(order);
+                let voucherGroups = [];
+                try {
+                    voucherGroups = buildVoucherGroupsForDisplay(order);
+                } catch (err) {
+                    console.error('Voucher grouping error for order', order.id, err);
+                    const fallbackSum = items.reduce((s, it) => s + (Number(it.originalPrice || 0) * Number(it.quantity || 1)), 0);
+                    voucherGroups = [{ type: 'A', label: 'Daftar Menu', normalSum: fallbackSum, items }];
+                }
 
                 return `
-                    <div class="border ${isDone ? 'border-gray-200 bg-gray-50/60' : 'border-amber-300 bg-[#FFFDF8]'} rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-sm">
+                    <div class="border ${cardClass} rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-sm">
                         
                         <div class="flex items-start justify-between gap-2 border-b border-gray-200/80 pb-2.5 mb-3">
                             <div class="min-w-0">
@@ -835,19 +868,36 @@
                                 <span class="text-[10px] sm:text-[11px] uppercase tracking-wider text-gray-500 font-bold">Total Pembayaran</span>
                                 <span class="text-lg sm:text-xl font-extrabold text-[#B43A34]">${formatPrice(order.totalPrice)}</span>
                             </div>
-                            <div class="flex gap-2">
-                                ${!isDone ? `
-                                    <button onclick="toggleOrderStatus('${order.id}', 'completed')" class="flex-1 sm:flex-none px-3.5 sm:px-4 py-2.5 bg-[#1F2A24] hover:bg-black text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
-                                        ✓ Tandai Selesai
+                            <div class="flex flex-col gap-2 w-full sm:w-auto">
+                                <div class="flex gap-2">
+                                    ${isWaiting ? `
+                                        <button onclick="toggleOrderStatus('${order.id}', 'processing')" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
+                                            ⏳ Proses
+                                        </button>
+                                        <button onclick="toggleOrderStatus('${order.id}', 'completed')" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-[#1F2A24] hover:bg-black text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
+                                            ✓ Selesai
+                                        </button>
+                                    ` : (isProcessing ? `
+                                        <button onclick="toggleOrderStatus('${order.id}', 'completed')" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-[#1F2A24] hover:bg-black text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
+                                            ✓ Tandai Selesai
+                                        </button>
+                                        <button onclick="toggleOrderStatus('${order.id}', 'waiting_payment')" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-full text-xs font-bold whitespace-nowrap">
+                                            ↺ Menunggu
+                                        </button>
+                                    ` : `
+                                        <button onclick="toggleOrderStatus('${order.id}', 'waiting_payment')" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-full text-xs font-bold whitespace-nowrap">
+                                            ↺ Belum Selesai
+                                        </button>
+                                    `)}
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="confirmToCustomer('${order.id}', 'remind')" class="flex-1 sm:flex-none px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-[11px] font-bold shadow-sm whitespace-nowrap">
+                                        💬 WA Ingatkan Bayar
                                     </button>
-                                ` : `
-                                    <button onclick="toggleOrderStatus('${order.id}', 'waiting_payment')" class="flex-1 sm:flex-none px-3.5 sm:px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-full text-xs font-bold whitespace-nowrap">
-                                        ↺ Belum Selesai
+                                    <button onclick="confirmToCustomer('${order.id}', 'processing')" class="flex-1 sm:flex-none px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-full text-[11px] font-bold shadow-sm whitespace-nowrap">
+                                        💬 WA Info Diproses
                                     </button>
-                                `}
-                                <button onclick="confirmToCustomer('${order.id}')" class="flex-1 sm:flex-none px-3.5 sm:px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
-                                    💬 Konfirmasi WA
-                                </button>
+                                </div>
                             </div>
                         </div>
                     </div>
