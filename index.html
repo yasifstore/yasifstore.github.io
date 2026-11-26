@@ -101,6 +101,10 @@
 
         let savedStore = localStorage.getItem('yasif_store');
         let parsedStore = savedStore ? JSON.parse(savedStore) : null;
+        if (parsedStore && parsedStore.isManual) {
+            parsedStore = null;
+            localStorage.removeItem('yasif_store');
+        }
 
         let savedHistoryIds = [];
         try {
@@ -116,6 +120,7 @@
             isLoadingStores: false,
             isLoadingMenu: false,
             hasSyncedLiveMenu: false,
+            menuLoadStatus: 'idle',
             showStoreSearch: false,
             selectedKKStore: parsedStore,
             showStorePrompt: false, 
@@ -127,6 +132,8 @@
             showHistory: false,
             showAvailabilityWarning: false,
             isFallbackWarning: false,
+            showApiErrorModal: false,
+            apiErrorStoreName: '',
             storeLocation: parsedStore ? parsedStore.name : '',
             activeProduct: null, 
             tempNote: '',
@@ -294,46 +301,109 @@
             return '';
         }
 
-        window.fetchLiveMenu = async function(storeCode) {
+        window.fetchLiveMenu = async function(storeCode, storeName = '') {
+            if (!storeCode) {
+                state.isLoadingMenu = false;
+                state.hasSyncedLiveMenu = false;
+                state.menuLoadStatus = 'error';
+                state.apiErrorStoreName = storeName || (state.selectedKKStore ? state.selectedKKStore.name : '');
+                state.showApiErrorModal = true;
+                render();
+                return false;
+            }
+
             state.isLoadingMenu = true; 
+            state.menuLoadStatus = 'loading';
             state.isFallbackWarning = false;
+            state.showApiErrorModal = false;
             render(); 
 
-            try {
-                const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${encodeURIComponent(storeCode)}&_t=${Date.now()}`;
-                const response = await fetch(url, { cache: 'no-store' });
-                if (!response.ok) throw new Error("Response not OK");
-                const data = await response.json();
-                
-                if (data && Array.isArray(data.items) && data.items.length > 0) {
-                    window.syncLiveWithLocal(data.items);
-                    state.hasSyncedLiveMenu = true;
-                } else {
-                    resetLocalProductsToBase();
-                    state.isFallbackWarning = true;
+            let loadedSuccess = false;
+            const maxAttempts = 2;
+
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                    const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${encodeURIComponent(storeCode)}&_t=${Date.now()}`;
+                    const response = await fetch(url, { cache: 'no-store' });
+                    if (!response.ok) throw new Error("Response not OK: " + response.status);
+                    const data = await response.json();
+                    
+                    if (data && Array.isArray(data.items) && data.items.length > 0) {
+                        window.syncLiveWithLocal(data.items);
+                        state.hasSyncedLiveMenu = true;
+                        state.menuLoadStatus = 'success';
+                        loadedSuccess = true;
+                        break;
+                    } else {
+                        throw new Error("Empty menu items from API");
+                    }
+                } catch (error) {
+                    console.error(`Gagal menarik data real-time (percobaan ${attempt}/${maxAttempts}):`, error);
+                    if (attempt < maxAttempts) {
+                        await new Promise(res => setTimeout(res, 600));
+                    }
                 }
-            } catch (error) {
-                console.error("Gagal menarik data real-time:", error);
+            }
+
+            if (!loadedSuccess) {
                 resetLocalProductsToBase();
-                state.isFallbackWarning = true;
-            } finally {
-                state.isLoadingMenu = false;
+                state.hasSyncedLiveMenu = false;
+                state.menuLoadStatus = 'error';
+                state.apiErrorStoreName = storeName || (state.selectedKKStore ? state.selectedKKStore.name : '');
+                state.showApiErrorModal = true;
+            }
+
+            state.isLoadingMenu = false;
+            render();
+            return loadedSuccess;
+        };
+
+        window.retryLoadCurrentStore = async function() {
+            state.showApiErrorModal = false;
+            if (typeof storesLoadPromise !== 'undefined' && storesLoadPromise) {
+                await storesLoadPromise;
+            }
+            const code = resolveStoreCode(state.selectedKKStore);
+            if (!code) {
+                state.selectedKKStore = null;
+                state.storeLocation = '';
+                localStorage.removeItem('yasif_store');
+                state.showStoreSearch = true;
+                render();
+                return;
+            }
+            const ok = await window.fetchLiveMenu(code, state.selectedKKStore ? state.selectedKKStore.name : '');
+            if (ok) {
+                state.showAvailabilityWarning = true;
                 render();
             }
         };
 
+        window.reselectStoreAfterError = function() {
+            state.showApiErrorModal = false;
+            state.menuLoadStatus = 'idle';
+            state.showStoreSearch = true;
+            render();
+        };
+
         window.manualRefreshStoreMenu = async function() {
+            if (typeof storesLoadPromise !== 'undefined' && storesLoadPromise) {
+                await storesLoadPromise;
+            }
             if (!state.selectedKKStore) return;
             const code = resolveStoreCode(state.selectedKKStore);
             if (!code) {
-                showToast('Cabang input manual menggunakan harga standar.', 'error');
+                state.selectedKKStore = null;
+                localStorage.removeItem('yasif_store');
+                state.menuLoadStatus = 'idle';
+                state.showStoreSearch = true;
+                showToast('Silakan pilih cabang dari daftar terlebih dahulu.', 'error');
+                render();
                 return;
             }
-            await window.fetchLiveMenu(code);
-            if (!state.isFallbackWarning) {
+            const ok = await window.fetchLiveMenu(code, state.selectedKKStore.name);
+            if (ok) {
                 showToast('Stok & harga real-time diperbarui!');
-            } else {
-                showToast('Gagal memuat data real-time, memakai harga standar.', 'error');
             }
         };
 
@@ -361,9 +431,10 @@
             return options;
         }
 
+        let storesLoadPromise = Promise.resolve();
         if (state.kkStores.length === 0) {
             state.isLoadingStores = true;
-            fetch('stores.json?v=' + antiCache)
+            storesLoadPromise = fetch('stores.json?v=' + antiCache)
                 .then(res => res.json())
                 .then(data => {
                     state.kkStores = data.map(s => ({
@@ -373,8 +444,21 @@
                         address: s.address
                     }));
                     state.isLoadingStores = false;
-                    if (state.selectedKKStore && !state.selectedKKStore.code) {
-                        resolveStoreCode(state.selectedKKStore);
+                    if (state.selectedKKStore) {
+                        const resolved = resolveStoreCode(state.selectedKKStore);
+                        if (!resolved) {
+                            state.selectedKKStore = null;
+                            state.storeLocation = '';
+                            state.menuLoadStatus = 'idle';
+                            localStorage.removeItem('yasif_store');
+                            if (state.selectedBrand === 'Kopi Kenangan') {
+                                state.showStorePrompt = false;
+                                state.showStoreSearch = true;
+                            }
+                        } else if (state.selectedBrand === 'Kopi Kenangan' && state.hasSeenStorePrompt && !state.showStorePrompt && !state.showStoreSearch && state.menuLoadStatus === 'idle') {
+                            window.fetchLiveMenu(resolved, state.selectedKKStore.name);
+                            return;
+                        }
                     }
                     if(typeof render === 'function') render();
                 })
@@ -464,6 +548,12 @@
         };
 
         window.safeBack = function() {
+            if (!state.isStoreOpen) {
+                window.location.hash = '';
+                state.showHistory = false;
+                render();
+                return;
+            }
             if (window.history.length > 1) {
                 window.history.back();
             } else {
@@ -666,24 +756,29 @@
             }
         }
 
-        async function executeStoreChange(store, isManual = false) {
+        async function executeStoreChange(store) {
+            if (storesLoadPromise) await storesLoadPromise;
+            const code = resolveStoreCode(store);
+            if (!code) {
+                showToast('Cabang tidak valid, silakan pilih cabang dari daftar.', 'error');
+                state.showStoreSearch = true;
+                render();
+                return;
+            }
+
             state.selectedKKStore = store;
             localStorage.setItem('yasif_store', JSON.stringify(store));
             state.showStoreSearch = false;
             state.storeLocation = store.name; 
             state.hasSeenStorePrompt = true;
+            state.hasSyncedLiveMenu = false;
+            state.menuLoadStatus = 'idle';
             
-            const code = isManual ? '' : resolveStoreCode(store);
-            if (!code) {
-                resetLocalProductsToBase();
-                state.hasSyncedLiveMenu = true;
-                state.isFallbackWarning = true;
-            } else {
-                await window.fetchLiveMenu(code);
+            const ok = await window.fetchLiveMenu(code, store.name);
+            if (ok) {
+                state.showAvailabilityWarning = true; 
+                render(); 
             }
-            
-            state.showAvailabilityWarning = true; 
-            render(); 
         }
 
         window.confirmStoreChange = function() {
@@ -707,16 +802,29 @@
         window.lanjutPesanan = async function() {
             state.showStorePrompt = false;
             state.hasSeenStorePrompt = true;
-            const code = resolveStoreCode(state.selectedKKStore);
-            if (code) {
-                await window.fetchLiveMenu(code);
-            } else {
-                resetLocalProductsToBase();
-                state.hasSyncedLiveMenu = true;
-                state.isFallbackWarning = true;
-            }
-            state.showAvailabilityWarning = true;
+            state.isLoadingMenu = true;
+            state.menuLoadStatus = 'loading';
             render();
+
+            if (storesLoadPromise) await storesLoadPromise;
+
+            const code = resolveStoreCode(state.selectedKKStore);
+            if (!code) {
+                state.isLoadingMenu = false;
+                state.selectedKKStore = null;
+                state.storeLocation = '';
+                state.menuLoadStatus = 'idle';
+                localStorage.removeItem('yasif_store');
+                state.showStoreSearch = true;
+                showToast('Silakan pilih cabang dari daftar terlebih dahulu.', 'error');
+                render();
+                return;
+            }
+            const ok = await window.fetchLiveMenu(code, state.selectedKKStore ? state.selectedKKStore.name : '');
+            if (ok) {
+                state.showAvailabilityWarning = true;
+                render();
+            }
         };
 
         window.handleStoreSearch = function(query) {
@@ -740,13 +848,12 @@
 
             if (displayStores.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-12 text-subtle flex flex-col items-center gap-3">
+                    <div class="text-center py-12 px-4 text-subtle flex flex-col items-center gap-3">
                         <span class="text-3xl">🔍</span>
                         <p class="text-sm font-semibold text-foreground">Cabang tidak ditemukan.</p>
-                        <p class="text-xs mb-2">Tidak ada di daftar? Bisa ketik manual di bawah ini.</p>
-                        <button onclick="selectManualStore('${escapeHtml(query)}')" class="bg-surface border border-border text-foreground px-5 py-3 rounded-full text-xs font-bold shadow-sm hover:border-[#B43A34]/40 transition-all">
-                            Pilih Cabang: "${escapeHtml(query)}"
-                        </button>
+                        <a href="https://wa.me/${ADMIN_WA}" target="_blank" class="inline-flex items-center gap-1 bg-surface border border-border text-subtle hover:border-[#B43A34]/40 px-4 py-2.5 rounded-full text-xs font-medium shadow-sm">
+                            Store tidak ditemukan? <span class="text-[#B43A34] font-bold underline">Hubungi Admin</span>
+                        </a>
                     </div>
                 `;
                 return;
@@ -763,18 +870,6 @@
                     </button>
                 `;
             }).join('');
-        };
-
-        window.selectManualStore = function(storeName) {
-            const manualId = Date.now();
-            const manualStore = {
-                id: manualId,
-                name: storeName,
-                address: 'Diinput manual oleh pembeli',
-                isManual: true
-            };
-            state.kkStores.push(manualStore);
-            executeStoreChange(manualStore, true);
         };
 
         function renderPickupStoreField(inputIcon, inputLabel) {
@@ -1417,6 +1512,33 @@
             `;
         }
 
+        function renderApiErrorModal() {
+            return `
+                <div class="fixed inset-0 z-[135] flex items-center justify-center p-4">
+                    <div class="absolute inset-0 diffused-backdrop"></div>
+                    <div class="luxury-panel w-full max-w-[400px] rounded-[2rem] z-10 overflow-hidden flex flex-col relative">
+                        <div class="px-6 py-7 text-center">
+                            <div class="w-16 h-16 bg-[#B43A34]/10 text-[#B43A34] rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-2xl">⚠️</span>
+                            </div>
+                            <h3 class="font-heading font-semibold text-2xl text-foreground mb-2.5 tracking-[-0.03em]">Gagal Memuat Menu</h3>
+                            <p class="text-sm text-subtle leading-relaxed mb-6">
+                                Data stok & harga real-time ${state.apiErrorStoreName ? `untuk cabang <strong class="text-foreground">${escapeHtml(state.apiErrorStoreName)}</strong> ` : ''}gagal dimuat. Silakan pilih ulang cabang atau coba muat lagi.
+                            </p>
+                            <div class="space-y-2.5">
+                                <button onclick="reselectStoreAfterError()" class="w-full py-3.5 bg-[#B43A34] text-white rounded-full font-semibold text-sm tracking-[-0.01em]">
+                                    Pilih Ulang Cabang
+                                </button>
+                                <button onclick="retryLoadCurrentStore()" class="w-full py-3 bg-surface border border-border text-foreground rounded-full font-semibold text-xs sm:text-sm tracking-[-0.01em]">
+                                    Coba Muat Ulang
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderStoreChangeConfirmModal() {
             return `
                 <div class="fixed inset-0 z-[110] flex items-center justify-center p-4">
@@ -1462,7 +1584,7 @@
                                     <p class="text-[10px] uppercase tracking-[0.24em] text-[#B43A34] font-semibold mb-1">Kopi Kenangan</p>
                                     <h2 class="text-2xl font-heading font-semibold text-foreground tracking-[-0.04em]">Pilih Cabang</h2>
                                 </div>
-                                ${state.selectedKKStore ? `<button onclick="state.showStoreSearch = false; render()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"></path></svg></button>` : ''}
+                                ${(state.selectedKKStore && resolveStoreCode(state.selectedKKStore) && state.menuLoadStatus === 'success') ? `<button onclick="state.showStoreSearch = false; render()" class="w-10 h-10 rounded-full border border-border flex items-center justify-center text-subtle"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"></path></svg></button>` : ''}
                             </div>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -1476,6 +1598,11 @@
                         </div>
                         <div id="store-list-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F7F5F0]">
                             ${initialContent}
+                        </div>
+                        <div class="px-4 py-3 border-t border-border/70 bg-surface text-center shrink-0">
+                            <a href="https://wa.me/${ADMIN_WA}" target="_blank" class="inline-flex items-center gap-1 text-xs font-medium text-subtle hover:text-foreground">
+                                Store tidak ditemukan? <span class="text-[#B43A34] font-bold underline">Hubungi Admin</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1510,57 +1637,68 @@
             if (isClosed) {
                 const reason = state.closeReason || "Admin sedang ada kesibukan lain.";
                 const timeText = state.closeTime || "";
+                const pendingCount = getPendingHistoryCount();
 
                 app.innerHTML = `
-                    <div class="min-h-screen bg-gradient-to-br from-[#F7F5F0] via-[#EFECE6] to-[#E5E0D5] flex flex-col items-center justify-center p-5 text-center">
-                        <div class="bg-white/95 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full border border-amber-900/10 relative overflow-hidden">
-                            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-600 via-orange-500 to-rose-600"></div>
-                            
-                            <button onclick="document.getElementById('wifi-info-closed').classList.toggle('hidden')" class="absolute top-5 right-5 w-9 h-9 bg-gray-50 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors shadow-sm border border-gray-200 z-10" title="Info WiFi">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.906 14.141 0M2.343 9.343c5.334-5.333 13.981-5.333 19.314 0"/></svg>
-                            </button>
-
-                            <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-rose-100">
-                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-
-                            <div id="wifi-info-closed" class="hidden mb-5 bg-gray-50 border border-gray-200 p-4 rounded-2xl text-left shadow-sm relative">
-                                <button onclick="document.getElementById('wifi-info-closed').classList.add('hidden')" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <div class="theme-scope">
+                        <div class="min-h-screen bg-gradient-to-br from-[#F7F5F0] via-[#EFECE6] to-[#E5E0D5] flex flex-col items-center justify-center p-5 text-center">
+                            <div class="bg-white/95 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full border border-amber-900/10 relative overflow-hidden">
+                                <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-600 via-orange-500 to-rose-600"></div>
+                                
+                                <button onclick="document.getElementById('wifi-info-closed').classList.toggle('hidden')" class="absolute top-5 right-5 w-9 h-9 bg-gray-50 text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors shadow-sm border border-gray-200 z-10" title="Info WiFi">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.906 14.141 0M2.343 9.343c5.334-5.333 13.981-5.333 19.314 0"/></svg>
                                 </button>
-                                <p class="text-[10px] uppercase tracking-widest text-amber-700 font-bold mb-2">📶 WiFi Kenangan</p>
-                                <div class="text-xs text-gray-600 mb-1.5">Username: <strong class="text-gray-800">kopikenangan</strong></div>
-                                <div class="text-[11px] text-gray-600 leading-relaxed font-semibold">
-                                    Password ada di struk pembelian yang akan Admin kirimkan via WhatsApp setelah pesanan selesai diproses.
-                                </div>
-                            </div>
 
-                            <h2 class="text-2xl font-bold text-gray-900 mb-2 tracking-tight">Yasif Store Sedang Tutup</h2>
-                            <p class="text-gray-700 text-sm leading-relaxed mb-4">${escapeHtml(reason)}</p>
-                            
-                            ${timeText ? `
-                                <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mb-6 shadow-2xs">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-rose-100">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    Ditutup sejak: ${escapeHtml(timeText)}
                                 </div>
-                            ` : ''}
 
-                            <div class="space-y-2.5 mt-2">
-                                <a href="https://wa.me/${ADMIN_WA}" class="block w-full py-3 border border-gray-300 text-gray-800 font-semibold text-xs rounded-full hover:bg-gray-50 transition-all shadow-2xs">
-                                    Hubungi Admin
-                                </a>
-                                <a href="https://whatsapp.com/channel/0029VbD5v9eLdQel7VENev1n" target="_blank" class="block w-full py-3 border border-emerald-200 bg-emerald-50 text-emerald-800 font-semibold text-xs rounded-full hover:bg-emerald-100 transition-all shadow-2xs flex items-center justify-center gap-1.5">
-                                    <span class="text-sm">📢</span> Channel WhatsApp
-                                </a>
-                                <button onclick="location.reload()" class="w-full pt-3 pb-1 text-gray-400 font-medium text-[11px] hover:text-gray-600 transition-all underline decoration-gray-300 underline-offset-2">
-                                    Refresh Halaman
-                                </button>
+                                <div id="wifi-info-closed" class="hidden mb-5 bg-gray-50 border border-gray-200 p-4 rounded-2xl text-left shadow-sm relative">
+                                    <button onclick="document.getElementById('wifi-info-closed').classList.add('hidden')" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </button>
+                                    <p class="text-[10px] uppercase tracking-widest text-amber-700 font-bold mb-2">📶 WiFi Kenangan</p>
+                                    <div class="text-xs text-gray-600 mb-1.5">Username: <strong class="text-gray-800">kopikenangan</strong></div>
+                                    <div class="text-[11px] text-gray-600 leading-relaxed font-semibold">
+                                        Password ada di struk pembelian yang akan Admin kirimkan via WhatsApp setelah pesanan selesai diproses.
+                                    </div>
+                                </div>
+
+                                <h2 class="text-2xl font-bold text-gray-900 mb-2 tracking-tight">Yasif Store Sedang Tutup</h2>
+                                <p class="text-gray-700 text-sm leading-relaxed mb-4">${escapeHtml(reason)}</p>
+                                
+                                ${timeText ? `
+                                    <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold mb-6 shadow-2xs">
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Ditutup sejak: ${escapeHtml(timeText)}
+                                    </div>
+                                ` : ''}
+
+                                <div class="space-y-2.5 mt-2">
+                                    <button onclick="window.location.hash = 'history'" class="w-full py-3 border border-[#B43A34]/30 bg-[#B43A34]/10 text-[#B43A34] font-bold text-xs rounded-full hover:bg-[#B43A34]/15 transition-all shadow-2xs flex items-center justify-center gap-1.5">
+                                        <span class="text-sm">🧾</span>
+                                        <span>Riwayat Pesanan</span>
+                                        ${pendingCount > 0 ? `<span class="px-2 py-0.5 rounded-full bg-[#B43A34] text-white text-[10px] font-bold">${pendingCount}</span>` : ''}
+                                    </button>
+                                    <a href="https://wa.me/${ADMIN_WA}" class="block w-full py-3 border border-gray-300 text-gray-800 font-semibold text-xs rounded-full hover:bg-gray-50 transition-all shadow-2xs">
+                                        Hubungi Admin
+                                    </a>
+                                    <a href="https://whatsapp.com/channel/0029VbD5v9eLdQel7VENev1n" target="_blank" class="block w-full py-3 border border-emerald-200 bg-emerald-50 text-emerald-800 font-semibold text-xs rounded-full hover:bg-emerald-100 transition-all shadow-2xs flex items-center justify-center gap-1.5">
+                                        <span class="text-sm">📢</span> Channel WhatsApp
+                                    </a>
+                                    <button onclick="location.reload()" class="w-full pt-3 pb-1 text-gray-400 font-medium text-[11px] hover:text-gray-600 transition-all underline decoration-gray-300 underline-offset-2">
+                                        Refresh Halaman
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                        ${state.showHistory ? renderHistoryModal() : ''}
+                        ${state.activeOrderConfirm ? renderOrderConfirmModal() : ''}
+                        ${state.confirmDialog ? renderConfirmDialogModal() : ''}
                     </div>
                 `;
                 return; 
@@ -1574,8 +1712,10 @@
                                            !state.showHistory &&
                                            !state.showStoreSearch &&
                                            !state.showAvailabilityWarning &&
+                                           !state.showApiErrorModal &&
                                            !state.showStorePrompt &&
-                                           !state.activeOrderConfirm;
+                                           !state.activeOrderConfirm &&
+                                           state.menuLoadStatus === 'success';
             
             if (state.isLoadingMenu) {
                 app.innerHTML = `
@@ -1594,11 +1734,9 @@
                 <div class="theme-scope">
                     ${renderHeader()}
                     <main class="min-h-screen">
-                        ${!state.selectedBrand 
+                        ${(!state.selectedBrand || (state.selectedBrand === 'Kopi Kenangan' && (!state.selectedKKStore || !resolveStoreCode(state.selectedKKStore) || state.menuLoadStatus !== 'success')))
                             ? renderBrandSelection() 
-                            : (state.selectedBrand === 'Kopi Kenangan' && !state.selectedKKStore && state.showStoreSearch 
-                                ? renderBrandSelection() 
-                                : renderMenu())}
+                            : renderMenu()}
                     </main>
                     ${shouldShowFloatingCart ? renderFloatingCart() : ''}
                     ${state.showStoreSearch && state.selectedBrand === 'Kopi Kenangan' ? renderStoreSearchModal() : ''}
@@ -1608,6 +1746,7 @@
                     ${state.activeProduct ? renderNotePopup() : ''}
                     ${state.showTutorial ? renderTutorialModal() : ''} 
                     ${state.showAvailabilityWarning ? renderAvailabilityWarningModal() : ''}
+                    ${state.showApiErrorModal ? renderApiErrorModal() : ''}
                     ${state.activeOrderConfirm ? renderOrderConfirmModal() : ''}
                     ${state.showScheduleWarning ? renderScheduleWarningModal() : ''}
                     ${state.showVoucherMismatchModal ? renderVoucherMismatchModal() : ''}
@@ -2082,6 +2221,10 @@
             state.showVoucherMismatchModal = false;
 
             if (hash.startsWith('#product-')) {
+                if (!state.selectedKKStore || !resolveStoreCode(state.selectedKKStore) || state.menuLoadStatus !== 'success') {
+                    window.location.hash = 'brand-' + encodeURIComponent('Kopi Kenangan');
+                    return;
+                }
                 const id = hash.replace('#product-', '');
                 const product = window.products.find(p => p.id === id);
                 if (product) {
@@ -2117,15 +2260,24 @@
                 state.searchQuery = ''; 
                 
                 if (brand === 'Kopi Kenangan') {
-                    if (!state.selectedKKStore) {
+                    if (!state.selectedKKStore || state.selectedKKStore.isManual) {
+                        state.selectedKKStore = null;
+                        state.storeLocation = '';
+                        localStorage.removeItem('yasif_store');
                         state.showStoreSearch = true;
                     } else if (!state.hasSeenStorePrompt) {
                         state.showStorePrompt = true;
                         state.hasSeenStorePrompt = true;
-                    } else if (!state.hasSyncedLiveMenu) {
+                    } else if (state.menuLoadStatus !== 'success' && state.menuLoadStatus !== 'loading') {
                         const code = resolveStoreCode(state.selectedKKStore);
                         if (code) {
-                            window.fetchLiveMenu(code);
+                            window.fetchLiveMenu(code, state.selectedKKStore.name);
+                            return;
+                        } else if (!state.isLoadingStores) {
+                            state.selectedKKStore = null;
+                            state.storeLocation = '';
+                            localStorage.removeItem('yasif_store');
+                            state.showStoreSearch = true;
                         }
                     }
                 }
@@ -2279,898 +2431,4 @@
 </body>
 </html>
 <!-- AKHIR FILE INDEX.HTML -->
-
-admin-v2
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#1F2A24">
-    <title>Admin Yasif Store</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-[#F7F5F0] min-h-screen p-2.5 sm:p-6 pb-16 text-gray-900">
-
-    <!-- BANNER ALERT ORDER BARU -->
-    <div id="newOrderBanner" class="hidden fixed top-3 left-3 right-3 z-50 max-w-lg mx-auto bg-[#1F2A24] text-white p-4 rounded-2xl shadow-2xl border border-emerald-400/40 flex items-center justify-between gap-3">
-        <div class="min-w-0">
-            <p class="text-[10px] uppercase tracking-widest text-emerald-300 font-bold">🔔 Orderan Baru Masuk!</p>
-            <p id="newOrderBannerText" class="text-sm font-extrabold truncate mt-0.5">Antrian baru masuk</p>
-        </div>
-        <button onclick="document.getElementById('newOrderBanner').classList.add('hidden')" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-full text-xs font-bold shrink-0">
-            Oke
-        </button>
-    </div>
-
-    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[310px_1fr] gap-4 sm:gap-6 items-start">
-        
-        <!-- PANEL KONTROL TOKO -->
-        <div class="bg-white p-5 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-md text-center border border-gray-100 lg:sticky lg:top-6">
-            <h1 class="text-xl sm:text-2xl font-bold mb-0.5 text-gray-900">Admin Yasif Store</h1>
-            <p id="statusText" class="text-gray-500 font-semibold text-xs sm:text-sm mb-4">Memuat status...</p>
-
-            <!-- PANEL NOTIFIKASI & STANDBY HP -->
-            <div class="mb-4 p-3.5 border border-emerald-200 rounded-2xl bg-emerald-50/60 text-left space-y-2.5">
-                <div class="flex items-center justify-between gap-2">
-                    <div>
-                        <span class="block text-xs font-extrabold text-emerald-950">Notif & Suara Realtime</span>
-                        <span id="notifStatusLabel" class="block text-[10px] font-semibold text-emerald-700 mt-0.5">Klik aktifkan agar berbunyi</span>
-                    </div>
-                    <button id="testSoundBtn" type="button" class="px-2.5 py-1 bg-white border border-emerald-200 rounded-full text-[10px] font-bold text-emerald-800 hover:bg-emerald-100 shrink-0">
-                        🔊 Tes
-                    </button>
-                </div>
-                <button id="enableNotifBtn" type="button" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm">
-                    🔔 Aktifkan Suara & Notif HP
-                </button>
-                <div class="flex items-center justify-between pt-2 border-t border-emerald-200/70">
-                    <div>
-                        <span class="block text-[11px] font-bold text-gray-800">Layar Tetap Nyala</span>
-                        <span class="block text-[10px] text-gray-500">Cegah HP tidur saat standby</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                        <input type="checkbox" id="wakeLockToggle" class="sr-only peer">
-                        <div class="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
-                    </label>
-                </div>
-            </div>
-
-            <div class="mb-4 flex items-center justify-between p-3.5 border border-gray-200 rounded-2xl bg-gray-50/70">
-                <div class="text-left pr-3">
-                    <span class="block text-sm font-bold text-gray-800">Promo (Min 33k)</span>
-                    <span class="block text-[11px] font-medium text-gray-500 mt-0.5">Khusus Voucher Min 50k</span>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                    <input type="checkbox" id="min32kToggle" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-                </label>
-            </div>
-
-            <input type="text" id="reasonInput" list="templateMalam" placeholder="Ketik alasan tutup di sini..." class="w-full mb-3.5 p-3.5 border border-gray-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-emerald-700 bg-white shadow-sm">
-            <datalist id="templateMalam">
-                <option value="Admin sudah tepar dan tertidur nyenyak."></option>
-                <option value="Admin sedang istirahat sebentar, buka lagi nanti ya."></option>
-            </datalist>
-
-            <button id="toggleBtn" class="w-full py-3.5 rounded-full font-bold text-white text-sm sm:text-base shadow-md transition-all" style="background-color: gray;">Loading...</button>
-        </div>
-
-        <!-- PANEL ANTREAN ORDERAN -->
-        <div class="bg-white p-3.5 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-md border border-gray-100">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-4 px-1">
-                <div>
-                    <h2 class="text-lg sm:text-xl font-bold text-gray-900">Antrean Orderan Masuk</h2>
-                    <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Belum bayar > 2 jam otomatis terhapus. Riwayat selesai tersimpan.</p>
-                </div>
-                <button id="clearDoneBtn" class="hidden text-[11px] font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-full hover:bg-rose-100">
-                    Hapus Semua Selesai
-                </button>
-            </div>
-
-            <!-- FILTER TAB -->
-            <div class="grid grid-cols-4 gap-1 mb-4 bg-[#F7F5F0] p-1 rounded-full">
-                <button data-tab="waiting_payment" class="tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all bg-[#1F2A24] text-white whitespace-nowrap">
-                    Menunggu (<span id="countWaiting">0</span>)
-                </button>
-                <button data-tab="processing" class="tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap">
-                    Proses (<span id="countProcessing">0</span>)
-                </button>
-                <button data-tab="completed" class="tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap">
-                    Selesai (<span id="countCompleted">0</span>)
-                </button>
-                <button data-tab="all" class="tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap">
-                    Semua (<span id="countAll">0</span>)
-                </button>
-            </div>
-
-            <div id="ordersList" class="space-y-3.5">
-                <div class="text-center py-12 text-gray-400 text-sm">Memuat data pesanan...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL KONFIRMASI ADMIN -->
-    <div id="adminConfirmModal" onclick="if(event.target===this) this.classList.add('hidden')" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
-        <div class="bg-white w-full max-w-sm rounded-[1.75rem] p-6 text-center shadow-2xl border border-gray-100">
-            <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">⚠️</div>
-            <h3 id="adminConfirmTitle" class="text-lg font-bold text-gray-900 mb-1.5">Konfirmasi</h3>
-            <p id="adminConfirmMsg" class="text-xs text-gray-500 leading-relaxed mb-5"></p>
-            <div class="flex gap-2.5">
-                <button id="adminConfirmCancel" class="flex-1 py-3 rounded-full border border-gray-200 text-xs font-bold text-gray-700">Batal</button>
-                <button id="adminConfirmOk" class="flex-1 py-3 rounded-full bg-[#B43A34] text-white text-xs font-bold">Ya, Hapus</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        window.__adminConnected = false;
-        setTimeout(function() {
-            if (!window.__adminConnected) {
-                var st = document.getElementById('statusText');
-                var ol = document.getElementById('ordersList');
-                if (st) st.innerText = '⚠️ Gagal terhubung ke server (cek koneksi / refresh)';
-                if (ol) ol.innerHTML = '<div class="text-center py-10 text-rose-600 text-xs font-semibold">Koneksi ke Firebase lambat atau terputus. Coba matikan/nyalakan internet lalu refresh halaman ini.</div>';
-            }
-        }, 7000);
-    </script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-        import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyB1sNl7HsyQoG_3_UbS-H8QYmjla8i6fKc",
-            authDomain: "yasif-store.firebaseapp.com",
-            databaseURL: "https://yasif-store-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "yasif-store",
-            storageBucket: "yasif-store.firebasestorage.app",
-            messagingSenderId: "76503690642",
-            appId: "1:76503690642:web:e9f3b1d73a545e102ae54b",
-            measurementId: "G-P10WDJPSK4"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
-
-        const btn = document.getElementById('toggleBtn');
-        const text = document.getElementById('statusText');
-        const reasonInput = document.getElementById('reasonInput');
-        const min32kToggle = document.getElementById('min32kToggle');
-        const ordersListEl = document.getElementById('ordersList');
-        const clearDoneBtn = document.getElementById('clearDoneBtn');
-        const enableNotifBtn = document.getElementById('enableNotifBtn');
-        const testSoundBtn = document.getElementById('testSoundBtn');
-        const notifStatusLabel = document.getElementById('notifStatusLabel');
-        const wakeLockToggle = document.getElementById('wakeLockToggle');
-
-        let currentStatus = { isOpen: true, reason: "", time: "", minPurchase32k: false };
-        let allOrders = [];
-        let activeTab = 'waiting_payment';
-        let isInitialOrdersLoad = true;
-        const knownOrderIds = new Set();
-        let audioCtx = null;
-        let wakeLockSentinel = null;
-
-        const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price ? price : 0);
-        const escapeHtml = (value) => String(value ? value : '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
-
-        // --- SISTEM NOTIFIKASI SUARA, GETAR, BANNER & WAKE LOCK ---
-        function unlockAudioContext() {
-            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContextClass) return null;
-            if (!audioCtx) {
-                audioCtx = new AudioContextClass();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume().catch(() => {});
-            }
-            return audioCtx;
-        }
-
-        function playOrderChime() {
-            try {
-                const ctx = unlockAudioContext();
-                if (!ctx) return;
-                const notes = [587.33, 880, 1174.66]; // D5 -> A5 -> D6
-                const repeats = [0, 0.55]; // Bunyi 2 kali biar jelas terdengar
-
-                repeats.forEach(repOffset => {
-                    notes.forEach((freq, idx) => {
-                        const startTime = ctx.currentTime + repOffset + (idx * 0.13);
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, startTime);
-
-                        gain.gain.setValueAtTime(0.001, startTime);
-                        gain.gain.exponentialRampToValueAtTime(0.35, startTime + 0.02);
-                        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
-
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.start(startTime);
-                        osc.stop(startTime + 0.36);
-                    });
-                });
-            } catch (e) {
-                console.error('Audio chime error:', e);
-            }
-        }
-
-        function updateNotifUI() {
-            const hasNotifSupport = ('Notification' in window);
-            const perm = hasNotifSupport ? Notification.permission : 'unsupported';
-            if (perm === 'granted') {
-                notifStatusLabel.innerText = '✅ Notif HP & Suara Siap';
-                enableNotifBtn.innerText = '🔔 Suara & Notif Aktif';
-                enableNotifBtn.className = 'w-full py-2.5 rounded-xl bg-emerald-800 text-white text-xs font-bold shadow-sm';
-            } else if (perm === 'denied') {
-                notifStatusLabel.innerText = '⚠️ Izin notif diblokir (suara tetap jalan)';
-                enableNotifBtn.innerText = '🔊 Aktifkan Suara Saja';
-            }
-        }
-
-        enableNotifBtn.onclick = async () => {
-            unlockAudioContext();
-            playOrderChime();
-            if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
-                try {
-                    await Notification.requestPermission();
-                } catch (e) {}
-            }
-            if (navigator.vibrate) {
-                navigator.vibrate([200, 100, 200]);
-            }
-            updateNotifUI();
-        };
-
-        testSoundBtn.onclick = () => {
-            unlockAudioContext();
-            playOrderChime();
-            if (navigator.vibrate) {
-                navigator.vibrate([250, 120, 250]);
-            }
-        };
-
-        async function requestScreenWakeLock() {
-            if (!('wakeLock' in navigator)) {
-                wakeLockToggle.checked = false;
-                alert('Browser ini belum mendukung fitur layar tetap nyala.');
-                return;
-            }
-            try {
-                wakeLockSentinel = await navigator.wakeLock.request('screen');
-                wakeLockSentinel.addEventListener('release', () => {
-                    if (!wakeLockToggle.checked) wakeLockSentinel = null;
-                });
-            } catch (e) {
-                wakeLockToggle.checked = false;
-            }
-        }
-
-        wakeLockToggle.onchange = async (e) => {
-            if (e.target.checked) {
-                await requestScreenWakeLock();
-            } else if (wakeLockSentinel) {
-                await wakeLockSentinel.release().catch(() => {});
-                wakeLockSentinel = null;
-            }
-        };
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible' && wakeLockToggle.checked) {
-                requestScreenWakeLock();
-            }
-        });
-
-        // Buka kunci audio otomatis pada sentuhan pertama di halaman
-        document.addEventListener('pointerdown', () => {
-            unlockAudioContext();
-        }, { once: true });
-
-        updateNotifUI();
-
-        function triggerNewOrderAlert(latestOrder, newCount) {
-            playOrderChime();
-
-            if (navigator.vibrate) {
-                navigator.vibrate([300, 150, 300, 150, 400]);
-            }
-
-            const titleText = newCount > 1
-                ? `${newCount} Orderan Baru Masuk!`
-                : `Antrian #${latestOrder.queueNumber} • ${latestOrder.customerName}`;
-            const bodyText = `${latestOrder.storeName} • Total ${formatPrice(latestOrder.totalPrice)}`;
-
-            const banner = document.getElementById('newOrderBanner');
-            const bannerText = document.getElementById('newOrderBannerText');
-            if (banner && bannerText) {
-                bannerText.innerText = `${titleText} (${formatPrice(latestOrder.totalPrice)})`;
-                banner.classList.remove('hidden');
-            }
-
-            if ('Notification' in window && Notification.permission === 'granted') {
-                try {
-                    const notif = new Notification(titleText, {
-                        body: bodyText,
-                        tag: 'yasif-order-' + latestOrder.id,
-                        renotify: true
-                    });
-                    notif.onclick = function() {
-                        window.focus();
-                        notif.close();
-                    };
-                } catch (e) {}
-            }
-        }
-
-        // --- MODAL KONFIRMASI ADMIN ---
-        function openAdminConfirm(title, message, onOk) {
-            const modal = document.getElementById('adminConfirmModal');
-            document.getElementById('adminConfirmTitle').innerText = title;
-            document.getElementById('adminConfirmMsg').innerText = message;
-            modal.classList.remove('hidden');
-
-            document.getElementById('adminConfirmCancel').onclick = function() {
-                modal.classList.add('hidden');
-            };
-            document.getElementById('adminConfirmOk').onclick = async function() {
-                modal.classList.add('hidden');
-                await onOk();
-            };
-        }
-
-        function isUnpaidExpired(order) {
-            if (!order || order.status === 'completed' || order.status === 'processing') return false;
-            const created = Number(order.createdAt ? order.createdAt : 0);
-            if (!created) return false;
-            return (Date.now() - created) >= TWO_HOURS_MS;
-        }
-
-        function cleanupExpiredOrders(ordersArray) {
-            const validOrders = [];
-            ordersArray.forEach(order => {
-                if (isUnpaidExpired(order)) {
-                    remove(ref(db, `orders/${order.id}`)).catch(() => {});
-                } else {
-                    validOrders.push(order);
-                }
-            });
-            return validOrders;
-        }
-
-        function buildVoucherGroupsForDisplay(order) {
-            const items = Array.isArray(order.items) ? order.items : [];
-            if (items.length === 0) return [];
-
-            const onlyVoucherB = currentStatus.minPurchase32k === true;
-            const units = [];
-
-            items.forEach(item => {
-                const qty = Number(item.quantity ? item.quantity : 1);
-                const promo = Number(item.promoPrice ? item.promoPrice : 0);
-                const orig = Number(item.originalPrice ? item.originalPrice : Math.max(0, (promo - 4000) * 2));
-                for (let i = 0; i < qty; i++) {
-                    units.push({ ...item, quantity: 1, _orig: orig });
-                }
-            });
-
-            units.sort((a, b) => b._orig - a._orig);
-
-            const evaluatePartition = (groups) => {
-                let extraCost = 0;
-                let nombok = 0;
-                let countA = 0;
-                let singleItemA = 0;
-                const typedGroups = [];
-
-                for (const g of groups) {
-                    const sum = g.reduce((s, u) => s + u._orig, 0);
-                    if (onlyVoucherB) {
-                        if (sum < 50000) return null;
-                        const loss = Math.max(0, Math.ceil((sum - 60000) / 2));
-                        nombok += loss;
-                        if (sum > 62000) extraCost += loss;
-                        typedGroups.push({ type: 'B', sum, items: [...g] });
-                    } else {
-                        if (sum >= 50000 && sum <= 62000) {
-                            const loss = Math.max(0, Math.ceil((sum - 60000) / 2));
-                            nombok += loss;
-                            typedGroups.push({ type: 'B', sum, items: [...g] });
-                        } else {
-                            const loss = Math.max(0, Math.ceil((sum - 70000) / 2));
-                            nombok += loss;
-                            if (sum > 72000) extraCost += loss;
-                            countA++;
-                            if (g.length === 1) singleItemA++;
-                            typedGroups.push({ type: 'A', sum, items: [...g] });
-                        }
-                    }
-                }
-
-                if (!onlyVoucherB) {
-                    const allowedSingleA = units.length >= 3 ? 1 : 0;
-                    if (singleItemA > allowedSingleA) {
-                        extraCost += (singleItemA - allowedSingleA) * 2000;
-                    }
-                }
-
-                return { extraCost, nombok, countA, groupCount: groups.length, typedGroups };
-            };
-
-            const isBetter = (cand, best) => {
-                if (!best) return true;
-                if (cand.extraCost !== best.extraCost) return cand.extraCost < best.extraCost;
-                if (cand.countA !== best.countA) return cand.countA < best.countA;
-                if (cand.groupCount !== best.groupCount) return cand.groupCount < best.groupCount;
-                return cand.nombok < best.nombok;
-            };
-
-            let bestResult = null;
-
-            if (units.length <= 10) {
-                const groups = [];
-                let steps = 0;
-                const MAX_STEPS = 4500;
-
-                const dfs = (idx) => {
-                    if (steps++ > MAX_STEPS) return;
-                    if (idx === units.length) {
-                        const res = evaluatePartition(groups);
-                        if (res && isBetter(res, bestResult)) bestResult = res;
-                        return;
-                    }
-                    const item = units[idx];
-                    for (let i = 0; i < groups.length; i++) {
-                        groups[i].push(item);
-                        dfs(idx + 1);
-                        groups[i].pop();
-                    }
-                    groups.push([item]);
-                    dfs(idx + 1);
-                    groups.pop();
-                };
-                dfs(0);
-            } else {
-                const remaining = [...units];
-                const groups = [];
-                while (remaining.length > 0) {
-                    let g = [remaining.shift()];
-                    let sum = g[0]._orig;
-                    for (let i = 0; i < remaining.length; ) {
-                        const limit = onlyVoucherB ? 62000 : (sum < 50000 ? 62000 : 72000);
-                        if (sum + remaining[i]._orig <= limit) {
-                            sum += remaining[i]._orig;
-                            g.push(remaining.splice(i, 1)[0]);
-                        } else {
-                            i++;
-                        }
-                    }
-                    groups.push(g);
-                }
-                const greedyRes = evaluatePartition(groups);
-                bestResult = greedyRes ? greedyRes : evaluatePartition([units]);
-            }
-
-            if (!bestResult) {
-                bestResult = evaluatePartition([units]);
-            }
-
-            bestResult.typedGroups.sort((a, b) => {
-                if (a.type !== b.type) return a.type === 'B' ? -1 : 1;
-                return b.sum - a.sum;
-            });
-
-            const totalB = bestResult.typedGroups.filter(g => g.type === 'B').length;
-            const totalA = bestResult.typedGroups.filter(g => g.type === 'A').length;
-            let idxB = 0;
-            let idxA = 0;
-
-            return bestResult.typedGroups.map(group => {
-                const merged = [];
-                group.items.forEach(u => {
-                    const existing = merged.find(m =>
-                        m.name === u.name &&
-                        (m.size ? m.size : '') === (u.size ? u.size : '') &&
-                        (m.sugar ? m.sugar : '') === (u.sugar ? u.sugar : '') &&
-                        Boolean(m.oatside) === Boolean(u.oatside) &&
-                        Boolean(m.juwara) === Boolean(u.juwara) &&
-                        (m.note ? m.note : '') === (u.note ? u.note : '')
-                    );
-                    if (existing) {
-                        existing.quantity += 1;
-                    } else {
-                        merged.push({ ...u, quantity: 1 });
-                    }
-                });
-
-                let label = '';
-                if (group.type === 'B') {
-                    idxB++;
-                    label = totalB > 1 ? `Voucher B #${idxB} (Min Beli 50k)` : `Voucher B (Min Beli 50k)`;
-                } else {
-                    idxA++;
-                    label = totalA > 1 ? `Voucher A #${idxA} (Tanpa Min)` : `Voucher A (Tanpa Min)`;
-                }
-
-                return {
-                    type: group.type,
-                    label,
-                    normalSum: group.sum,
-                    items: merged
-                };
-            });
-        }
-
-        onValue(ref(db, 'store_status'), (snapshot) => {
-            window.__adminConnected = true;
-            const data = snapshot.val();
-            currentStatus = (typeof data === 'object' && data !== null)
-                ? {
-                    isOpen: data.isOpen !== false,
-                    reason: data.reason ? data.reason : "",
-                    time: data.time ? data.time : "",
-                    minPurchase32k: data.minPurchase32k === true
-                }
-                : { isOpen: !!data, reason: "Admin sedang sibuk.", time: "", minPurchase32k: false };
-            
-            min32kToggle.checked = currentStatus.minPurchase32k === true;
-
-            if (currentStatus.isOpen) {
-                btn.style.backgroundColor = '#1F2A24';
-                btn.innerText = 'TUTUP TOKO';
-                text.innerText = '🟢 Toko: BUKA';
-                reasonInput.disabled = false;
-            } else {
-                btn.style.backgroundColor = '#9E3C3C';
-                btn.innerText = 'BUKA TOKO';
-                text.innerText = '🔴 Toko: TUTUP';
-                reasonInput.disabled = true;
-            }
-            renderOrders();
-        }, (err) => {
-            window.__adminConnected = true;
-            text.innerText = '⚠️ Error Firebase: ' + err.message;
-        });
-
-        min32kToggle.onchange = (e) => {
-            currentStatus.minPurchase32k = e.target.checked;
-            set(ref(db, 'store_status'), currentStatus);
-        };
-
-        btn.onclick = () => {
-            if (currentStatus.isOpen) {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
-                set(ref(db, 'store_status'), { 
-                    isOpen: false, 
-                    reason: reasonInput.value ? reasonInput.value : "Admin sedang ada kesibukan lain.", 
-                    time: timeString,
-                    minPurchase32k: currentStatus.minPurchase32k
-                });
-            } else {
-                set(ref(db, 'store_status'), { 
-                    isOpen: true, 
-                    reason: "", 
-                    time: "",
-                    minPurchase32k: currentStatus.minPurchase32k
-                });
-            }
-        };
-
-        onValue(ref(db, 'orders'), (snapshot) => {
-            window.__adminConnected = true;
-            const rawData = snapshot.val();
-            const data = rawData ? rawData : {};
-            const sorted = Object.values(data).sort((a, b) => (b.createdAt ? b.createdAt : 0) - (a.createdAt ? a.createdAt : 0));
-            allOrders = cleanupExpiredOrders(sorted);
-
-            if (isInitialOrdersLoad) {
-                allOrders.forEach(o => knownOrderIds.add(o.id));
-                isInitialOrdersLoad = false;
-            } else {
-                const brandNewOrders = allOrders.filter(o => !knownOrderIds.has(o.id) && o.status !== 'completed' && o.status !== 'processing');
-                allOrders.forEach(o => knownOrderIds.add(o.id));
-                if (brandNewOrders.length > 0) {
-                    triggerNewOrderAlert(brandNewOrders[0], brandNewOrders.length);
-                }
-            }
-
-            renderOrders();
-        }, (err) => {
-            window.__adminConnected = true;
-            ordersListEl.innerHTML = `<div class="text-center py-10 text-rose-600 text-xs font-semibold">Gagal memuat pesanan: ${escapeHtml(err.message)}</div>`;
-        });
-
-        setInterval(() => {
-            const beforeLen = allOrders.length;
-            allOrders = cleanupExpiredOrders(allOrders);
-            if (allOrders.length !== beforeLen) {
-                renderOrders();
-            }
-        }, 60000);
-
-        document.querySelectorAll('.tab-btn').forEach(tabBtn => {
-            tabBtn.onclick = () => {
-                activeTab = tabBtn.dataset.tab;
-                document.querySelectorAll('.tab-btn').forEach(b => {
-                    if (b.dataset.tab === activeTab) {
-                        b.className = 'tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all bg-[#1F2A24] text-white whitespace-nowrap';
-                    } else {
-                        b.className = 'tab-btn py-2 px-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all text-gray-600 whitespace-nowrap';
-                    }
-                });
-                renderOrders();
-            };
-        });
-
-        clearDoneBtn.onclick = () => {
-            const doneOrders = allOrders.filter(o => o.status === 'completed');
-            if (doneOrders.length === 0) return;
-            openAdminConfirm(
-                'Hapus Semua Selesai?',
-                `Yakin ingin menghapus semua ${doneOrders.length} pesanan yang sudah selesai?`,
-                async () => {
-                    for (const o of doneOrders) {
-                        await remove(ref(db, `orders/${o.id}`));
-                    }
-                }
-            );
-        };
-
-        window.confirmToCustomer = function(orderId, mode = 'remind') {
-            const order = allOrders.find(o => o.id === orderId);
-            if (!order) return;
-
-            const waktuPesan = order.orderType === 'scheduled' ? 'JAM ' + order.scheduledTime : 'Sekarang';
-
-            let lines = [];
-            lines.push(`Halo Kak *${order.customerName}*, pesanan Kopi Kenangan kamu sudah masuk ke Yasif Store`);
-            lines.push(``);
-            lines.push(`No. Antrian: *#${order.queueNumber}*`);
-            lines.push(`Lokasi Store: *${order.storeName}*`);
-            lines.push(`Pick Up Atas Nama: *${order.customerName}*`);
-            lines.push(`Waktu Pesan: *${waktuPesan}*`);
-            lines.push(`--------------------------------`);
-
-            const items = Array.isArray(order.items) ? order.items : [];
-            items.forEach(item => {
-                const qty = Number(item.quantity ? item.quantity : 1);
-                lines.push(`• *${item.name}* (${qty}x)`);
-
-                let details = [];
-                if (item.size) {
-                    details.push(`Size: ${item.size}`);
-                }
-                if (item.sugar) {
-                    let sg = item.sugar.replace(/ sugar/i, '').trim();
-                    details.push(`Sugar: ${sg}`);
-                }
-                if (details.length > 0) lines.push(`   ${details.join(' • ')}`);
-
-                let upArr = [];
-                if (item.oatside) upArr.push('UP Oatside +1,5K');
-                if (item.juwara) upArr.push('UP Juwara +1,5K');
-                if (upArr.length > 0) lines.push(`   ${upArr.join(' - ')}`);
-
-                if (item.note) lines.push(`   Note: ${item.note}`);
-                const itemPrice = item.promoPrice ? item.promoPrice : 0;
-                lines.push(`   Harga: ${formatPrice(itemPrice * qty)}`);
-            });
-
-            const extraCostVal = Number(order.extraCost ? order.extraCost : 0);
-            if (extraCostVal > 0) {
-                lines.push(`• *Biaya Lebihan (Tidak Sesuai Voucher)*`);
-                lines.push(`   Harga: ${formatPrice(extraCostVal)}`);
-            }
-
-            lines.push(`--------------------------------`);
-            lines.push(`Total Pembayaran: *${formatPrice(order.totalPrice)}*`);
-            lines.push(``);
-            if (mode === 'processing') {
-                lines.push(`*Pesanan sedang dalam proses, tunggu sampai Yasif Store mengirim bukti pesanan, terima kasih.*`);
-            } else {
-                lines.push(`*Silakan kirim bukti pembayaran sesuai nominal di atas, Terima kasih!*`);
-            }
-
-            const url = `https://wa.me/${order.customerWa}?text=${encodeURIComponent(lines.join('\n'))}`;
-            window.open(url, '_blank');
-        };
-
-        window.toggleOrderStatus = async function(orderId, newStatus) {
-            await update(ref(db, `orders/${orderId}`), { status: newStatus });
-        };
-
-        window.deleteOrder = function(orderId) {
-            openAdminConfirm(
-                'Hapus Pesanan?',
-                'Pesanan ini akan dihapus permanen dari daftar admin.',
-                async () => {
-                    await remove(ref(db, `orders/${orderId}`));
-                }
-            );
-        };
-
-        function renderOrders() {
-            const waitingOrders = allOrders.filter(o => o.status !== 'completed' && o.status !== 'processing');
-            const processingOrders = allOrders.filter(o => o.status === 'processing');
-            const completedOrders = allOrders.filter(o => o.status === 'completed');
-
-            document.getElementById('countWaiting').innerText = waitingOrders.length;
-            document.getElementById('countProcessing').innerText = processingOrders.length;
-            document.getElementById('countCompleted').innerText = completedOrders.length;
-            document.getElementById('countAll').innerText = allOrders.length;
-
-            if (completedOrders.length > 0) {
-                clearDoneBtn.classList.remove('hidden');
-            } else {
-                clearDoneBtn.classList.add('hidden');
-            }
-
-            const visible = activeTab === 'waiting_payment'
-                ? waitingOrders
-                : (activeTab === 'processing'
-                    ? processingOrders
-                    : (activeTab === 'completed' ? completedOrders : allOrders));
-
-            if (visible.length === 0) {
-                ordersListEl.innerHTML = `<div class="text-center py-12 text-gray-400 text-sm">Belum ada pesanan di kategori ini.</div>`;
-                return;
-            }
-
-            ordersListEl.innerHTML = visible.map(order => {
-                const isDone = order.status === 'completed';
-                const isProcessing = order.status === 'processing';
-                const isWaiting = !isDone && !isProcessing;
-                const badgeClass = isDone
-                    ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
-                    : (isProcessing ? 'bg-sky-100 text-sky-800 border-sky-200' : 'bg-amber-100 text-amber-900 border-amber-200');
-                const cardClass = isDone
-                    ? 'border-gray-200 bg-gray-50/60'
-                    : (isProcessing ? 'border-sky-300 bg-sky-50/30' : 'border-amber-300 bg-[#FFFDF8]');
-                const statusLabel = isDone ? 'Selesai' : (isProcessing ? 'Proses' : 'Menunggu Bayar');
-                const items = Array.isArray(order.items) ? order.items : [];
-                const totalItemCount = items.reduce((acc, i) => acc + Number(i.quantity ? i.quantity : 1), 0);
-                const waktuPesan = order.orderType === 'scheduled' ? 'JADWAL ' + order.scheduledTime : 'Sekarang';
-                const waDisplay = order.customerWaRaw ? order.customerWaRaw : order.customerWa;
-                const extraCostVal = Number(order.extraCost ? order.extraCost : 0);
-                const voucherGroups = buildVoucherGroupsForDisplay(order);
-
-                return `
-                    <div class="border ${cardClass} rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-sm">
-                        
-                        <div class="flex items-start justify-between gap-2 border-b border-gray-200/80 pb-2.5 mb-3">
-                            <div class="min-w-0">
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="text-base sm:text-lg font-extrabold text-gray-900 whitespace-nowrap">Antrian #${escapeHtml(order.queueNumber)}</span>
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold border ${badgeClass} whitespace-nowrap">${statusLabel}</span>
-                                </div>
-                                <p class="text-[11px] text-gray-500 mt-0.5 truncate">${escapeHtml(order.dateStr ? order.dateStr : '')}${order.deviceInfo ? ' • ' + escapeHtml(order.deviceInfo) : ''}</p>
-                            </div>
-                            <button onclick="deleteOrder('${order.id}')" class="text-[11px] font-bold text-gray-400 hover:text-rose-600 px-2 py-1 shrink-0">Hapus</button>
-                        </div>
-
-                        <div class="bg-white rounded-xl p-3 border border-gray-100 space-y-1.5 text-[13px] sm:text-sm mb-3">
-                            <div class="flex justify-between items-start gap-3">
-                                <span class="text-gray-500 shrink-0">Nama Pick Up</span>
-                                <strong class="text-gray-950 font-bold text-right">${escapeHtml(order.customerName)}</strong>
-                            </div>
-                            <div class="flex justify-between items-start gap-3">
-                                <span class="text-gray-500 shrink-0">Cabang / Store</span>
-                                <strong class="text-[#B43A34] font-bold text-right">${escapeHtml(order.storeName)}</strong>
-                            </div>
-                            <div class="flex justify-between items-start gap-3">
-                                <span class="text-gray-500 shrink-0">Waktu Pesan</span>
-                                <strong class="${order.orderType === 'scheduled' ? 'text-rose-700' : 'text-gray-950'} font-bold text-right">${escapeHtml(waktuPesan)}</strong>
-                            </div>
-                            <div class="flex justify-between items-start gap-3 pt-1 border-t border-gray-100 text-xs">
-                                <span class="text-gray-400 shrink-0">No. WA</span>
-                                <strong class="text-gray-700 font-semibold text-right">${escapeHtml(waDisplay)}</strong>
-                            </div>
-                        </div>
-
-                        <div class="bg-[#F7F5F0] rounded-xl p-3 sm:p-3.5 mb-3.5 border border-gray-200/70">
-                            <p class="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-gray-500 mb-2.5">Daftar Menu (${totalItemCount} Item)</p>
-                            
-                            <div class="space-y-3">
-                                ${voucherGroups.map((group, gIdx) => {
-                                    const pillClass = group.type === 'B'
-                                        ? 'bg-amber-200/80 text-amber-950 border-amber-300'
-                                        : 'bg-emerald-100 text-emerald-900 border-emerald-200';
-                                    return `
-                                        <div class="${gIdx > 0 ? 'pt-2.5 border-t border-dashed border-gray-300' : ''}">
-                                            <div class="flex items-center justify-between gap-2 mb-2">
-                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold border ${pillClass}">${escapeHtml(group.label)}</span>
-                                                <span class="text-[10px] font-semibold text-gray-400 whitespace-nowrap">Normal ${formatPrice(group.normalSum)}</span>
-                                            </div>
-                                            <div class="space-y-2">
-                                                ${group.items.map(item => {
-                                                    const qty = Number(item.quantity ? item.quantity : 1);
-                                                    const itemPrice = item.promoPrice ? item.promoPrice : 0;
-                                                    const varParts = [
-                                                        item.size ? 'Size: ' + item.size : '',
-                                                        item.sugar ? 'Sugar: ' + item.sugar.replace(/ sugar/i, '').trim() : '',
-                                                        item.oatside ? 'UP Oatside (+1,5K)' : '',
-                                                        item.juwara ? 'UP Juwara (+1,5K)' : ''
-                                                    ].filter(Boolean);
-
-                                                    return `
-                                                        <div class="flex justify-between items-start gap-2.5">
-                                                            <div class="min-w-0 flex-1">
-                                                                <p class="text-[13.5px] sm:text-[15px] font-bold text-gray-950 leading-snug">
-                                                                    ${escapeHtml(item.name)} <span class="text-[#B43A34] whitespace-nowrap">(${qty}x)</span>
-                                                                </p>
-                                                                ${varParts.length > 0 ? `<p class="text-xs font-medium text-gray-600 mt-0.5">${escapeHtml(varParts.join(' • '))}</p>` : ''}
-                                                                ${item.note ? `<p class="text-xs font-semibold italic text-rose-800 mt-0.5">Note: ${escapeHtml(item.note)}</p>` : ''}
-                                                            </div>
-                                                            <span class="text-[13px] sm:text-sm font-bold text-gray-900 shrink-0 whitespace-nowrap">${formatPrice(itemPrice * qty)}</span>
-                                                        </div>
-                                                    `;
-                                                }).join('')}
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-
-                            ${extraCostVal > 0 ? `
-                                <div class="flex justify-between items-center text-xs font-bold text-[#B43A34] mt-2.5 pt-2 border-t border-gray-300">
-                                    <span>Biaya Lebihan Voucher</span>
-                                    <span class="whitespace-nowrap">+ ${formatPrice(extraCostVal)}</span>
-                                </div>
-                            ` : ''}
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div class="flex sm:flex-col items-baseline sm:items-start justify-between">
-                                <span class="text-[10px] sm:text-[11px] uppercase tracking-wider text-gray-500 font-bold">Total Pembayaran</span>
-                                <span class="text-lg sm:text-xl font-extrabold text-[#B43A34]">${formatPrice(order.totalPrice)}</span>
-                            </div>
-                            <div class="flex flex-col gap-2 w-full sm:w-auto">
-                                <div class="flex gap-2">
-                                    ${isWaiting ? `
-                                        <button onclick="toggleOrderStatus('${order.id}', 'processing')" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
-                                            ⏳ Proses
-                                        </button>
-                                        <button onclick="toggleOrderStatus('${order.id}', 'completed')" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-[#1F2A24] hover:bg-black text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
-                                            ✓ Selesai
-                                        </button>
-                                    ` : (isProcessing ? `
-                                        <button onclick="toggleOrderStatus('${order.id}', 'completed')" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-[#1F2A24] hover:bg-black text-white rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
-                                            ✓ Tandai Selesai
-                                        </button>
-                                        <button onclick="toggleOrderStatus('${order.id}', 'waiting_payment')" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-full text-xs font-bold whitespace-nowrap">
-                                            ↺ Menunggu
-                                        </button>
-                                    ` : `
-                                        <button onclick="toggleOrderStatus('${order.id}', 'waiting_payment')" class="flex-1 sm:flex-none px-3.5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-full text-xs font-bold whitespace-nowrap">
-                                            ↺ Belum Selesai
-                                        </button>
-                                    `)}
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="confirmToCustomer('${order.id}', 'remind')" class="flex-1 sm:flex-none px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-[11px] font-bold shadow-sm whitespace-nowrap">
-                                        💬 WA Ingatkan Bayar
-                                    </button>
-                                    <button onclick="confirmToCustomer('${order.id}', 'processing')" class="flex-1 sm:flex-none px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-full text-[11px] font-bold shadow-sm whitespace-nowrap">
-                                        💬 WA Info Diproses
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-    </script>
-</body>
-</html>
-<!-- AKHIR FILE ADMIN.HTML -->
+Preventing menu access when real-time branch data fails to load
