@@ -364,48 +364,32 @@
             return validOrders;
         }
 
-        function buildVoucherGroupsForDisplay(order) {
-            const items = Array.isArray(order.items) ? order.items : [];
-            if (items.length === 0) return [];
-
-            const onlyVoucherB = false;
-            const units = [];
-
-            items.forEach(item => {
-                const qty = Number(item.quantity ? item.quantity : 1);
-                const promo = Number(item.promoPrice ? item.promoPrice : 0);
-                const orig = Number(item.originalPrice ? item.originalPrice : Math.max(0, (promo - 4000) * 2));
-                for (let i = 0; i < qty; i++) {
-                    units.push({ ...item, quantity: 1, _orig: orig });
-                }
-            });
-
-            units.sort((a, b) => b._orig - a._orig);
-
+        function solveGroupsForMode(units, onlyVoucherB) {
             const evaluatePartition = (groups) => {
                 let extraCost = 0;
                 let nombok = 0;
                 let countA = 0;
                 let singleItemA = 0;
+                let underMinCount = 0;
                 const typedGroups = [];
 
                 for (const g of groups) {
                     const sum = g.reduce((s, u) => s + u._orig, 0);
                     if (onlyVoucherB) {
-                        if (sum < 50000) return null;
+                        if (sum < 50000) underMinCount++;
+                        // Fix tanpa toleransi: max tercover diskon 50% = 60.000. Kelebihan tanpa diskon 50%.
                         const loss = Math.max(0, Math.ceil((sum - 60000) / 2));
                         nombok += loss;
-                        if (sum > 62000) extraCost += loss;
+                        if (sum > 60000) extraCost += loss;
                         typedGroups.push({ type: 'B', sum, items: [...g] });
                     } else {
-                        if (sum >= 50000 && sum <= 62000) {
-                            const loss = Math.max(0, Math.ceil((sum - 60000) / 2));
-                            nombok += loss;
+                        if (sum >= 50000 && sum <= 60000) {
                             typedGroups.push({ type: 'B', sum, items: [...g] });
                         } else {
+                            // Fix tanpa toleransi: max tercover diskon 50% = 70.000. Kelebihan tanpa diskon 50%.
                             const loss = Math.max(0, Math.ceil((sum - 70000) / 2));
                             nombok += loss;
-                            if (sum > 72000) extraCost += loss;
+                            if (sum > 70000) extraCost += loss;
                             countA++;
                             if (g.length === 1) singleItemA++;
                             typedGroups.push({ type: 'A', sum, items: [...g] });
@@ -420,11 +404,12 @@
                     }
                 }
 
-                return { extraCost, nombok, countA, groupCount: groups.length, typedGroups };
+                return { underMinCount, extraCost, nombok, countA, groupCount: groups.length, typedGroups };
             };
 
             const isBetter = (cand, best) => {
                 if (!best) return true;
+                if (cand.underMinCount !== best.underMinCount) return cand.underMinCount < best.underMinCount;
                 if (cand.extraCost !== best.extraCost) return cand.extraCost < best.extraCost;
                 if (cand.countA !== best.countA) return cand.countA < best.countA;
                 if (cand.groupCount !== best.groupCount) return cand.groupCount < best.groupCount;
@@ -463,7 +448,7 @@
                     let g = [remaining.shift()];
                     let sum = g[0]._orig;
                     for (let i = 0; i < remaining.length; ) {
-                        const limit = onlyVoucherB ? 62000 : (sum < 50000 ? 62000 : 72000);
+                        const limit = onlyVoucherB ? 60000 : (sum < 50000 ? 60000 : 70000);
                         if (sum + remaining[i]._orig <= limit) {
                             sum += remaining[i]._orig;
                             g.push(remaining.splice(i, 1)[0]);
@@ -473,23 +458,49 @@
                     }
                     groups.push(g);
                 }
-                const greedyRes = evaluatePartition(groups);
-                bestResult = greedyRes ? greedyRes : evaluatePartition([units]);
+                bestResult = evaluatePartition(groups);
             }
 
             if (!bestResult) {
                 bestResult = evaluatePartition([units]);
             }
 
-            if (!bestResult) {
-                const totalSum = units.reduce((s, u) => s + u._orig, 0);
-                bestResult = {
-                    extraCost: 0,
-                    nombok: 0,
-                    countA: 1,
-                    groupCount: 1,
-                    typedGroups: [{ type: 'A', sum: totalSum, items: [...units] }]
-                };
+            return bestResult;
+        }
+
+        function buildVoucherGroupsForDisplay(order) {
+            if (Array.isArray(order.voucherGroups) && order.voucherGroups.length > 0) {
+                return order.voucherGroups;
+            }
+
+            const items = Array.isArray(order.items) ? order.items : [];
+            if (items.length === 0) return [];
+
+            const units = [];
+            items.forEach(item => {
+                const qty = Number(item.quantity ? item.quantity : 1);
+                const promo = Number(item.promoPrice ? item.promoPrice : 0);
+                const orig = Number(item.originalPrice ? item.originalPrice : Math.max(0, (promo - 4000) * 2));
+                for (let i = 0; i < qty; i++) {
+                    units.push({ ...item, quantity: 1, _orig: orig });
+                }
+            });
+
+            units.sort((a, b) => b._orig - a._orig);
+
+            const orderExtra = Number(order.extraCost ? order.extraCost : 0);
+            const resB = solveGroupsForMode(units, true);
+            const resA = solveGroupsForMode(units, false);
+
+            let bestResult = resA;
+            if (order.minPurchase32k === true) {
+                bestResult = resB;
+            } else if (order.minPurchase32k === false) {
+                bestResult = resA;
+            } else if (orderExtra > 0 && resB.extraCost === orderExtra && resA.extraCost !== orderExtra) {
+                bestResult = resB;
+            } else if (currentStatus.minPurchase32k === true && resB.underMinCount === 0 && resB.extraCost === orderExtra) {
+                bestResult = resB;
             }
 
             bestResult.typedGroups.sort((a, b) => {
@@ -907,4 +918,4 @@
     </script>
 </body>
 </html>
-<!-- AKHIR FILE ADMIN.HTML -->
+
