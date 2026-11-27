@@ -107,8 +107,31 @@
                 </button>
             </div>
 
+            <!-- RINGKASAN PENDAPATAN & VOUCHER (KHUSUS TAB SELESAI) -->
+            <div id="completedSummary" class="hidden mb-4 space-y-3"></div>
+
             <div id="ordersList" class="space-y-3.5">
                 <div class="text-center py-12 text-gray-400 text-sm">Memuat data pesanan...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PREVIEW BUKTI PESANAN -->
+    <div id="adminProofModal" onclick="if(event.target===this) this.classList.add('hidden')" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
+        <div class="bg-white w-full max-w-md rounded-[1.75rem] overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                    <p class="text-[10px] uppercase tracking-widest text-emerald-700 font-bold">Bukti Pesanan</p>
+                    <p id="adminProofModalTitle" class="text-sm font-bold text-gray-900 truncate"></p>
+                </div>
+                <button type="button" onclick="document.getElementById('adminProofModal').classList.add('hidden')" class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 shrink-0">✕</button>
+            </div>
+            <div class="p-3 bg-gray-950 flex items-center justify-center overflow-auto flex-1">
+                <img id="adminProofModalImg" src="" alt="Bukti Pesanan" class="max-w-full max-h-[68vh] object-contain rounded-xl" />
+            </div>
+            <div class="p-3.5 border-t border-gray-100 flex gap-2">
+                <a id="adminProofDownloadBtn" href="#" download="bukti-pesanan.jpg" class="flex-1 py-2.5 rounded-full bg-emerald-600 text-white text-xs font-bold text-center">Download</a>
+                <button type="button" onclick="document.getElementById('adminProofModal').classList.add('hidden')" class="flex-1 py-2.5 rounded-full border border-gray-200 text-xs font-bold text-gray-700">Tutup</button>
             </div>
         </div>
     </div>
@@ -156,12 +179,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+        const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+        const PROFIT_PER_MENU = 3500;
 
         const btn = document.getElementById('toggleBtn');
         const text = document.getElementById('statusText');
         const reasonInput = document.getElementById('reasonInput');
         const min32kToggle = document.getElementById('min32kToggle');
         const ordersListEl = document.getElementById('ordersList');
+        const completedSummaryEl = document.getElementById('completedSummary');
         const clearDoneBtn = document.getElementById('clearDoneBtn');
         const enableNotifBtn = document.getElementById('enableNotifBtn');
         const testSoundBtn = document.getElementById('testSoundBtn');
@@ -358,10 +384,226 @@
                 if (isUnpaidExpired(order)) {
                     remove(ref(db, `orders/${order.id}`)).catch(() => {});
                 } else {
+                    if (order.proofImage) {
+                        const proofTime = Number(order.proofUploadedAt ? order.proofUploadedAt : (order.createdAt ? order.createdAt : 0));
+                        if (proofTime > 0 && (Date.now() - proofTime) >= TWO_DAYS_MS) {
+                            update(ref(db, `orders/${order.id}`), {
+                                proofImage: null,
+                                proofUploadedAt: null,
+                                proofExpired: true
+                            }).catch(() => {});
+                            order.proofImage = null;
+                            order.proofUploadedAt = null;
+                            order.proofExpired = true;
+                        }
+                    }
                     validOrders.push(order);
                 }
             });
             return validOrders;
+        }
+
+        function compressImageToBase64(file, maxDim = 900, quality = 0.72) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = () => reject(new Error('Gagal membaca file gambar'));
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('File bukan gambar yang valid'));
+                    img.onload = () => {
+                        let w = img.width;
+                        let h = img.height;
+                        if (w > maxDim || h > maxDim) {
+                            if (w >= h) {
+                                h = Math.round((h * maxDim) / w);
+                                w = maxDim;
+                            } else {
+                                w = Math.round((w * maxDim) / h);
+                                h = maxDim;
+                            }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w;
+                        canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, w, h);
+                        ctx.drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        window.handleUploadProof = async function(orderId, inputEl) {
+            const file = inputEl && inputEl.files && inputEl.files[0];
+            if (!file) return;
+            const statusSpan = document.getElementById('proof-status-' + orderId);
+            if (statusSpan) statusSpan.innerText = 'Mengompres & mengupload...';
+            try {
+                const compressedDataUrl = await compressImageToBase64(file);
+                await update(ref(db, `orders/${orderId}`), {
+                    proofImage: compressedDataUrl,
+                    proofUploadedAt: Date.now(),
+                    proofExpired: null
+                });
+            } catch (err) {
+                console.error(err);
+                alert('Gagal upload bukti pesanan: ' + (err.message || 'Coba foto lain'));
+                if (statusSpan) statusSpan.innerText = '';
+            } finally {
+                if (inputEl) inputEl.value = '';
+            }
+        };
+
+        window.deleteProofImage = function(orderId) {
+            openAdminConfirm(
+                'Hapus Foto Bukti?',
+                'Foto bukti pesanan ini akan dihapus dari web pembeli. Data pesanan tidak terhapus.',
+                async () => {
+                    await update(ref(db, `orders/${orderId}`), {
+                        proofImage: null,
+                        proofUploadedAt: null,
+                        proofExpired: null
+                    });
+                }
+            );
+        };
+
+        window.openAdminProofModal = function(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order || !order.proofImage) return;
+            document.getElementById('adminProofModalTitle').innerText = `Antrian #${order.queueNumber} • ${order.customerName}`;
+            document.getElementById('adminProofModalImg').src = order.proofImage;
+            const dl = document.getElementById('adminProofDownloadBtn');
+            dl.href = order.proofImage;
+            dl.download = `Bukti-Pesanan-${order.queueNumber || 'YasifStore'}.jpg`;
+            document.getElementById('adminProofModal').classList.remove('hidden');
+        };
+
+        function getOrderDateObj(order) {
+            if (order && order.createdAt) {
+                const d = new Date(Number(order.createdAt));
+                if (!isNaN(d.getTime())) return d;
+            }
+            if (order && order.id) {
+                const match = String(order.id).match(/ORD-(\d{4})(\d{2})(\d{2})-/);
+                if (match) {
+                    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+                }
+            }
+            return null;
+        }
+
+        function formatRemainingProofTime(order) {
+            const uploadedAt = Number(order.proofUploadedAt ? order.proofUploadedAt : (order.createdAt ? order.createdAt : 0));
+            if (!uploadedAt) return 'Berlaku 2 hari';
+            const remainingMs = TWO_DAYS_MS - (Date.now() - uploadedAt);
+            if (remainingMs <= 0) return 'Segera terhapus otomatis';
+            const hours = Math.ceil(remainingMs / (60 * 60 * 1000));
+            if (hours >= 24) {
+                const days = Math.floor(hours / 24);
+                const remH = hours % 24;
+                return remH > 0 ? `Auto hapus dalam ${days}h ${remH}j` : `Auto hapus dalam ${days} hari`;
+            }
+            return `Auto hapus dalam ${hours} jam`;
+        }
+
+        function renderCompletedSummary(completedOrders) {
+            const now = new Date();
+            const todayY = now.getFullYear();
+            const todayM = now.getMonth();
+            const todayD = now.getDate();
+
+            let dailyMenus = 0;
+            let monthlyMenus = 0;
+            let totalMenus = 0;
+            let dailyOrdersCount = 0;
+            let monthlyOrdersCount = 0;
+            let voucherAToday = 0;
+            let voucherBToday = 0;
+
+            completedOrders.forEach(order => {
+                const items = Array.isArray(order.items) ? order.items : [];
+                const qtySum = items.reduce((acc, it) => acc + Number(it.quantity ? it.quantity : 1), 0);
+                totalMenus += qtySum;
+
+                const d = getOrderDateObj(order);
+                if (!d) return;
+
+                const isThisMonth = d.getFullYear() === todayY && d.getMonth() === todayM;
+                const isToday = isThisMonth && d.getDate() === todayD;
+
+                if (isThisMonth) {
+                    monthlyMenus += qtySum;
+                    monthlyOrdersCount += 1;
+                }
+
+                if (isToday) {
+                    dailyMenus += qtySum;
+                    dailyOrdersCount += 1;
+                    try {
+                        const groups = buildVoucherGroupsForDisplay(order);
+                        groups.forEach(g => {
+                            if (g.type === 'B') voucherBToday += 1;
+                            else voucherAToday += 1;
+                        });
+                    } catch (e) {}
+                }
+            });
+
+            const dailyProfit = dailyMenus * PROFIT_PER_MENU;
+            const monthlyProfit = monthlyMenus * PROFIT_PER_MENU;
+            const totalProfit = totalMenus * PROFIT_PER_MENU;
+            const monthName = now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            const todayLabel = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            completedSummaryEl.innerHTML = `
+                <div class="bg-[#1F2A24] text-white rounded-[1.25rem] sm:rounded-[1.5rem] p-4 sm:p-5 shadow-sm">
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-widest text-emerald-300 font-bold">💰 Penghasilan Bersih (Rp 3.500 / menu)</p>
+                            <p class="text-[11px] text-white/70 mt-0.5">Dihitung khusus dari pesanan berstatus Selesai</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-white/10 text-[10px] font-bold text-emerald-200 whitespace-nowrap">${escapeHtml(todayLabel)}</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div class="bg-white/10 border border-white/10 rounded-xl p-3">
+                            <p class="text-[10px] uppercase tracking-wider text-emerald-200 font-bold">Hari Ini</p>
+                            <p class="text-xl font-extrabold text-white mt-0.5">${formatPrice(dailyProfit)}</p>
+                            <p class="text-[11px] text-white/70 mt-0.5">${dailyMenus} menu • ${dailyOrdersCount} order</p>
+                        </div>
+                        <div class="bg-white/10 border border-white/10 rounded-xl p-3">
+                            <p class="text-[10px] uppercase tracking-wider text-white/75 font-bold">Bulan Ini (${escapeHtml(monthName)})</p>
+                            <p class="text-xl font-extrabold text-white mt-0.5">${formatPrice(monthlyProfit)}</p>
+                            <p class="text-[11px] text-white/70 mt-0.5">${monthlyMenus} menu • ${monthlyOrdersCount} order</p>
+                        </div>
+                        <div class="bg-white/10 border border-white/10 rounded-xl p-3">
+                            <p class="text-[10px] uppercase tracking-wider text-amber-200 font-bold">Selama Berjualan</p>
+                            <p class="text-xl font-extrabold text-white mt-0.5">${formatPrice(totalProfit)}</p>
+                            <p class="text-[11px] text-white/70 mt-0.5">${totalMenus} menu • ${completedOrders.length} order</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-white/15 flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-white/75 font-bold">🎫 Pemakaian Voucher Hari Ini (Selesai)</p>
+                            <p class="text-[10px] text-white/55">Data sementara khusus hari ini, otomatis reset besok</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-xs font-extrabold text-emerald-200">
+                                Voucher A: ${voucherAToday}
+                            </span>
+                            <span class="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-xs font-extrabold text-amber-200">
+                                Voucher B: ${voucherBToday}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         function solveGroupsForMode(units, onlyVoucherB) {
@@ -753,6 +995,13 @@
                 clearDoneBtn.classList.add('hidden');
             }
 
+            if (activeTab === 'completed') {
+                completedSummaryEl.classList.remove('hidden');
+                renderCompletedSummary(completedOrders);
+            } else {
+                completedSummaryEl.classList.add('hidden');
+            }
+
             const visible = activeTab === 'waiting_payment'
                 ? waitingOrders
                 : (activeTab === 'processing'
@@ -874,6 +1123,33 @@
                             ` : ''}
                         </div>
 
+                        <div class="bg-white rounded-xl p-3 border border-gray-200/80 mb-3.5">
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-gray-600">📸 Bukti Pesanan (Web Pembeli)</span>
+                                ${order.proofImage ? `<span class="text-[10px] font-semibold text-emerald-700">${escapeHtml(formatRemainingProofTime(order))}</span>` : `<span id="proof-status-${order.id}" class="text-[10px] font-semibold text-gray-400">${order.proofExpired ? 'Foto > 2 hari (auto hapus)' : 'Belum diupload'}</span>`}
+                            </div>
+                            ${order.proofImage ? `
+                                <div class="flex items-center gap-3">
+                                    <button type="button" onclick="openAdminProofModal('${order.id}')" class="w-16 h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 shrink-0">
+                                        <img src="${order.proofImage}" alt="Bukti" class="w-full h-full object-cover" loading="lazy" />
+                                    </button>
+                                    <div class="flex-1 flex flex-wrap gap-1.5">
+                                        <button type="button" onclick="openAdminProofModal('${order.id}')" class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">Lihat</button>
+                                        <label class="px-3 py-1.5 rounded-full bg-gray-100 border border-gray-200 text-gray-700 text-[11px] font-bold cursor-pointer">
+                                            Ganti
+                                            <input type="file" accept="image/*" class="hidden" onchange="handleUploadProof('${order.id}', this)" />
+                                        </label>
+                                        <button type="button" onclick="deleteProofImage('${order.id}')" class="px-3 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[11px] font-bold">Hapus</button>
+                                    </div>
+                                </div>
+                            ` : `
+                                <label class="w-full py-2.5 px-3 rounded-xl border border-dashed border-emerald-400 bg-emerald-50/50 hover:bg-emerald-50 text-emerald-800 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer">
+                                    <span>📤 Upload Foto Bukti Pesanan</span>
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleUploadProof('${order.id}', this)" />
+                                </label>
+                            `}
+                        </div>
+
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="flex sm:flex-col items-baseline sm:items-start justify-between">
                                 <span class="text-[10px] sm:text-[11px] uppercase tracking-wider text-gray-500 font-bold">Total Pembayaran</span>
@@ -918,4 +1194,3 @@
     </script>
 </body>
 </html>
-
