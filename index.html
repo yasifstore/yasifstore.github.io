@@ -1043,7 +1043,7 @@
             render();
         }
 
-        window.handleSubmitOrder = async function() {
+        window.handleSubmitOrder = function() {
             if (state.isSubmittingOrder) return;
 
             const pickupStore = (state.storeLocation || '').trim();
@@ -1086,6 +1086,22 @@
                 showToast('Sedang menghubungkan ke server, coba sesaat lagi...', 'error');
                 return;
             }
+
+            openConfirmDialog({
+                title: 'Kirim Pesanan?',
+                cancelText: 'Kembali',
+                confirmText: 'Kirim',
+                onConfirm: () => executeSubmitOrder()
+            });
+        };
+
+        async function executeSubmitOrder() {
+            if (state.isSubmittingOrder) return;
+            const pickupStore = (state.storeLocation || '').trim();
+            const finalName = (state.customPickupName || '').trim();
+            const rawWa = (state.customerWa || '').trim();
+            const normalizedWa = normalizeWaNumber(rawWa);
+            const plan = getVoucherPlan();
 
             state.isSubmittingOrder = true;
             render();
@@ -1155,22 +1171,47 @@
                 return;
             }
             const lines = [
-                `Konfirmasi pesanan atas nama *${order.customerName}*`,
-                `Antrian: *#${order.queueNumber}*`,
-                `Nominal: *${formatPrice(order.totalPrice)}*`
+                `Konfirmasi pesanan atas nama ${order.customerName}`,
+                `Antrian: #${order.queueNumber}`,
+                `Nominal: ${formatPrice(order.totalPrice)}`
             ];
             window.open(`https://wa.me/${ADMIN_WA}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
         };
 
-        window.openProofPreview = function(orderId) {
+        function getOrderProofImages(order) {
+            if (!order) return [];
+            if (Array.isArray(order.proofImages)) {
+                return order.proofImages.filter(Boolean);
+            }
+            if (order.proofImages && typeof order.proofImages === 'object') {
+                return Object.values(order.proofImages).filter(Boolean);
+            }
+            if (order.proofImage) {
+                return [order.proofImage];
+            }
+            return [];
+        }
+
+        window.openProofPreview = function(orderId, idx = 0) {
             const order = (state.orderHistoryMap && state.orderHistoryMap[orderId])
                 || (state.activeOrderConfirm && state.activeOrderConfirm.id === orderId ? state.activeOrderConfirm : null);
-            if (!order || !order.proofImage) return;
+            const images = getOrderProofImages(order);
+            if (!order || images.length === 0) return;
+            const safeIdx = Math.max(0, Math.min(idx, images.length - 1));
             state.previewProofImage = {
-                src: order.proofImage,
+                images,
+                index: safeIdx,
                 queueNumber: order.queueNumber || '',
                 customerName: order.customerName || ''
             };
+            render();
+        };
+
+        window.stepProofPreview = function(delta) {
+            if (!state.previewProofImage || !Array.isArray(state.previewProofImage.images)) return;
+            const len = state.previewProofImage.images.length;
+            if (len <= 1) return;
+            state.previewProofImage.index = (state.previewProofImage.index + delta + len) % len;
             render();
         };
 
@@ -1180,32 +1221,70 @@
         };
 
         function isProofStillValid(order) {
-            if (!order || !order.proofImage) return false;
+            const images = getOrderProofImages(order);
+            if (images.length === 0) return false;
             const uploadedAt = Number(order.proofUploadedAt || order.createdAt || 0);
             if (!uploadedAt) return true;
             return (Date.now() - uploadedAt) < (2 * 24 * 60 * 60 * 1000);
         }
 
+        function renderProofGalleryBox(order, subtitleText = 'Tersimpan 2 hari') {
+            const images = getOrderProofImages(order);
+            if (images.length === 0) return '';
+            const gridCols = images.length === 1 ? 'grid-cols-1' : 'grid-cols-2';
+            return `
+                <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-3 mb-3 text-left">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="text-[11px] font-extrabold text-emerald-900">📸 Bukti Pesanan (${images.length} Foto)</span>
+                        <span class="text-[10px] text-emerald-700 font-semibold">${escapeHtml(subtitleText)}</span>
+                    </div>
+                    <div class="grid ${gridCols} gap-2">
+                        ${images.map((src, idx) => `
+                            <div class="bg-white border border-emerald-200 rounded-xl overflow-hidden flex flex-col">
+                                <button type="button" onclick="openProofPreview('${order.id}', ${idx})" class="w-full block bg-white relative">
+                                    <img src="${src}" alt="Bukti Pesanan ${idx + 1}" class="w-full ${images.length === 1 ? 'max-h-56 object-contain' : 'h-32 object-cover'} mx-auto" loading="lazy" />
+                                    <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-black/60 text-white text-[9px] font-bold">#${idx + 1}</span>
+                                </button>
+                                <div class="p-1.5 flex gap-1 border-t border-emerald-100 bg-emerald-50/40">
+                                    <button type="button" onclick="openProofPreview('${order.id}', ${idx})" class="flex-1 py-1 bg-white border border-emerald-300 text-emerald-900 rounded-full text-[10px] font-bold">Lihat</button>
+                                    <a href="${src}" download="Bukti-Pesanan-${escapeHtml(order.queueNumber)}-${idx + 1}.jpg" class="flex-1 py-1 bg-emerald-700 text-white rounded-full text-[10px] font-bold text-center">Unduh</a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
         function renderProofPreviewModal() {
             const proof = state.previewProofImage;
-            if (!proof) return '';
-            const dlName = `Bukti-Pesanan-${proof.queueNumber || 'YasifStore'}.jpg`;
+            if (!proof || !Array.isArray(proof.images) || proof.images.length === 0) return '';
+            const idx = Math.max(0, Math.min(proof.index || 0, proof.images.length - 1));
+            const currentSrc = proof.images[idx];
+            const dlName = `Bukti-Pesanan-${proof.queueNumber || 'YasifStore'}-${idx + 1}.jpg`;
             return `
                 <div class="fixed inset-0 z-[160] flex items-center justify-center p-4">
                     <div class="absolute inset-0 bg-black/80" onclick="closeProofPreview()"></div>
                     <div class="relative z-10 w-full max-w-md bg-white rounded-[1.75rem] overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
                         <div class="px-5 py-3.5 border-b border-border flex items-center justify-between gap-2 bg-surface">
                             <div class="min-w-0">
-                                <p class="text-[10px] uppercase tracking-[0.2em] text-[#B43A34] font-bold">Bukti Pesanan</p>
+                                <p class="text-[10px] uppercase tracking-[0.2em] text-[#B43A34] font-bold">Bukti Pesanan (${idx + 1}/${proof.images.length})</p>
                                 <p class="text-sm font-bold text-foreground truncate">Antrian #${escapeHtml(proof.queueNumber)} • ${escapeHtml(proof.customerName)}</p>
                             </div>
                             <button onclick="closeProofPreview()" class="w-9 h-9 rounded-full border border-border flex items-center justify-center text-subtle bg-white shrink-0">✕</button>
                         </div>
-                        <div class="p-3 bg-[#191B18] flex items-center justify-center overflow-auto flex-1">
-                            <img src="${proof.src}" alt="Bukti Pesanan" class="max-w-full max-h-[68vh] object-contain rounded-xl" />
+                        <div class="p-3 bg-[#191B18] flex items-center justify-center overflow-auto flex-1 relative">
+                            <img src="${currentSrc}" alt="Bukti Pesanan ${idx + 1}" class="max-w-full max-h-[64vh] object-contain rounded-xl" />
                         </div>
+                        ${proof.images.length > 1 ? `
+                            <div class="px-4 py-2 bg-[#191B18] border-t border-white/10 flex items-center justify-between gap-2">
+                                <button type="button" onclick="stepProofPreview(-1)" class="px-3.5 py-1.5 rounded-full bg-white/15 text-white text-xs font-bold">← Sebelumnya</button>
+                                <span class="text-xs font-bold text-white/80">${idx + 1} / ${proof.images.length}</span>
+                                <button type="button" onclick="stepProofPreview(1)" class="px-3.5 py-1.5 rounded-full bg-white/15 text-white text-xs font-bold">Berikutnya →</button>
+                            </div>
+                        ` : ''}
                         <div class="p-4 bg-surface border-t border-border flex gap-2.5">
-                            <a href="${proof.src}" download="${escapeHtml(dlName)}" class="flex-1 py-3 bg-[#B43A34] text-white rounded-full text-xs font-bold text-center">Download Bukti</a>
+                            <a href="${currentSrc}" download="${escapeHtml(dlName)}" class="flex-1 py-3 bg-[#B43A34] text-white rounded-full text-xs font-bold text-center">Download Foto Ini</a>
                             <button onclick="closeProofPreview()" class="flex-1 py-3 bg-white border border-border text-foreground rounded-full text-xs font-bold">Tutup</button>
                         </div>
                     </div>
@@ -1342,42 +1421,14 @@
                                     </div>
                                 </div>
                             ` : (isProcessing ? `
-                                ${isProofStillValid(liveOrder) ? `
-                                    <div class="bg-emerald-50 border border-emerald-200 rounded-[1.25rem] p-3.5 mb-5 text-left">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="text-[11px] font-extrabold text-emerald-900 uppercase tracking-wider">📸 Bukti Pesanan</span>
-                                            <span class="text-[10px] text-emerald-700 font-semibold">Klik foto untuk perbesar</span>
-                                        </div>
-                                        <button type="button" onclick="openProofPreview('${liveOrder.id}')" class="w-full block rounded-xl overflow-hidden border border-emerald-200 bg-white">
-                                            <img src="${liveOrder.proofImage}" alt="Bukti Pesanan" class="w-full max-h-[34vh] object-contain mx-auto" />
-                                        </button>
-                                        <div class="mt-2.5 flex gap-2">
-                                            <button type="button" onclick="openProofPreview('${liveOrder.id}')" class="flex-1 py-2 bg-white border border-emerald-300 text-emerald-900 rounded-full text-[11px] font-bold">Perbesar</button>
-                                            <a href="${liveOrder.proofImage}" download="Bukti-Pesanan-${escapeHtml(liveOrder.queueNumber)}.jpg" class="flex-1 py-2 bg-emerald-700 text-white rounded-full text-[11px] font-bold text-center">Download</a>
-                                        </div>
-                                    </div>
-                                ` : `
+                                ${isProofStillValid(liveOrder) ? renderProofGalleryBox(liveOrder, 'Klik foto untuk perbesar') : `
                                     <div class="bg-sky-50 border border-sky-200 rounded-[1.25rem] p-4 mb-5 text-xs text-sky-900 leading-relaxed font-medium">
                                         Pesanan sedang dalam proses. Bukti pesanan akan otomatis muncul di sini & menu Riwayat setelah admin memprosesnya.
                                     </div>
                                 `}
                                 <button onclick="state.activeOrderConfirm=null; render()" class="w-full py-3.5 brand-button rounded-full font-semibold text-sm">Tutup</button>
                             ` : `
-                                ${isProofStillValid(liveOrder) ? `
-                                    <div class="bg-emerald-50 border border-emerald-200 rounded-[1.25rem] p-3.5 mb-5 text-left">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="text-[11px] font-extrabold text-emerald-900 uppercase tracking-wider">📸 Bukti Pesanan</span>
-                                            <span class="text-[10px] text-emerald-700 font-semibold">Berlaku 2 hari</span>
-                                        </div>
-                                        <button type="button" onclick="openProofPreview('${liveOrder.id}')" class="w-full block rounded-xl overflow-hidden border border-emerald-200 bg-white">
-                                            <img src="${liveOrder.proofImage}" alt="Bukti Pesanan" class="w-full max-h-[34vh] object-contain mx-auto" />
-                                        </button>
-                                        <div class="mt-2.5 flex gap-2">
-                                            <button type="button" onclick="openProofPreview('${liveOrder.id}')" class="flex-1 py-2 bg-white border border-emerald-300 text-emerald-900 rounded-full text-[11px] font-bold">Perbesar</button>
-                                            <a href="${liveOrder.proofImage}" download="Bukti-Pesanan-${escapeHtml(liveOrder.queueNumber)}.jpg" class="flex-1 py-2 bg-emerald-700 text-white rounded-full text-[11px] font-bold text-center">Download</a>
-                                        </div>
-                                    </div>
-                                ` : (liveOrder.proofExpired ? `
+                                ${isProofStillValid(liveOrder) ? renderProofGalleryBox(liveOrder, 'Berlaku 2 hari') : (liveOrder.proofExpired ? `
                                     <div class="bg-background border border-border rounded-[1.25rem] p-3 mb-4 text-[11px] text-subtle">
                                         Foto bukti pesanan sudah melewati 2 hari dan otomatis dihapus.
                                     </div>
@@ -1480,31 +1531,13 @@
                                             ` : ''}
                                         </div>
 
-                                        ${isWaiting ? `
-                                            <p class="text-[10px] text-amber-800 bg-amber-50 border border-amber-200/70 rounded-xl px-3 py-1.5 mb-3">
-                                                ⏳ Otomatis dibatalkan jika belum dibayar dalam 2 jam.
-                                            </p>
-                                        ` : (isProcessing && !isProofStillValid(order) ? `
+                                        ${isProcessing && !isProofStillValid(order) ? `
                                             <p class="text-[10px] text-sky-800 bg-sky-50 border border-sky-200/70 rounded-xl px-3 py-1.5 mb-3 font-medium">
                                                 ⏳ Pesanan sedang dalam proses. Bukti pesanan akan muncul otomatis di sini.
                                             </p>
-                                        ` : '')}
+                                        ` : ''}
 
-                                        ${isProofStillValid(order) ? `
-                                            <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-3 mb-3">
-                                                <div class="flex items-center justify-between gap-2 mb-2">
-                                                    <span class="text-[11px] font-extrabold text-emerald-900">📸 Bukti Pesanan</span>
-                                                    <span class="text-[10px] text-emerald-700 font-semibold">Tersimpan 2 hari</span>
-                                                </div>
-                                                <button type="button" onclick="openProofPreview('${order.id}')" class="w-full block rounded-xl overflow-hidden border border-emerald-200 bg-white">
-                                                    <img src="${order.proofImage}" alt="Bukti Pesanan" class="w-full max-h-52 object-contain mx-auto" loading="lazy" />
-                                                </button>
-                                                <div class="mt-2 flex gap-2">
-                                                    <button type="button" onclick="openProofPreview('${order.id}')" class="flex-1 py-2 bg-white border border-emerald-300 text-emerald-900 rounded-full text-[11px] font-bold">Lihat Penuh</button>
-                                                    <a href="${order.proofImage}" download="Bukti-Pesanan-${escapeHtml(order.queueNumber)}.jpg" class="flex-1 py-2 bg-emerald-700 text-white rounded-full text-[11px] font-bold text-center">Download</a>
-                                                </div>
-                                            </div>
-                                        ` : (order.proofExpired ? `
+                                        ${isProofStillValid(order) ? renderProofGalleryBox(order, 'Tersimpan 2 hari') : (order.proofExpired ? `
                                             <p class="text-[10px] text-subtle bg-[#F7F5F0] border border-border rounded-xl px-3 py-1.5 mb-3">
                                                 📸 Foto bukti pesanan sudah melewati 2 hari (otomatis terhapus).
                                             </p>
@@ -2523,15 +2556,17 @@
                             state.activeOrderConfirm = null;
                         }
                     } else {
-                        if (val.proofImage) {
+                        if (val.proofImage || val.proofImages) {
                             const pTime = Number(val.proofUploadedAt || val.createdAt || 0);
                             if (pTime && (Date.now() - pTime) >= TWO_DAYS_MS) {
                                 update(ref(db, `orders/${orderId}`), {
                                     proofImage: null,
+                                    proofImages: null,
                                     proofUploadedAt: null,
                                     proofExpired: true
                                 }).catch(() => {});
                                 val.proofImage = null;
+                                val.proofImages = null;
                                 val.proofUploadedAt = null;
                                 val.proofExpired = true;
                             }
