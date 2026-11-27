@@ -127,7 +127,12 @@
                 <button type="button" onclick="document.getElementById('adminProofModal').classList.add('hidden')" class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 shrink-0">✕</button>
             </div>
             <div class="p-3 bg-gray-950 flex items-center justify-center overflow-auto flex-1">
-                <img id="adminProofModalImg" src="" alt="Bukti Pesanan" class="max-w-full max-h-[68vh] object-contain rounded-xl" />
+                <img id="adminProofModalImg" src="" alt="Bukti Pesanan" class="max-w-full max-h-[64vh] object-contain rounded-xl" />
+            </div>
+            <div id="adminProofNav" class="hidden px-4 py-2 bg-gray-950 border-t border-white/10 flex items-center justify-between gap-2">
+                <button type="button" onclick="stepAdminProofModal(-1)" class="px-3.5 py-1.5 rounded-full bg-white/15 text-white text-xs font-bold">← Sebelumnya</button>
+                <span id="adminProofCounter" class="text-xs font-bold text-white/80">1 / 1</span>
+                <button type="button" onclick="stepAdminProofModal(1)" class="px-3.5 py-1.5 rounded-full bg-white/15 text-white text-xs font-bold">Berikutnya →</button>
             </div>
             <div class="p-3.5 border-t border-gray-100 flex gap-2">
                 <a id="adminProofDownloadBtn" href="#" download="bukti-pesanan.jpg" class="flex-1 py-2.5 rounded-full bg-emerald-600 text-white text-xs font-bold text-center">Download</a>
@@ -378,21 +383,37 @@
             return (Date.now() - created) >= TWO_HOURS_MS;
         }
 
+        function getOrderProofImages(order) {
+            if (!order) return [];
+            if (Array.isArray(order.proofImages)) {
+                return order.proofImages.filter(Boolean);
+            }
+            if (order.proofImages && typeof order.proofImages === 'object') {
+                return Object.values(order.proofImages).filter(Boolean);
+            }
+            if (order.proofImage) {
+                return [order.proofImage];
+            }
+            return [];
+        }
+
         function cleanupExpiredOrders(ordersArray) {
             const validOrders = [];
             ordersArray.forEach(order => {
                 if (isUnpaidExpired(order)) {
                     remove(ref(db, `orders/${order.id}`)).catch(() => {});
                 } else {
-                    if (order.proofImage) {
+                    if (order.proofImage || order.proofImages) {
                         const proofTime = Number(order.proofUploadedAt ? order.proofUploadedAt : (order.createdAt ? order.createdAt : 0));
                         if (proofTime > 0 && (Date.now() - proofTime) >= TWO_DAYS_MS) {
                             update(ref(db, `orders/${order.id}`), {
                                 proofImage: null,
+                                proofImages: null,
                                 proofUploadedAt: null,
                                 proofExpired: true
                             }).catch(() => {});
                             order.proofImage = null;
+                            order.proofImages = null;
                             order.proofUploadedAt = null;
                             order.proofExpired = true;
                         }
@@ -438,14 +459,22 @@
         }
 
         window.handleUploadProof = async function(orderId, inputEl) {
-            const file = inputEl && inputEl.files && inputEl.files[0];
-            if (!file) return;
+            const files = inputEl && inputEl.files ? Array.from(inputEl.files) : [];
+            if (files.length === 0) return;
             const statusSpan = document.getElementById('proof-status-' + orderId);
-            if (statusSpan) statusSpan.innerText = 'Mengompres & mengupload...';
+            if (statusSpan) statusSpan.innerText = `Mengompres ${files.length} foto...`;
             try {
-                const compressedDataUrl = await compressImageToBase64(file);
+                const order = allOrders.find(o => o.id === orderId);
+                const existingImages = getOrderProofImages(order);
+                const newImages = [];
+                for (let i = 0; i < files.length; i++) {
+                    const compressed = await compressImageToBase64(files[i]);
+                    newImages.push(compressed);
+                }
+                const combined = [...existingImages, ...newImages];
                 await update(ref(db, `orders/${orderId}`), {
-                    proofImage: compressedDataUrl,
+                    proofImages: combined,
+                    proofImage: combined[0] || null,
                     proofUploadedAt: Date.now(),
                     proofExpired: null
                 });
@@ -458,12 +487,31 @@
             }
         };
 
-        window.deleteProofImage = function(orderId) {
+        window.deleteSingleProofImage = function(orderId, imgIndex) {
             openAdminConfirm(
-                'Hapus Foto Bukti?',
+                `Hapus Foto #${imgIndex + 1}?`,
                 'Foto bukti pesanan ini akan dihapus dari web pembeli. Data pesanan tidak terhapus.',
                 async () => {
+                    const order = allOrders.find(o => o.id === orderId);
+                    const images = getOrderProofImages(order);
+                    const updated = images.filter((_, i) => i !== imgIndex);
                     await update(ref(db, `orders/${orderId}`), {
+                        proofImages: updated.length > 0 ? updated : null,
+                        proofImage: updated[0] || null,
+                        proofUploadedAt: updated.length > 0 ? (order.proofUploadedAt || Date.now()) : null,
+                        proofExpired: null
+                    });
+                }
+            );
+        };
+
+        window.deleteAllProofImages = function(orderId) {
+            openAdminConfirm(
+                'Hapus Semua Foto Bukti?',
+                'Semua foto bukti pesanan ini akan dihapus dari web pembeli. Data pesanan tidak terhapus.',
+                async () => {
+                    await update(ref(db, `orders/${orderId}`), {
+                        proofImages: null,
                         proofImage: null,
                         proofUploadedAt: null,
                         proofExpired: null
@@ -472,15 +520,48 @@
             );
         };
 
-        window.openAdminProofModal = function(orderId) {
-            const order = allOrders.find(o => o.id === orderId);
-            if (!order || !order.proofImage) return;
-            document.getElementById('adminProofModalTitle').innerText = `Antrian #${order.queueNumber} • ${order.customerName}`;
-            document.getElementById('adminProofModalImg').src = order.proofImage;
+        let adminProofPreviewState = { images: [], index: 0, queueNumber: '', customerName: '' };
+
+        function renderAdminProofModalView() {
+            const { images, index, queueNumber, customerName } = adminProofPreviewState;
+            if (!images || images.length === 0) return;
+            const safeIdx = Math.max(0, Math.min(index, images.length - 1));
+            adminProofPreviewState.index = safeIdx;
+            const src = images[safeIdx];
+            document.getElementById('adminProofModalTitle').innerText = `Antrian #${queueNumber} • ${customerName} (${safeIdx + 1}/${images.length})`;
+            document.getElementById('adminProofModalImg').src = src;
             const dl = document.getElementById('adminProofDownloadBtn');
-            dl.href = order.proofImage;
-            dl.download = `Bukti-Pesanan-${order.queueNumber || 'YasifStore'}.jpg`;
+            dl.href = src;
+            dl.download = `Bukti-Pesanan-${queueNumber || 'YasifStore'}-${safeIdx + 1}.jpg`;
+            const nav = document.getElementById('adminProofNav');
+            const counter = document.getElementById('adminProofCounter');
+            if (images.length > 1) {
+                nav.classList.remove('hidden');
+                counter.innerText = `${safeIdx + 1} / ${images.length}`;
+            } else {
+                nav.classList.add('hidden');
+            }
+        }
+
+        window.openAdminProofModal = function(orderId, idx = 0) {
+            const order = allOrders.find(o => o.id === orderId);
+            const images = getOrderProofImages(order);
+            if (!order || images.length === 0) return;
+            adminProofPreviewState = {
+                images,
+                index: idx,
+                queueNumber: order.queueNumber || '',
+                customerName: order.customerName || ''
+            };
+            renderAdminProofModalView();
             document.getElementById('adminProofModal').classList.remove('hidden');
+        };
+
+        window.stepAdminProofModal = function(delta) {
+            const len = adminProofPreviewState.images.length;
+            if (len <= 1) return;
+            adminProofPreviewState.index = (adminProofPreviewState.index + delta + len) % len;
+            renderAdminProofModalView();
         };
 
         function getOrderDateObj(order) {
@@ -1123,32 +1204,42 @@
                             ` : ''}
                         </div>
 
-                        <div class="bg-white rounded-xl p-3 border border-gray-200/80 mb-3.5">
-                            <div class="flex items-center justify-between gap-2 mb-2">
-                                <span class="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-gray-600">📸 Bukti Pesanan (Web Pembeli)</span>
-                                ${order.proofImage ? `<span class="text-[10px] font-semibold text-emerald-700">${escapeHtml(formatRemainingProofTime(order))}</span>` : `<span id="proof-status-${order.id}" class="text-[10px] font-semibold text-gray-400">${order.proofExpired ? 'Foto > 2 hari (auto hapus)' : 'Belum diupload'}</span>`}
-                            </div>
-                            ${order.proofImage ? `
-                                <div class="flex items-center gap-3">
-                                    <button type="button" onclick="openAdminProofModal('${order.id}')" class="w-16 h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 shrink-0">
-                                        <img src="${order.proofImage}" alt="Bukti" class="w-full h-full object-cover" loading="lazy" />
-                                    </button>
-                                    <div class="flex-1 flex flex-wrap gap-1.5">
-                                        <button type="button" onclick="openAdminProofModal('${order.id}')" class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">Lihat</button>
-                                        <label class="px-3 py-1.5 rounded-full bg-gray-100 border border-gray-200 text-gray-700 text-[11px] font-bold cursor-pointer">
-                                            Ganti
-                                            <input type="file" accept="image/*" class="hidden" onchange="handleUploadProof('${order.id}', this)" />
-                                        </label>
-                                        <button type="button" onclick="deleteProofImage('${order.id}')" class="px-3 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[11px] font-bold">Hapus</button>
+                        ${(() => {
+                            const proofImgs = getOrderProofImages(order);
+                            return `
+                                <div class="bg-white rounded-xl p-3 border border-gray-200/80 mb-3.5">
+                                    <div class="flex items-center justify-between gap-2 mb-2">
+                                        <span class="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-gray-600">📸 Bukti Pesanan ${proofImgs.length > 0 ? `(${proofImgs.length} Foto)` : ''}</span>
+                                        <span id="proof-status-${order.id}" class="text-[10px] font-semibold ${proofImgs.length > 0 ? 'text-emerald-700' : 'text-gray-400'}">${proofImgs.length > 0 ? escapeHtml(formatRemainingProofTime(order)) : (order.proofExpired ? 'Foto > 2 hari (auto hapus)' : 'Belum diupload')}</span>
                                     </div>
+                                    ${proofImgs.length > 0 ? `
+                                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-2.5">
+                                            ${proofImgs.map((src, idx) => `
+                                                <div class="relative rounded-lg overflow-hidden border border-gray-200 bg-gray-50 aspect-square group">
+                                                    <button type="button" onclick="openAdminProofModal('${order.id}', ${idx})" class="w-full h-full block">
+                                                        <img src="${src}" alt="Bukti ${idx + 1}" class="w-full h-full object-cover" loading="lazy" />
+                                                    </button>
+                                                    <span class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/65 text-white text-[9px] font-bold">#${idx + 1}</span>
+                                                    <button type="button" onclick="deleteSingleProofImage('${order.id}', ${idx})" title="Hapus foto ini" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600 text-white text-[10px] font-bold flex items-center justify-center shadow">✕</button>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                        <div class="flex flex-wrap gap-1.5">
+                                            <label class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold cursor-pointer">
+                                                + Tambah Foto
+                                                <input type="file" accept="image/*" multiple class="hidden" onchange="handleUploadProof('${order.id}', this)" />
+                                            </label>
+                                            <button type="button" onclick="deleteAllProofImages('${order.id}')" class="px-3 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[11px] font-bold">Hapus Semua</button>
+                                        </div>
+                                    ` : `
+                                        <label class="w-full py-2.5 px-3 rounded-xl border border-dashed border-emerald-400 bg-emerald-50/50 hover:bg-emerald-50 text-emerald-800 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer">
+                                            <span>📤 Upload Foto Bukti </span>
+                                            <input type="file" accept="image/*" multiple class="hidden" onchange="handleUploadProof('${order.id}', this)" />
+                                        </label>
+                                    `}
                                 </div>
-                            ` : `
-                                <label class="w-full py-2.5 px-3 rounded-xl border border-dashed border-emerald-400 bg-emerald-50/50 hover:bg-emerald-50 text-emerald-800 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer">
-                                    <span>📤 Upload Foto Bukti Pesanan</span>
-                                    <input type="file" accept="image/*" class="hidden" onchange="handleUploadProof('${order.id}', this)" />
-                                </label>
-                            `}
-                        </div>
+                            `;
+                        })()}
 
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="flex sm:flex-col items-baseline sm:items-start justify-between">
