@@ -239,25 +239,30 @@
         window.syncLiveWithLocal = function(liveItems) {
             resetLocalProductsToBase();
 
+            // Ambil menu satuan saja (abaikan item promo/combo)
+            const regularLiveItems = liveItems.filter(live => !live.isCombo && live.name);
+
             let isPremiumStore = false;
-            const kkmLive = liveItems.find(live => live.name.toLowerCase().trim() === "kopi kenangan mantan");
-            
+            const kkmLive = regularLiveItems.find(live =>
+                live.name.toLowerCase().trim() === "kopi kenangan mantan"
+            );
+
             if (kkmLive) {
-                const kkmPrice = kkmLive.outletPrice || kkmLive.normalPrice || 19000;
+                const kkmPrice = Number(kkmLive.originalPrice) || 19000;
                 if (kkmPrice > 19000) {
                     isPremiumStore = true;
                 }
             }
 
             window.products.forEach(localProduct => {
-                const liveMatch = liveItems.find(live => 
+                const liveMatch = regularLiveItems.find(live =>
                     live.name.toLowerCase().trim() === localProduct.name.toLowerCase().trim()
                 );
 
                 if (liveMatch) {
-                    localProduct.isSoldOut = Boolean(liveMatch.isSoldOut);
-                    
-                    const apiRegPrice = liveMatch.outletPrice || liveMatch.normalPrice || localProduct.originalPrice;
+                    localProduct.isSoldOut = liveMatch.isAvailable === false;
+
+                    const apiRegPrice = Number(liveMatch.originalPrice) || localProduct.originalPrice;
                     localProduct.originalPrice = apiRegPrice;
                     localProduct.promoPrice = Math.floor((apiRegPrice * 0.5) + 4000);
 
@@ -267,7 +272,7 @@
                             regSize.originalPrice = localProduct.originalPrice;
                             regSize.promoPrice = localProduct.promoPrice;
                         }
-                        
+
                         const largeSize = localProduct.sizes.find(s => s.name === "Large");
                         if (largeSize) {
                             let finalLargePrice = largeSize._baseOriginalPrice !== undefined
@@ -313,24 +318,24 @@
                 return false;
             }
 
-            state.isLoadingMenu = true; 
+            state.isLoadingMenu = true;
             state.menuLoadStatus = 'loading';
             state.isFallbackWarning = false;
             state.showApiErrorModal = false;
-            render(); 
+            render();
 
             let loadedSuccess = false;
             const maxAttempts = 2;
 
             for (let attempt = 1; attempt <= maxAttempts; attempt++) {
                 try {
-                    const url = `https://zonafitrinet.my.id/api/kopken/menu?outlet=${encodeURIComponent(storeCode)}&_t=${Date.now()}`;
+                    const url = `https://yasif-kopken-api.yasif1sa123.workers.dev/?store_code=${encodeURIComponent(storeCode)}&_t=${Date.now()}`;
                     const response = await fetch(url, { cache: 'no-store' });
                     if (!response.ok) throw new Error("Response not OK: " + response.status);
                     const data = await response.json();
-                    
-                    if (data && Array.isArray(data.items) && data.items.length > 0) {
-                        window.syncLiveWithLocal(data.items);
+
+                    if (data && data.success && Array.isArray(data.data) && data.data.length > 0) {
+                        window.syncLiveWithLocal(data.data);
                         state.hasSyncedLiveMenu = true;
                         state.menuLoadStatus = 'success';
                         loadedSuccess = true;
